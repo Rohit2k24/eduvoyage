@@ -1,0 +1,24 @@
+.carousel-container {
+  display: flex; /* Use flexbox to arrange carousels horizontally */
+  justify-content: space-between; /* Space between the two carousels */
+  width: 100%; /* Full width */
+}
+
+.carousel-wrapper {
+  flex: 1; /* Allow both carousels to grow equally */
+  max-width: 58%; /* Ensure they fit side by side */
+  /* margin: 20 10px; */
+}
+
+.carousel {
+  height: auto; /* Ensure flexible height */
+}
+
+.legend {
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent background for legend */
+  color: white; /* Text color for legend */
+  padding: 1px; /* Padding for legend text */
+  position: absolute; /* Positioning for legend */
+  bottom: 10px; /* Position from the bottom */
+  left: 10px; /* Position from the left */
+}

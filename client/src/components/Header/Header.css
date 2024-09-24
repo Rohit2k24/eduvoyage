@@ -1,0 +1,143 @@
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #111; /* Deep black for a classy vibe */
+  padding: 15px 20px;
+  color: #f1f1f1; /* Light grey for better contrast */
+  flex-wrap: wrap;
+  position: relative;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Adds depth to the header */
+}
+
+.logo {
+  font-size: 30px;
+  font-weight: bold;
+  color: #f39c12;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.logo:hover {
+  color: #e67e22;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  justify-content: center;
+  max-width: 450px;
+  margin-right: 20px;
+  gap: 10px;
+}
+
+.search-container input {
+  padding: 10px;
+  border-radius: 25px;
+  border: none;
+  background-color: #333;
+  color: #f1f1f1;
+  width: 100%;
+  max-width: 300px;
+  margin-top: 20px;
+
+  transition: background-color 0.3s ease;
+}
+
+.search-container input:focus {
+  background-color: #444;
+  outline: none;
+}
+
+.search-container button {
+  background-color: #f39c12;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.search-container button:hover {
+  background-color: #e67e22;
+}
+
+.nav-menu {
+  display: flex;
+  gap: 30px;
+  transition: all 0.3s ease-in-out;
+}
+
+.nav-menu a {
+  color: #f1f1f1;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 10px 15px;
+  transition: color 0.3s ease;
+}
+
+.nav-menu a:hover {
+  color: #f39c12;
+}
+
+.menu-toggle {
+  display: none;
+  cursor: pointer;
+}
+
+.menu-icon {
+  font-size: 28px;
+  color: #f1f1f1;
+}
+
+.login-signup-container {
+  display: flex;
+  gap: 15px;
+}
+
+.login-signup {
+  background-color: #f39c12;
+  padding: 10px 25px;
+  border-radius: 30px;
+  color: white;
+  text-decoration: none;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.login-signup:hover {
+  background-color: #e67e22;
+  transform: scale(1.05); /* Slight enlargement for hover effect */
+}
+
+@media (max-width: 768px) {
+  .search-container {
+    margin-bottom: 10px;
+    order: 2;
+  }
+
+  .nav-menu {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    background-color: #111;
+    width: 100%;
+    padding: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  .nav-menu.active {
+    display: flex;
+  }
+
+  .menu-toggle {
+    display: block;
+  }
+
+  .menu-icon {
+    font-size: 30px;
+  }
+}
