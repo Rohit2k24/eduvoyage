@@ -133,7 +133,7 @@ const RegistrationForm = () => {
   return (
     <div className="registration-form-container">
       <form className="registration-form" onSubmit={handleSubmit}>
-        <h2>Register</h2>
+        <h2>Register Form</h2>
 
         {Object.keys(formData).map((field) => (
           <div className="form-group" key={field}>
