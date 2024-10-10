@@ -1,0 +1,31 @@
+/* src/Loader/Loader.css */
+.loader-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; /* Full viewport height */
+    background-color: #121212; /* Dark background */
+    color: #FFFFFF; /* White text */
+    font-family: 'Arial', sans-serif; /* Clean font */
+  }
+  
+  .loader {
+    border: 8px solid rgba(255, 255, 255, 0.3); /* Light color */
+    border-radius: 50%;
+    border-top: 8px solid #FF5733; /* Accent color */
+    width: 60px; /* Size of the loader */
+    height: 60px; /* Size of the loader */
+    animation: spin 1s linear infinite; /* Spin animation */
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .loader-container p {
+    margin-top: 15px; /* Space above text */
+    font-size: 18px; /* Text size */
+  }
+  

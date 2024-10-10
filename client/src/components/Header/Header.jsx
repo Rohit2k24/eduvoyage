@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { FaSearch } from "react-icons/fa";
 import './Header.css';
 
 function Header() {
@@ -16,7 +17,9 @@ function Header() {
 
       <div className="search-container">
         <input type="text" placeholder="Search study programs..." />
-        <button type="submit">Search</button>
+        <button type="submit" className="search-button">
+          <FaSearch className='search-icon' />
+        </button>
       </div>
 
       <nav className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
@@ -30,8 +33,8 @@ function Header() {
       </div>
 
       <div className="login-signup-container">
-        <Link to="/login" className="login-signup">Login</Link>
-        <Link to="/register" className="login-signup">Sign Up</Link>
+        <Link to="/login" className="login-button">Login</Link>
+        <Link to="/register" className="signup-button">Sign Up</Link>
       </div>
     </header>
   );

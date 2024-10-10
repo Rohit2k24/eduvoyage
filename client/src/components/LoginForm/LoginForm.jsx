@@ -51,6 +51,7 @@ function LoginForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         const newErrors = {};
         Object.keys(formData).forEach((field) => {
             const error = validateField(field, formData[field]);
@@ -61,21 +62,34 @@ function LoginForm() {
         if (Object.keys(newErrors).length === 0) {
             try {
                 const response = await axios.post('http://localhost:5000/api/auth/login', formData);
-                console.log(response);
-                if(response.data.status === 1) {
-                    navigate('/studentDashboard')
+                const { status, token, role } = response.data;
+
+                if (status === 1) {
+                    localStorage.setItem('token', token);
+
+                    if (role === 'Admin') {
+                        navigate('/adminDashboard');
+                    } else if (role === 'Student') {
+                        navigate('/studentDashboard');
+                    } else {
+                        navigate('/studentDashboard');
+                    }
                 }
             } catch (error) {
                 console.error('Login error:', error.response?.data || error.message);
                 setErrors({ form: 'Invalid email or password' });
-                alert(error.response.data.msg)
+                if (error.response && error.response.data && error.response.data.msg) {
+                    alert(error.response.data.msg);
+                } else {
+                    alert('An error occurred. Please try again.');
+                }
             }
         }
     };
 
     return (
         <div>
-            <Header /> {/* Add Header here */}
+            <Header />
             <div className="login-form-container">
                 <form className="login-form" onSubmit={handleSubmit}>
                     <h2>Login</h2>
@@ -110,7 +124,7 @@ function LoginForm() {
 
                     {errors.form && <p className="error-message">{errors.form}</p>}
 
-                    <button style={{backgroundColor:'lightblue'}} type="submit">Login</button>
+                    <button type="submit">Login</button>
                 </form>
             </div>
         </div>

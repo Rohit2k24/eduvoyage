@@ -1,88 +1,88 @@
-body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #f0f0f0; /* Light background for contrast */
-    margin: 0;
-    padding: 0;
-}
-
+/* Container for the login form */
 .login-form-container {
-    max-width: 450px;
-    margin: 60px auto;
-    padding: 50px;
-    background-color: #2c2c2c; /* Soft black/greyish background */
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15); /* Softer shadow for a premium feel */
-    color: #d0d0d0; /* Light grey text */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full height of the viewport */
+    background-color: #afb0b2; /* Light background color */
+    padding: 20px;
 }
 
+/* Styling for the form */
+.login-form {
+    background-color: white; /* White background for the form */
+    padding: 30px;
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+    width: 100%;
+    max-width: 400px; /* Maximum width */
+}
+
+/* Heading styles */
 .login-form h2 {
     text-align: center;
-    margin-bottom: 25px;
-    color: #f5f5f5; /* Slightly off-white for title */
-    font-size: 26px;
-    font-weight: 500;
+    margin-bottom: 20px; /* Space below the heading */
+    color: #333; /* Dark color for text */
 }
 
+/* Form group styles */
 .form-group {
-    margin-bottom: 18px;
+    margin-bottom: 15px; /* Space between form groups */
 }
 
-.form-group label {
-    display: block;
-    margin-bottom: 7px;
-    font-weight: bold;
-    color: #dcdcdc; /* Softer light grey */
-    font-size: 14px;
+/* Label styles */
+label {
+    display: block; /* Block display for label */
+    margin-bottom: 5px; /* Space below label */
+    font-weight: bold; /* Bold text */
+    color: #555; /* Medium dark color */
 }
 
-.form-group input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #444; /* Dark grey border */
-    color: #f0f0f0; /* Light text */
-    border-radius: 6px;
-    box-sizing: border-box;
-    transition: border-color 0.3s, background-color 0.3s;
+/* Input field styles */
+input[type="email"],
+input[type="password"] {
+    width: 100%; /* Full width */
+    padding: 10px; /* Padding inside input */
+    border: 1px solid #ccc; /* Light border */
+    border-radius: 4px; /* Slightly rounded corners */
+    font-size: 16px; /* Font size */
+    transition: border 0.3s ease; /* Smooth border transition */
 }
 
-.form-group input:focus {
-    border-color: #56ccf2; /* Light blue on focus */
-    background-color: #494949; /* Slightly lighter background on focus */
-    outline: none;
+/* Input focus styles */
+input[type="email"]:focus,
+input[type="password"]:focus {
+    border-color: #4caf50; /* Green border on focus */
+    outline: none; /* Remove default outline */
 }
 
+/* Error message styles */
 .error-message {
-    color: #e74c3c; /* Red for errors */
-    font-size: 0.85em;
+    color: red; /* Red color for error messages */
+    font-size: 14px; /* Font size */
 }
 
+/* Button styles */
 button {
-    width: 100%;
-    margin-top: 20px;
-    padding: 12px;
-    background-color: #1a73e8; /* Rich blue for button */
-    color: #fff; /* White text */
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 18px;
-    font-weight: bold;
-    transition: background-color 0.3s, transform 0.2s;
+    width: 100%; /* Full width */
+    padding: 10px; /* Padding inside button */
+    background-color: #4caf50; /* Green background */
+    color: rgb(16, 16, 16); /* White text */
+    border: none; /* No border */
+    border-radius: 4px; /* Slightly rounded corners */
+    font-size: 16px; /* Font size */
+    cursor: pointer; /* Pointer cursor */
+    transition: background-color 0.3s ease; /* Smooth background color transition */
 }
 
+/* Button hover styles */
 button:hover {
-    background-color: #155ab2; /* Darker blue on hover */
-    transform: translateY(-2px); /* Slight lift */
+    background-color: #45a049; /* Darker green on hover */
 }
 
-button:active {
-    background-color: #0f3c84; /* Even darker blue on active */
-    transform: translateY(0); /* Reset lift */
-}
-
-@media (max-width: 480px) {
-    .login-form-container {
-        width: 90%;
-        padding: 20px;
+/* Responsive design for smaller screens */
+@media (max-width: 500px) {
+    .login-form {
+        padding: 20px; /* Adjust padding for smaller screens */
     }
 }

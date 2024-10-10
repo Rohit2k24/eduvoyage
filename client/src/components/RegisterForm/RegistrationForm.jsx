@@ -20,6 +20,10 @@ const RegistrationForm = () => {
 
   const navigate = useNavigate();
 
+  const validateName = (name) => {
+    return /^[A-Za-z\s]+$/.test(name);
+  };
+
   const validateEmail = (email) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
@@ -30,6 +34,7 @@ const RegistrationForm = () => {
     if (phone[0] === '0') return false;
     if (/^(.)\1+$/.test(phone)) return false; // Check for repeated digits
     if (phone === '1234567890') return false;
+    if (phone.startsWith('12345')) return false;
     return /^\d{10}$/.test(phone);
   };
 
@@ -49,7 +54,12 @@ const RegistrationForm = () => {
     });
 
     // Live validation
-    if (name === 'email') {
+    if (name === 'firstName' || name === 'lastName' || name === 'country') {
+      setErrors({
+        ...errors,
+        [name]: validateName(value) ? '' : 'Should only contain letters',
+      });
+    } else if (name === 'email') {
       setErrors({
         ...errors,
         email: validateEmail(value) ? '' : 'Invalid email format',
@@ -75,12 +85,20 @@ const RegistrationForm = () => {
 
   const handleBlur = (e) => {
     const { name, value } = e.target;
-    if (name === 'email' || name === 'phone') {
+    if (name === 'firstName' || name === 'lastName' || name === 'country') {
       setErrors({
         ...errors,
-        [name]: name === 'email' 
-          ? (validateEmail(value) ? '' : 'Invalid email format')
-          : (validatePhone(value) ? '' : 'Invalid phone number'),
+        [name]: validateName(value) ? '' : 'Should only contain letters',
+      });
+    } else if (name === 'email') {
+      setErrors({
+        ...errors,
+        email: validateEmail(value) ? '' : 'Invalid email format',
+      });
+    } else if (name === 'phone') {
+      setErrors({
+        ...errors,
+        phone: validatePhone(value) ? '' : 'Invalid phone number',
       });
     } else if (name === 'password') {
       setErrors({
@@ -100,6 +118,12 @@ const RegistrationForm = () => {
     
     // Validate all fields before submission
     const newErrors = {};
+    if (!validateName(formData.firstName)) {
+      newErrors.firstName = 'First name should only contain letters';
+    }
+    if (!validateName(formData.lastName)) {
+      newErrors.lastName = 'Last name should only contain letters';
+    }
     if (!validateEmail(formData.email)) {
       newErrors.email = 'Invalid email format';
     }
@@ -111,6 +135,9 @@ const RegistrationForm = () => {
     }
     if (!validateConfirmPassword(formData.password, formData.confirmPassword)) {
       newErrors.confirmPassword = 'Passwords do not match';
+    }
+    if (!validateName(formData.country)) {
+      newErrors.country = 'Country should only contain letters';
     }
 
     if (Object.keys(newErrors).length > 0) {

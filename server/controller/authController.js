@@ -60,9 +60,11 @@ exports.userLogin = async (req, res) => {
             { expiresIn: '23h' }, 
             (err, token) => {
                 if (err) throw err;
-                res.json({ status: 1, message: "Login Successfull!!", token }); 
-            }
+                res.json({ status: 1, message: "Login Successful!", token, role: user.role });            }
         );
+        // if (user.role=="Admin"){
+        //     <Navigate to="/" replace={true} />;
+        // }
     } catch (error) {
         console.error('Server error:', error.message);
         res.status(500).send('Server error');

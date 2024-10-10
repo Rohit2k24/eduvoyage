@@ -1,143 +1,151 @@
+/* Header container styling */
 .header-container {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #111; /* Deep black for a classy vibe */
-  padding: 15px 20px;
-  color: #f1f1f1; /* Light grey for better contrast */
-  flex-wrap: wrap;
-  position: relative;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Adds depth to the header */
+  justify-content: space-between; /* Space between elements */
+  align-items: center; /* Vertically center items */
+  background-color: #0b0b0b; /* Dark green background */
+  padding: 15px 30px; /* Padding around the header */
+  color: white; /* White text color */
+  position: relative; /* Positioned relative for dropdowns */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
+/* Logo styling */
 .logo {
-  font-size: 30px;
-  font-weight: bold;
-  color: #f39c12;
-  cursor: pointer;
-  transition: color 0.3s ease;
+  font-size: 24px; /* Logo font size */
+  cursor: pointer; /* Pointer cursor on hover */
+  text-decoration: none; /* No underline */
 }
 
-.logo:hover {
-  color: #e67e22;
-}
-
+/* Search container styling */
 .search-container {
   display: flex;
-  align-items: center;
-  flex: 1;
-  justify-content: center;
-  max-width: 450px;
-  margin-right: 20px;
-  gap: 10px;
+  align-items: center; /* Center items vertically */
+  flex-grow: 0; /* Allow search to take available space */
+  margin: 0 20px; 
+  width:550px;/* Margin between elements */
 }
 
+/* Search input field styling */
 .search-container input {
-  padding: 10px;
-  border-radius: 25px;
-  border: none;
-  background-color: #333;
-  color: #f1f1f1;
-  width: 100%;
-  max-width: 300px;
-  margin-top: 20px;
-
-  transition: background-color 0.3s ease;
+  width: 100%; /* Full width of the container */
+  padding: 10px; /* Padding inside input */
+  border: none; /* No border */
+  border-radius: 5px; /* Slightly rounded corners */
+  font-size: 16px; /* Font size */
+  transition: box-shadow 0.3s ease; /* Smooth shadow transition */
 }
 
+/* Search input focus styling */
 .search-container input:focus {
-  background-color: #444;
-  outline: none;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.6); /* White shadow on focus */
+  outline: none; /* Remove default outline */
 }
 
-.search-container button {
-  background-color: #f39c12;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 25px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+/* Search button styling */
+.search-button {
+  background-color: #45a049; /* Darker green for button */
+  border: none; /* No border */
+  border-radius: 5px; /* Slightly rounded corners */
+  padding: 5px 10px; /* Reduced padding for smaller size */
+  cursor: pointer; /* Pointer cursor on hover */
+  margin-left: 10px; /* Space between input and button */
+  color: white; /* White text */
+  display: flex; /* Flexbox for centering icon */
+  align-items: center;
+  width:50px; /* Center icon vertically */
 }
 
-.search-container button:hover {
-  background-color: #e67e22;
+/* Search button hover styling */
+.search-button:hover {
+  background-color: #388e3c; /* Darker green on hover */
 }
 
+/* Navigation menu styling */
 .nav-menu {
   display: flex;
-  gap: 30px;
-  transition: all 0.3s ease-in-out;
+  align-items: center; /* Center items vertically */
+  transition: max-height 0.3s ease; /* Smooth transition */
 }
 
+/* Links styling in the navigation */
 .nav-menu a {
-  color: #f1f1f1;
-  text-decoration: none;
-  font-weight: bold;
-  padding: 10px 15px;
-  transition: color 0.3s ease;
+  margin: 0 15px; /* Space between links */
+  color: white; /* White text */
+  text-decoration: none; /* No underline */
+  font-weight: bold; /* Bold text */
 }
 
+/* Links hover styling */
 .nav-menu a:hover {
-  color: #f39c12;
+  text-decoration: underline; /* Underline on hover */
 }
-
+.search-icon{
+  font-size:xx-large;
+}
+/* Menu toggle styling */
 .menu-toggle {
-  display: none;
-  cursor: pointer;
+  display: none; /* Hide by default */
+  cursor: pointer; /* Pointer cursor on hover */
 }
 
-.menu-icon {
-  font-size: 28px;
-  color: #f1f1f1;
-}
-
+/* Login/Signup container styling */
 .login-signup-container {
-  display: flex;
-  gap: 15px;
+  display: flex; /* Flex display for alignment */
+  align-items: center; /* Center items vertically */
 }
 
-.login-signup {
-  background-color: #f39c12;
-  padding: 10px 25px;
-  border-radius: 30px;
-  color: white;
-  text-decoration: none;
-  transition: background-color 0.3s ease, transform 0.3s ease;
+/* Login button styling */
+.login-button {
+  margin-left: 15px; /* Space between links */
+  color: rgb(91, 88, 88); /* White text */
+  text-decoration: none; /* No underline */
+  font-weight: bold; /* Bold text */
+  background-color: #e7e014; /* Bootstrap green */
+  padding: 10px 15px; /* Padding for button */
+  border-radius: 5px; /* Rounded corners */
+  transition: background-color 0.3s; /* Transition for hover effect */
 }
 
-.login-signup:hover {
-  background-color: #e67e22;
-  transform: scale(1.05); /* Slight enlargement for hover effect */
+/* Signup button styling */
+.signup-button {
+  margin-left: 15px; /* Space between links */
+  color: white; /* White text */
+  text-decoration: none; /* No underline */
+  font-weight: bold; /* Bold text */
+  background-color: #0275d8; /* Bootstrap blue */
+  padding: 10px 15px; /* Padding for button */
+  border-radius: 5px; /* Rounded corners */
+  transition: background-color 0.3s; /* Transition for hover effect */
 }
 
+/* Button hover styling */
+.login-button:hover {
+  background-color: #ed3f0f; /* Darker green on hover */
+}
+
+.signup-button:hover {
+  background-color: #05376c; /* Darker blue on hover */
+}
+
+/* Responsive styles */
 @media (max-width: 768px) {
-  .search-container {
-    margin-bottom: 10px;
-    order: 2;
-  }
-
   .nav-menu {
-    display: none;
-    flex-direction: column;
-    position: absolute;
-    top: 60px;
-    left: 0;
-    background-color: #111;
-    width: 100%;
-    padding: 15px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      display: none; /* Hide nav menu by default on small screens */
+      flex-direction: column; /* Vertical layout */
+      position: absolute; /* Absolute positioning */
+      top: 60px; /* Position below the header */
+      left: 0; /* Align left */
+      background-color: #4CAF50; /* Same background as header */
+      width: 100%; /* Full width */
+      z-index: 100; /* Bring to front */
   }
 
   .nav-menu.active {
-    display: flex;
+      display: flex; /* Show menu when active */
   }
 
   .menu-toggle {
-    display: block;
-  }
-
-  .menu-icon {
-    font-size: 30px;
+      display: block; /* Show menu toggle on small screens */
   }
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import './StudentDashboard.css';
+import './studentDashboard.css';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 // Sample data for the chart

@@ -6,16 +6,36 @@ import Advertisement from '../Home/Advertisement'; // Import the advertisement c
 
 const Home = () => {
   const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true); // Loading state
+
+  useEffect(() => {
+    // Simulating data fetching
+    const fetchCourses = async () => {
+      // Simulating a delay
+      setTimeout(() => {
+        setCourses(['Course 1', 'Course 2', 'Course 3', 'Course 4']);
+        setLoading(false);
+      }, 2000); // 2 seconds delay for loading simulation
+    };
+
+    fetchCourses();
+  }, []);
 
   return (
-    <div className="head">  
+    <div className="home-page">  
       <Header />
 
-      <div className="home-container">
-        <main>
+      {loading ? (
+        <div className="loader-container">
+          <div className="loader"></div>
+          <p>Loading...</p>
+        </div>
+      ) : (
+        <div className="home-container">
           <section className="hero">
             <h1>Welcome to EduVoyage</h1>
             <p>Your gateway to global education and opportunities abroad.</p>
+            <button className="explore-button">Explore Now</button>
           </section>
 
           {/* Add Advertisement Section */}
@@ -42,8 +62,8 @@ const Home = () => {
               <p>Get expert guidance on scholarships, visas, and cultural integration.</p>
             </div>
           </section>
-        </main>
-      </div>
+        </div>
+      )}
     </div>
   );
 };
