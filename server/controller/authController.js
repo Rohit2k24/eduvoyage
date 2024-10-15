@@ -10,7 +10,6 @@ exports.userRegister = async (req, res) => {
         if (user) {
             return res.status(400).json({ msg: 'User already exists' });
         }
-
         user = new User({
             firstname:firstName,
             lastname:lastName,
@@ -70,3 +69,15 @@ exports.userLogin = async (req, res) => {
         res.status(500).send('Server error');
     }
 };
+// controllers/authController.js
+
+exports.logout = (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ message: 'Logout failed' });
+      }
+      res.clearCookie('connect.sid'); // Clear the session cookie
+      return res.status(200).json({ message: 'Logout successful' });
+    });
+  };
+  

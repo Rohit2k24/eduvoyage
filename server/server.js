@@ -23,6 +23,14 @@ const connectDB = async () => {
         process.exit(1);
     }
 };
+const session = require('express-session');
+
+app.use(session({
+  secret: process.env.JWT_SECRET, // replace with your actual secret
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false }, // set to true if using HTTPS
+}));
 
 connectDB();
 

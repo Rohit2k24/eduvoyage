@@ -6,7 +6,8 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import "./App.css"; // Import your main styles
 import StudentDashboard from "./components/student/studentDashboard";
-import AdminDashboard from "./components/admin/adminDashboard"; // Import AdminDashboard from correct path
+import AdminDashboard from "./components/Admin/AdminDashboard"; // Import AdminDashboard from correct path
+import CollegeAdmin from "./components/collegeAdmin/collegeadminDashboard";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/studentDashboard" element={<StudentDashboard />} />
         <Route path="/adminDashboard" element={<AdminDashboard/>} />
+        <Route path="/collegeadminDashboard" element={<CollegeAdmin/>} />
       </Routes>
     </Router>
   );

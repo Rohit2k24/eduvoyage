@@ -72,7 +72,7 @@ function LoginForm() {
                     } else if (role === 'Student') {
                         navigate('/studentDashboard');
                     } else {
-                        navigate('/studentDashboard');
+                        navigate('/collegeadminDashboard');
                     }
                 }
             } catch (error) {
