@@ -14,14 +14,7 @@ import axios from 'axios';
 import { Modal, Button, Form } from 'react-bootstrap';
 // Sample data for the chart
 const data = [
-  { day: 'Mon', hours: 2 },
-  { day: 'Tue', hours: 4 },
-  { day: 'Wed', hours: 3 },
-  { day: 'Thu', hours: 5 },
-  { day: 'Fri', hours: 1 },
-  { day: 'Sat', hours: 6 },
-  { day: 'Sun', hours: 4 },
-];
+
 
 const StudentDashboard = () => {
   const [user, setUser] = useState({ firstname: '', lastname: '' }); // State for user data
