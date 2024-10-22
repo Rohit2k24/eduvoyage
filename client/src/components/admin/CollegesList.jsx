@@ -65,11 +65,25 @@ const CollegesList = () => {
 
   const disableCollege = async (collegeId) => {
     try {
-      await axios.patch(`http://localhost:5000/api/auth/colleges/${collegeId}/disable`);
-      fetchColleges(); // Refresh the list after disabling
-      Swal.fire("success","College disabled successfully","success");
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: "This will disable the college.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, disable it!',
+      });
+
+      if (result.isConfirmed) {
+        await axios.patch(`http://localhost:5000/api/auth/colleges/${collegeId}/disable`);
+        fetchColleges(); // Refresh the list after disabling
+
+        Swal.fire("Success", "College disabled successfully", "success");
+      } else {
+        Swal.fire("Cancelled", "The college is still active", "info");
+      }
     } catch (error) {
       console.error('Error disabling college:', error);
+      Swal.fire("Error", "There was an error disabling the college", "error");
     }
   };
 

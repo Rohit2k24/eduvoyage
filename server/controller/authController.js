@@ -356,16 +356,14 @@ exports.collegeLogin = async (req, res) => {
 };
 
 exports.disableCollege = async (req, res) => {
-  const { collegeId } = req.params; // Get the college ID from the request parameters
-
+  const { id } = req.params; // Get the college ID from the request parameters
+  console.log(req.params)
   try {
     // Find the college by ID and update the isApproved field to false
     const college = await College.findByIdAndUpdate(
-      collegeId,
-      { isApproved: false },
-      { new: true } // Return the updated document
+      id,
+      { isApproved: false }
     );
-
     if (!college) {
       return res.status(404).json({ message: "College not found" });
     }
