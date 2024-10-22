@@ -1,7 +1,7 @@
 import { useState } from "react";
-import "./RegistrationForm.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const RegistrationForm = () => {
   const [formData, setFormData] = useState({
@@ -148,7 +148,10 @@ const RegistrationForm = () => {
     try {
       const response = await axios.post("http://localhost:5000/api/auth/register", formData);
       if (response.data.status === 1) {
-        alert("User Registered Successfully");
+        Swal.fire({
+          title: "Registered Successfully",
+          icon: "success"
+        });
         navigate("/login");
       }
     } catch (error) {
@@ -158,13 +161,37 @@ const RegistrationForm = () => {
   };
 
   return (
-    <div className="registration-form-container">
-      <form className="registration-form" onSubmit={handleSubmit}>
-        <h2>Register Form</h2>
+    <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      minHeight: '100vh',
+      backgroundColor: '#f0f2f5',
+      fontFamily: 'Arial, sans-serif'
+    }}>
+      <form className="registration-form" onSubmit={handleSubmit} style={{
+        backgroundColor: 'white',
+        padding: '2rem',
+        borderRadius: '8px',
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+        width: '100%',
+        maxWidth: '400px'
+      }}>
+        <h2 style={{
+          textAlign: 'center',
+          color: '#333',
+          marginBottom: '1.5rem',
+          fontSize: '24px'
+        }}>Register Form</h2>
 
         {Object.keys(formData).map((field) => (
-          <div className="form-group" key={field}>
-            <label htmlFor={field}>
+          <div className="form-group" key={field} style={{marginBottom: '1rem'}}>
+            <label htmlFor={field} style={{
+              display: 'block',
+              marginBottom: '0.5rem',
+              color: '#555',
+              fontSize: '14px'
+            }}>
               {field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}
             </label>
             {field === "role" ? (
@@ -174,10 +201,16 @@ const RegistrationForm = () => {
                 value={formData[field]}
                 onChange={handleChange}
                 required
+                style={{
+                  width: '100%',
+                  padding: '0.5rem',
+                  border: '1px solid #ccc',
+                  borderRadius: '4px',
+                  fontSize: '16px'
+                }}
               >
                 <option value="">Select Role</option>
                 <option value="Student">Student</option>
-                <option value="CollegeAdmin">College Admin</option>
               </select>
             ) : (
               <input
@@ -196,13 +229,35 @@ const RegistrationForm = () => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 required
+                style={{
+                  width: '100%',
+                  padding: '0.5rem',
+                  border: '1px solid #ccc',
+                  borderRadius: '4px',
+                  fontSize: '16px'
+                }}
               />
             )}
-            {errors[field] && <span className="error-message">{errors[field]}</span>}
+            {errors[field] && <span className="error-message" style={{
+              color: 'red',
+              fontSize: '12px',
+              marginTop: '0.25rem',
+              display: 'block'
+            }}>{errors[field]}</span>}
           </div>
         ))}
 
-        <button style={{backgroundColor:'lightblue'}} type="submit">Register</button>
+        <button type="submit" style={{
+          width: '100%',
+          padding: '0.75rem',
+          backgroundColor: '#4CAF50',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          fontSize: '16px',
+          cursor: 'pointer',
+          transition: 'background-color 0.3s'
+        }}>Register</button>
       </form>
     </div>
   );

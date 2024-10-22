@@ -110,19 +110,18 @@ const CollegeAdmin = () => {
   const handleLogout = async () => {
     try {
       await axios.post('http://localhost:5000/api/auth/logout');
-      // Redirect to login page or clear session
-      window.location.href = '/'; // Adjust to your login route
+      localStorage.removeItem("token");
+      window.location.href = '/'; 
     } catch (error) {
       console.error('Error logging out:', error);
     }
   };
 
-  // Static data for the pie chart
   const staticData = [
-    { value: 50 }, // Static value for course 1
-    { value: 30 }, // Static value for course 2
-    { value: 20 }, // Static value for course 3
-    { value: 10 }, // Static value for course 4
+    { value: 50 }, 
+    { value: 30 }, 
+    { value: 20 }, 
+    { value: 10 }, 
   ];
 
   return (
@@ -142,7 +141,7 @@ const CollegeAdmin = () => {
         </div>
         <div className="dashboard-card">
           <h3>Courses Offered</h3>
-          <p>{dashboardData.courseCount}</p> {/* Display fetched course count */}
+          <p>{dashboardData.courseCount}</p> 
         </div>
         <div className="dashboard-card">
           <h3>Total Revenue</h3>
@@ -154,15 +153,14 @@ const CollegeAdmin = () => {
         </div>
       </div>
 
-      {/* Student Enrollment by Course Section */}
       <div className="course-enrollment-section">
         <h2>Student Enrollment by Course</h2>
         <ResponsiveContainer width="100%" height={400}>
           <PieChart>
             <Pie
-              data={staticData} // Use static data for pie values
+              data={staticData} 
               dataKey="value"
-              nameKey="name" // Use name from courseEnrollmentData for labels
+              nameKey="name"
               cx="50%"
               cy="50%"
               outerRadius={150}
@@ -179,14 +177,12 @@ const CollegeAdmin = () => {
         </ResponsiveContainer>
       </div>
 
-      {/* Modal to Add Course */}
       <Modal show={showAddCourseModal} onHide={handleCloseAddCourseModal}>
         <Modal.Header closeButton>
           <Modal.Title>Add Course</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmitCourse}>
-            {/* Course Name */}
             <Form.Group controlId="formCourseName">
               <Form.Label>Course Name</Form.Label>
               <Form.Control
@@ -199,7 +195,6 @@ const CollegeAdmin = () => {
               />
             </Form.Group>
 
-            {/* Course Duration */}
             <Form.Group controlId="formCourseDuration">
               <Form.Label>Course Duration</Form.Label>
               <Form.Control
@@ -212,7 +207,6 @@ const CollegeAdmin = () => {
               />
             </Form.Group>
 
-            {/* Course Price */}
             <Form.Group controlId="formCoursePrice">
               <Form.Label>Price</Form.Label>
               <Form.Control

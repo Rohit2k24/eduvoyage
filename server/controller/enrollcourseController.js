@@ -4,19 +4,31 @@ const Course = require('../models/Course');
 const User = require('../models/User');
 
 const enrollCourse = async (req, res) => {
+  console.log("Entered enrollCourse controller");
   try {
-    const { courseId, userId } = req.body;
+    const { salutation, name, email, phone, courseId, courseName, duration, price } = req.body;
 
-    // Find the user and course
-    const user = await User.findById(userId);
+    // Find or create the user based on email
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = new User({
+        salutation,
+        name,
+        email,
+        phone,
+        role: 'student' // Assuming all enrollees are students
+      });
+      await user.save();
+    }
+
+    // Find the course
     const course = await Course.findById(courseId);
-
-    if (!user || !course) {
-      return res.status(404).json({ message: 'User or course not found' });
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' });
     }
 
     // Check if the user is already enrolled
-    const alreadyEnrolled = await Enroll.findOne({ userId: userId, courseId: courseId });
+    const alreadyEnrolled = await Enroll.findOne({ userId: user._id, courseId: courseId });
     if (alreadyEnrolled) {
       return res.status(400).json({ message: 'Already enrolled in this course' });
     }
@@ -25,7 +37,10 @@ const enrollCourse = async (req, res) => {
     const enrollment = new Enroll({
       userId: user._id,
       courseId: course._id,
-      enrolledDate: new Date(), // You can track when the user enrolled
+      courseName,
+      duration,
+      price,
+      enrolledDate: new Date(),
     });
 
     await enrollment.save();

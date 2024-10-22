@@ -6,7 +6,7 @@ const getUserRoleCounts = async (req, res) => {
   try {
     // Count users based on roles
     const studentCount = await User.countDocuments({ role: 'Student' });
-    const collegeAdminCount = await User.countDocuments({ role: 'collegeAdmin' });
+    const collegeAdminCount = await User.countDocuments({ role: 'CollegeAdmin' });
     const AdminCount = await User.countDocuments({ role: 'Admin' });
     // const sellerCount = await User.countDocuments({ role: 'seller' }); // Add more roles if needed
 

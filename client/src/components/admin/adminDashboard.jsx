@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react';
 import './AdminDashboard.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
-import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, Legend
-} from 'recharts';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Button, Form, Table, ListGroup } from 'react-bootstrap';
+import ApproveColleges from './ApproveColleges';
+import CollegesList from './CollegesList';
 
 const userGrowthData = [
   { name: 'Jan', users: 300 },
@@ -42,42 +41,58 @@ const AdminDashboard = () => {
     collegeAdminCount: 0,
     sellerCount: 0,
     adminCount: 0,
+    courseCount: 0,
   });
 
   const [recentActivity, setRecentActivity] = useState([]);
   const [students, setStudents] = useState([]);
+  const [courses, setCourses] = useState([]);
   const [showStudentModal, setShowStudentModal] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editFormData, setEditFormData] = useState({});
+  const [showAddCourseModal, setShowAddCourseModal] = useState(false);
+  const [newCourseData, setNewCourseData] = useState({
+    courseName: '',
+    courseDescription: '',
+  });
+  const [showCoursesModal, setShowCoursesModal] = useState(false);
+  const [unapprovedColleges, setUnapprovedColleges] = useState([]);
+  const [showApproveModal, setShowApproveModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState('dashboard');
 
   useEffect(() => {
-    const fetchRoleCounts = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/role-counts');
-        setRoleCounts(response.data);
+        const [roleCounts, coursesData, recentActivityData] = await Promise.all([
+          axios.get('http://localhost:5000/api/role-counts'),
+          axios.get('http://localhost:5000/api/fetch-courses'),
+          axios.get('http://localhost:5000/api/users')
+        ]);
+
+        console.log('Role Counts:', roleCounts.data);
+        console.log('Courses Data:', coursesData.data);
+        console.log('Recent Activity Data:', recentActivityData.data);
+
+        setRoleCounts(prevCounts => ({
+          ...prevCounts,
+          ...roleCounts.data,
+          courseCount: coursesData.data.length
+        }));
+        setCourses(coursesData.data);
+        setRecentActivity(recentActivityData.data);
       } catch (error) {
-        console.error('Error fetching role counts:', error);
+        console.error('Error fetching data:', error);
       }
     };
 
-    const fetchRecentActivity = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/users');
-        setRecentActivity(response.data);
-      } catch (error) {
-        console.error('Error fetching recent activity:', error);
-      }
-    };
-
-    fetchRoleCounts();
-    fetchRecentActivity();
+    fetchData();
   }, []);
 
-  const handleShowStudents = async () => {
+  const handleShowCollegeAdmin = async () => {
     try {
       const response = await axios.get('http://localhost:5000/api/users');
-      const studentsData = response.data.filter(user => user.role === 'Student');
+      const studentsData = response.data.filter(user => user.role === 'CollegeAdmin');
       setStudents(studentsData);
     } catch (error) {
       console.error('Error fetching students:', error);
@@ -85,11 +100,19 @@ const AdminDashboard = () => {
     setShowStudentModal(true);
   };
 
+  const handleShowCoursesModal = () => {
+    setShowCoursesModal(true);
+  };
+
   const handleCloseStudentModal = () => {
     setShowStudentModal(false);
     setSelectedStudent(null);
     setShowEditModal(false);
     setEditFormData({});
+  };
+
+  const handleCloseCoursesModal = () => {
+    setShowCoursesModal(false);
   };
 
   const handleEditStudent = (student) => {
@@ -138,215 +161,249 @@ const AdminDashboard = () => {
     }
   };
 
-  // Logout function
+  const handleShowAddCourseModal = () => {
+    setShowAddCourseModal(true);
+  };
+
+  const handleCloseAddCourseModal = () => {
+    setShowAddCourseModal(false);
+    setNewCourseData({
+      courseName: '',
+      courseDescription: '',
+    });
+  };
+
+  const handleAddCourseFormChange = (e) => {
+    const { name, value } = e.target;
+    setNewCourseData({
+      ...newCourseData,
+      [name]: value,
+    });
+  };
+
+  const handleAddCourse = async (e) => {
+    e.preventDefault();
+
+    if (!newCourseData.courseName || !newCourseData.courseDescription) {
+      alert("Both fields are required.");
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/course-add', newCourseData);
+      alert(response.data.message);
+      handleCloseAddCourseModal();
+      // Refresh courses
+      const coursesData = await axios.get('http://localhost:5000/api/fetch-courses');
+      setCourses(coursesData.data);
+      setRoleCounts(prevCounts => ({
+        ...prevCounts,
+        courseCount: coursesData.data.length
+      }));
+    } catch (error) {
+      console.error('Error adding course:', error);
+      alert('Failed to add course. Please try again.');
+    }
+  };
+
   const handleLogout = async () => {
     try {
       await axios.post('http://localhost:5000/api/auth/logout');
-      // Redirect to login page or clear session
-      window.location.href = '/'; // Adjust to your login route
+      localStorage.removeItem("token");
+      window.location.href = '/';
     } catch (error) {
       console.error('Error logging out:', error);
     }
   };
 
+  const handleShowApproveColleges = () => {
+    setCurrentPage('approveColleges');
+  };
+
+  const handleCloseApproveModal = () => {
+    setShowApproveModal(false);
+  };
+
   return (
-    <div className="admin-dashboard-container">
-      <div className="admin-dashboard-header">
-        <h1>Admin Dashboard</h1>
-        <p>Welcome back, Admin! Here's an overview of the latest metrics.</p>
-        <Button variant="danger" onClick={handleLogout}>
-          Logout
-        </Button>
+    <div className="admin-dashboard">
+      <div className="sidebar">
+        <div className="sidebar-header">Admin Panel</div>
+        <ul className="sidebar-menu">
+          <li><a href="#" onClick={() => setCurrentPage('dashboard')}>Dashboard</a></li>
+          <li><a href="#" onClick={() => setCurrentPage('colleges')}>List Colleges</a></li>
+          <li><a href="#" onClick={handleShowApproveColleges}>Approve Colleges</a></li>
+          <li><a href="#" onClick={() => setCurrentPage('courses')}>Manage Courses</a></li>
+          <li><a href="#" onClick={() => setCurrentPage('users')}>Manage Users</a></li>
+          <li><a href="#" onClick={() => setCurrentPage('reports')}>Reports</a></li>
+          <li><a href="#" onClick={handleLogout}>Logout</a></li>
+        </ul>
       </div>
+      <div className="main-content">
+        {currentPage === 'dashboard' && (
+          <>
+            <div className="admin-dashboard-header">
+              <h1>Admin Dashboard</h1>
+              <p>Welcome back, Admin! Here's an overview of the latest metrics.</p>
+            </div>
 
-      <div className="admin-dashboard-overview">
-        <div className="admin-dashboard-card" onClick={handleShowStudents}>
-          <h3>Total Students</h3>
-          <p>{roleCounts.studentCount}</p>
-        </div>
-        <div className="admin-dashboard-card">
-          <h3>Total College Admins</h3>
-          <p>{roleCounts.collegeAdminCount}</p>
-        </div>
-        <div className="admin-dashboard-card">
-          <h3>Total Admins</h3>
-          <p>{roleCounts.adminCount}</p>
-        </div>
-      </div>
+            <div className="admin-dashboard-overview">
+              <div className="admin-dashboard-card" onClick={handleShowCoursesModal}>
+                <h3>Current Courses</h3>
+                <p>{roleCounts.courseCount}</p>
+              </div>
+              <div className="admin-dashboard-card">
+                <h3>Total Students</h3>
+                <p>{roleCounts.studentCount}</p>
+              </div>
+              <div className="admin-dashboard-card" onClick={handleShowAddCourseModal}>
+                <h3>Add New Course</h3>
+                <p>+</p>
+              </div>
+            </div>
 
-      <div className="admin-dashboard-charts-container">
-        <div className="admin-dashboard-chart">
-          <h2>User Growth (Last 8 Months)</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={userGrowthData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Line type="monotone" dataKey="users" stroke="#8884d8" />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+            {/* Recent Activity Table */}
+            <div className="admin-dashboard-recent-activity">
+              <h2>Recent Activity</h2>
+              <Table striped bordered hover>
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {recentActivity.slice(0, 5).map((activity, index) => (
+                    <tr key={index}>
+                      <td>{activity.firstname} {activity.lastname}</td>
+                      <td>{activity.role} registered</td>
+                      <td>{new Date(activity.createdAt).toLocaleDateString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </div>
+          </>
+        )}
 
-        <div className="admin-dashboard-chart">
-          <h2>Revenue Growth (Last 8 Months)</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={revenueData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="revenue" fill="#82ca9d" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+        {currentPage === 'approveColleges' && <ApproveColleges />}
 
-        <div className="admin-dashboard-chart">
-          <h2>Student Gender Distribution</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={genderData}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={100}
-                fill="#8884d8"
-                label
-              >
-                {genderData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
+        {currentPage === 'colleges' && <CollegesList />}
 
-      <div className="admin-dashboard-recent-activity">
-        <h2>Recent Activity</h2>
-        <table className="admin-dashboard-activity-table">
-          <thead>
-            <tr>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Address</th>
-              <th>Phone</th>
-            </tr>
-          </thead>
-          <tbody>
-            {recentActivity.map((user, index) => (
-              <tr key={index}>
-                <td>{user.firstname}</td>
-                <td>{user.lastname}</td>
-                <td>{user.email}</td>
-                <td>{user.role}</td>
-                <td>{user.address}</td>
-                <td>{user.phone}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <Modal show={showStudentModal} onHide={handleCloseStudentModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>Student List</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <table className="table">
-            <thead>
-              <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {students.map((student) => (
-                <tr key={student._id}>
-                  <td>{student.firstname}</td>
-                  <td>{student.lastname}</td>
-                  <td>{student.email}</td>
-                  <td>
-                    <Button onClick={() => handleEditStudent(student)}>Edit</Button>
-                    <Button variant="danger" onClick={() => handleDeleteStudent(student._id)}>Delete</Button>
-                  </td>
+        {/* Students Modal */}
+        <Modal show={showStudentModal} onHide={handleCloseStudentModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>College Admins</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </Modal.Body>
-      </Modal>
-
-      <Modal show={showEditModal} onHide={handleCloseStudentModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>Edit Student</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form onSubmit={handleUpdateStudent}>
-            <Form.Group controlId="formFirstname">
-              <Form.Label>First Name</Form.Label>
-              <Form.Control
-                type="text"
-                name="firstname"
-                value={editFormData.firstname}
-                onChange={handleEditFormChange}
-                required
-              />
-            </Form.Group>
-            <Form.Group controlId="formLastname">
-              <Form.Label>Last Name</Form.Label>
-              <Form.Control
-                type="text"
-                name="lastname"
-                value={editFormData.lastname}
-                onChange={handleEditFormChange}
-                required
-              />
-            </Form.Group>
-            <Form.Group controlId="formEmail">
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type="email"
-                name="email"
-                value={editFormData.email}
-                onChange={handleEditFormChange}
-                required
-              />
-            </Form.Group>
-            <Form.Group controlId="formAddress">
-              <Form.Label>Address</Form.Label>
-              <Form.Control
-                type="text"
-                name="address"
-                value={editFormData.address}
-                onChange={handleEditFormChange}
-                required
-              />
-            </Form.Group>
-            <Form.Group controlId="formPhone">
-              <Form.Label>Phone</Form.Label>
-              <Form.Control
-                type="text"
-                name="phone"
-                value={editFormData.phone}
-                onChange={handleEditFormChange}
-                required
-              />
-            </Form.Group>
-            <Button variant="primary" type="submit">
-              Update Student
+              </thead>
+              <tbody>
+                {students.map((student) => (
+                  <tr key={student._id}>
+                    <td>{student.firstname} {student.lastname}</td>
+                    <td>{student.email}</td>
+                    <td>
+                      <Button variant="warning" onClick={() => handleEditStudent(student)}>Edit</Button>
+                      <Button variant="danger" onClick={() => handleDeleteStudent(student._id)}>Delete</Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseStudentModal}>
+              Close
             </Button>
-          </Form>
-        </Modal.Body>
-      </Modal>
+          </Modal.Footer>
+        </Modal>
+
+        {/* Courses Modal */}
+        <Modal show={showCoursesModal} onHide={handleCloseCoursesModal} size="lg">
+          <Modal.Header closeButton>
+            <Modal.Title>Current Courses</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th>Course Name</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                {courses.length > 0 ? (
+                  courses.map((course) => (
+                    <tr key={course._id}>
+                      <td>{course.courseName}</td>
+                      <td>{course.courseDescription}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="2" className="text-center">No courses available</td>
+                  </tr>
+                )}
+              </tbody>
+            </Table>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseCoursesModal}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
+        {/* Add Course Modal */}
+        <Modal show={showAddCourseModal} onHide={handleCloseAddCourseModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>Add New Course</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form onSubmit={handleAddCourse}>
+              <Form.Group controlId="formCourseName">
+                <Form.Label>Course Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter course name"
+                  name="courseName"
+                  value={newCourseData.courseName}
+                  onChange={handleAddCourseFormChange}
+                  required
+                />
+              </Form.Group>
+
+              <Form.Group controlId="formCourseDescription">
+                <Form.Label>Course Description</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  placeholder="Enter course description"
+                  name="courseDescription"
+                  value={newCourseData.courseDescription}
+                  onChange={handleAddCourseFormChange}
+                  required
+                />
+              </Form.Group>
+              <Button variant="primary" type="submit">
+                Add Course
+              </Button>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseAddCourseModal}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </div>
     </div>
   );
 };

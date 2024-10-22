@@ -14,14 +14,21 @@ import axios from 'axios';
 import { Modal, Button, Form } from 'react-bootstrap';
 // Sample data for the chart
 const data = [
-
+  { day: 'Mon', hours: 2 },
+  { day: 'Tue', hours: 4 },
+  { day: 'Wed', hours: 3 },
+  { day: 'Thu', hours: 5 },
+  { day: 'Fri', hours: 1 },
+  { day: 'Sat', hours: 6 },
+  { day: 'Sun', hours: 4 },
+];
 
 const StudentDashboard = () => {
   const [user, setUser] = useState({ firstname: '', lastname: '' }); // State for user data
   const [courses, setCourses] = useState([]); // State for course data
   const [activeTab, setActiveTab] = useState('Dashboard'); // State for active sidebar tab
   const [selectedCourse, setSelectedCourse] = useState(null); // State to store selected course details
-  const [showModal, setShowModal] = useState(false); // State to control modal visibility
+  const [showModal,                                                                                                                   setShowModal] = useState(false); // State to control modal visibility
   const [formData, setFormData] = useState({
     salutation: '',
     name: '',
@@ -52,6 +59,7 @@ const StudentDashboard = () => {
   const handleLogout = async () => {
     try {
       await axios.post('http://localhost:5000/api/auth/logout');
+      localStorage.removeItem("token");
       window.location.href = '/'; // Adjust to your login route
     } catch (error) {
       console.error('Error logging out:', error);
@@ -59,10 +67,12 @@ const StudentDashboard = () => {
     }
   };
 
+  const handleClose = () => setShowModal(false);
+  const handleShow = () => setShowModal(true);
+
   const enrollCourse = (course) => {
-    console.log('Course enrolled:', course); 
-    setSelectedCourse(course); // Set the selected course
-    setShowModal(true); // Show the modal
+    setSelectedCourse(course);
+    handleShow();
   };
 
   const handleFormChange = (e) => {
@@ -271,33 +281,34 @@ const StudentDashboard = () => {
             </section>
           )}
           {/* Modal for Enrollment */}
-          {showModal && (
-            <div className="modal">
-              <div className="modal-content">
-                <h2>Enroll in {selectedCourse?.name}</h2>
-                <form onSubmit={handleSubmit}>
-                  <label>
-                    Salutation:
-                    <input type="text" name="salutation" value={formData.salutation} onChange={handleFormChange} required />
-                  </label>
-                  <label>
-                    Name:
-                    <input type="text" name="name" value={formData.name} onChange={handleFormChange} required />
-                  </label>
-                  <label>
-                    Email:
-                    <input type="email" name="email" value={formData.email} onChange={handleFormChange} required />
-                  </label>
-                  <label>
-                    Phone:
-                    <input type="tel" name="phone" value={formData.phone} onChange={handleFormChange} required />
-                  </label>
-                  <button type="submit">Submit Enrollment</button>
-                  <button type="button" onClick={() => setShowModal(false)}>Cancel</button>
-                </form>
-              </div>
-            </div>
-          )}
+          <Modal show={showModal} onHide={handleClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>Enroll in {selectedCourse?.name}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form onSubmit={handleSubmit}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Salutation</Form.Label>
+                  <Form.Control type="text" name="salutation" value={formData.salutation} onChange={handleFormChange} required />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Name</Form.Label>
+                  <Form.Control type="text" name="name" value={formData.name} onChange={handleFormChange} required />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control type="email" name="email" value={formData.email} onChange={handleFormChange} required />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Phone</Form.Label>
+                  <Form.Control type="tel" name="phone" value={formData.phone} onChange={handleFormChange} required />
+                </Form.Group>
+                <Button variant="primary" type="submit">
+                  Submit Enrollment
+                </Button>
+              </Form>
+            </Modal.Body>
+          </Modal>
         </main>
       </div>
     </div>

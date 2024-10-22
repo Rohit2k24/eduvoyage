@@ -7,9 +7,8 @@ const UserSchema = new mongoose.Schema({
     },
     lastname: {
         type: String,
-        required:true,
+        required: true,
     },
-
     email: {
         type: String,
         required: true,
@@ -34,6 +33,12 @@ const UserSchema = new mongoose.Schema({
     role: {
         type: String,
         required: true,
+    },
+    resetPasswordToken: {
+        type: String,
+    },
+    resetPasswordExpire: {
+        type: Date,
     }
 });
 
