@@ -35,4 +35,6 @@ router.get('/download/legal/:collegeName', authController.downloadLegal)
 
 router.post('/login-for-all', authController.LoginForAll);
 
+router.delete('/decline-college/:id',authController.deletereqcollege);
+
 module.exports = router;

@@ -377,6 +377,24 @@ exports.disableCollege = async (req, res) => {
   
 };
 
+exports.deletereqcollege= async (req, res) => {
+  const { id } = req.params;
+  
+  try {
+    const college = await College.findById(id);
+    if (!college) {
+      return res.status(404).json({ message: 'College not found' });
+    }
+    
+    // Delete the college from the database
+    await College.findByIdAndDelete(id);
+    res.status(200).json({ message: 'College request declined and deleted' });
+  } catch (error) {
+    console.error('Error declining college:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 const getFilePath = (basePath, fileNameWithoutExtension) => {
   const jpgPath = path.join(basePath, `${fileNameWithoutExtension}.jpg`);
   const pngPath = path.join(basePath, `${fileNameWithoutExtension}.png`);

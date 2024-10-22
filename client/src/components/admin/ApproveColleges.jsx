@@ -31,6 +31,17 @@ const ApproveColleges = () => {
       Swal.fire("error","Failed to approve college. Please try again.","error");    }
   };
 
+  const handleDeclineCollege = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/auth/decline-college/${id}`);
+      fetchUnapprovedColleges(); 
+      Swal.fire("success","College request declined and deleted","success");
+    } catch (error) {
+      console.error('Error declining college:', error);
+      Swal.fire("error","Failed to decline college. Please try again.","error");
+    }
+  };
+
   const styles = {
     container: {
       backgroundColor: '#f8f9fa',
@@ -131,6 +142,13 @@ const ApproveColleges = () => {
                   >
                     Approve
                   </Button>
+                  <Button
+                      variant="danger"
+                      onClick={() => handleDeclineCollege(college._id)}
+                      style={styles.declineButton}
+                    >
+                      Decline
+                    </Button>
                 </Card.Body>
               </Card>
             </Col>
