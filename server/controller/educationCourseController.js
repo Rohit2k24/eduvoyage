@@ -54,6 +54,50 @@ const fetchCourses = async (req, res) => {
     }
   };
 
+  const courseupdate= async (req, res) => {
+    const { id } = req.params;
+    const { courseName, courseDescription } = req.body;
+  
+    try {
+      const updatedCourse = await EducationCourse.findByIdAndUpdate(
+        id,
+        { courseName, courseDescription },
+        { new: true } // Returns the modified document rather than the original
+    );
+  
+      if (!updatedCourse) {
+        return res.status(404).json({ message: 'Course not found' });
+      }
+  
+      res.status(200).json(updatedCourse); // Respond with the updated course details
+    } catch (error) {
+      console.error('Error updating course:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  };
+
+  //DISABLE COURSES
+
+  const disableCourse = async (req, res) => {
+    console.log("Entered the backend")
+    const { courseId } = req.params;
+    try {
+      await EducationCourse.findByIdAndUpdate(courseId, { isDisabled: true });
+      res.status(200).json({ message: 'Course disabled successfully' });
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to disable course' });
+    }
+  };
+
+  const getDisabledCourses = async (req, res) => {
+    try {
+      const disabledCourses = await EducationCourse.find({ isDisabled: true });
+      res.status(200).json(disabledCourses);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch disabled courses' });
+    }
+  };
+
 module.exports = {
-  addCourses,fetchCourses,countCourses
+  addCourses,fetchCourses,countCourses,courseupdate,disableCourse,getDisabledCourses
 };

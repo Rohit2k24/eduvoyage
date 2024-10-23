@@ -3,9 +3,9 @@ import './AdminDashboard.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import { Modal, Button, Form, Table } from 'react-bootstrap';
-import ApproveColleges from './ApproveColleges';
-import CollegesList from './CollegesList';
-
+import Swal from 'sweetalert2';
+import { Link, Routes, Route } from 'react-router-dom'; // Import route and link components
+import Sidebar from '../Sidebar/Sidebar';
 const AdminDashboard = () => {
   const [roleCounts, setRoleCounts] = useState({
     studentCount: 0,
@@ -20,7 +20,7 @@ const AdminDashboard = () => {
   const [showAddCourseModal, setShowAddCourseModal] = useState(false);
   const [newCourseName, setNewCourseName] = useState('');
   const [newCourseDescription, setNewCourseDescription] = useState('');
-
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -44,6 +44,29 @@ const AdminDashboard = () => {
 
     fetchData();
   }, []);
+
+  // Handle editing course
+  const handleEditCourse = (course) => {
+    setNewCourseName(course.courseName);
+    setNewCourseDescription(course.courseDescription);
+    setShowAddCourseModal(true); // Reusing the same modal for editing
+    // Add additional logic here for editing if necessary
+  };
+
+  // Handle deleting course
+  const handleDeleteCourse = async (courseId) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this course?");
+    if (confirmDelete) {
+      try {
+        await axios.delete(`http://localhost:5000/api/course-delete/${courseId}`);
+        // Refresh course list after deletion
+        const coursesData = await axios.get('http://localhost:5000/api/fetch-courses');
+        setCourses(coursesData.data);
+      } catch (error) {
+        console.error('Error deleting course:', error);
+      }
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -71,6 +94,12 @@ const AdminDashboard = () => {
       const coursesData = await axios.get('http://localhost:5000/api/fetch-courses');
       setCourses(coursesData.data);
       handleCloseAddCourseModal(); // Close the modal after success
+      Swal.fire({
+        title: 'Success!',
+        text: 'Course Added Successfully',
+        icon: 'success',
+        confirmButtonText: 'OK'
+      });
     } catch (error) {
       console.error('Error adding course:', error);
     }
@@ -78,18 +107,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="admin-dashboard">
-      <div className="sidebar">
-        <div className="sidebar-header">Admin Panel</div>
-        <ul className="sidebar-menu">
-          <li><a href="#" onClick={() => setCurrentPage('dashboard')}>Dashboard</a></li>
-          <li><a href="#" onClick={() => setCurrentPage('colleges')}>List Colleges</a></li>
-          <li><a href="#" onClick={() => setCurrentPage('approveColleges')}>Approve Colleges</a></li>
-          <li><a href="#" onClick={() => setCurrentPage('courses')}>Manage Courses</a></li>
-          <li><a href="#" onClick={() => setCurrentPage('users')}>Manage Users</a></li>
-          <li><a href="#" onClick={() => setCurrentPage('reports')}>Reports</a></li>
-          <li><a href="#" onClick={handleLogout}>Logout</a></li>
-        </ul>
-      </div>
+   <Sidebar handleLogout={handleLogout} setCurrentPage={setCurrentPage} />
       <div className="main-content">
         {currentPage === 'dashboard' && (
           <>
@@ -107,7 +125,6 @@ const AdminDashboard = () => {
                 <p>{roleCounts.courseCount}</p>
               </div>
             </div>
-            {/* Recent Activity Table */}
             <div className="admin-dashboard-recent-activity">
               <h2>Recent Activity</h2>
               <Table striped bordered hover>
@@ -132,74 +149,6 @@ const AdminDashboard = () => {
           </>
         )}
 
-        {currentPage === 'courses' && (
-          <div className="manage-courses-section">
-            <h2>Manage Courses</h2>
-            <Button className="addc" variant="primary" onClick={handleShowAddCourseModal}>
-              Add Course
-            </Button>
-            <Table striped bordered hover>
-              <thead>
-                <tr>
-                  <th>Course Name</th>
-                  <th>Description</th>
-                </tr>
-              </thead>
-              <tbody>
-                {courses.length > 0 ? (
-                  courses.map((course) => (
-                    <tr key={course._id}>
-                      <td>{course.courseName}</td>
-                      <td>{course.courseDescription}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="2" className="text-center">No courses available</td>
-                  </tr>
-                )}
-              </tbody>
-            </Table>
-
-            {/* Add Course Modal */}
-            <Modal show={showAddCourseModal} onHide={handleCloseAddCourseModal}>
-              <Modal.Header closeButton>
-                <Modal.Title>Add New Course</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <Form onSubmit={handleAddCourse}>
-                  <Form.Group controlId="formCourseName">
-                    <Form.Label>Course Name</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Enter course name"
-                      value={newCourseName}
-                      onChange={(e) => setNewCourseName(e.target.value)}
-                      required
-                    />
-                  </Form.Group>
-                  <Form.Group controlId="formCourseDescription">
-                    <Form.Label>Course Description</Form.Label>
-                    <Form.Control
-                      as="textarea"
-                      rows={3}
-                      placeholder="Enter course description"
-                      value={newCourseDescription}
-                      onChange={(e) => setNewCourseDescription(e.target.value)}
-                      required
-                    />
-                  </Form.Group>
-                  <Button variant="primary" type="submit">
-                    Add Course
-                  </Button>
-                </Form>
-              </Modal.Body>
-            </Modal>
-          </div>
-        )}
-
-        {currentPage === 'approveColleges' && <ApproveColleges />}
-        {currentPage === 'colleges' && <CollegesList />}
       </div>
     </div>
   );

@@ -10,7 +10,7 @@ const EducationCourseSchema = new Schema({
     type: String,
     // required: true,
   },
- 
+  isDisabled: { type: Boolean, default: false },  // New field to track course status
 });
 
 const EducationCourse = mongoose.model('EducationCourse', EducationCourseSchema);

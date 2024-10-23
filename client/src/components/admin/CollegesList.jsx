@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Table, Card, Container, Row, Col } from 'react-bootstrap';
 import Swal from 'sweetalert2';
+import Sidebar from '../Sidebar/Sidebar';
+
 const CollegesList = () => {
   const [colleges, setColleges] = useState([]);
 
@@ -19,7 +21,13 @@ const CollegesList = () => {
   };
 
   const styles = {
-    container: {
+    pageContainer: {
+      display: 'flex',        // Flexbox layout to position sidebar and content side by side
+      minHeight: '100vh',     // Full page height
+    },
+    contentContainer: {
+      flexGrow: 1,            // The content takes up the remaining space
+      marginLeft: '20px',    // Adjust to match the sidebar width in AdminDashboard.css
       padding: '30px',
       backgroundColor: '#f8f9fa',
       borderRadius: '8px',
@@ -52,9 +60,7 @@ const CollegesList = () => {
   };
 
   const getStatusStyle = (status) => {
-    // Provide a default status if it's undefined
     const safeStatus = status;
-    
     switch (safeStatus) {
       case 'true':
         return { backgroundColor: '#2ecc71', color: 'white' };
@@ -88,64 +94,71 @@ const CollegesList = () => {
   };
 
   return (
-    <Container fluid style={styles.container}>
-      <Row>
-        <Col>
-          <h2 style={styles.header}>List of Colleges</h2>
-          <Card style={styles.table}>
-            <Table striped bordered hover responsive>
-              <thead>
-                <tr>
-                  <th style={styles.tableHeader}>College Name</th>
-                  <th style={styles.tableHeader}>Address</th>
-                  <th style={styles.tableHeader}>Email</th>
-                  <th style={styles.tableHeader}>Contact Person</th>
-                  <th style={styles.tableHeader}>Phone Number</th>
-                  <th style={styles.tableHeader}>Website</th>
-                  <th style={styles.tableHeader}>Status</th>
-                  <th style={styles.tableHeader}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {colleges.map((college) => (
-                  <tr key={college._id}>
-                    <td style={styles.tableCell}>{college.collegeName}</td>
-                    <td style={styles.tableCell}>{college.address}</td>
-                    <td style={styles.tableCell}>{college.email}</td>
-                    <td style={styles.tableCell}>{college.contactPerson}</td>
-                    <td style={styles.tableCell}>{college.phoneNumber}</td>
-                    <td style={styles.tableCell}>{college.website}</td>
-                    <td style={styles.tableCell}>
-                      <div
-                        style={styles.status}>{college.isApproved ? 'Approved' : 'Pending'}
-                      </div>
-                    </td>
-                    <td style={styles.tableCell}>
-                      <button 
-                        onClick={() => disableCollege(college._id)} 
-                        style={{
-                          backgroundColor: '#e74c3c', // Red background
-                          color: 'white', // White text
-                          border: 'none', // No border
-                          borderRadius: '5px', // Rounded corners
-                          padding: '10px 15px', // Padding for size
-                          cursor: 'pointer', // Pointer cursor on hover
-                          transition: 'background-color 0.3s', // Smooth transition
-                        }}
-                        onMouseEnter={(e) => e.target.style.backgroundColor = '#c0392b'} // Darker red on hover
-                        onMouseLeave={(e) => e.target.style.backgroundColor = '#e74c3c'} // Original red on leave
-                      >
-                        Unapprove
-                      </button>
-                    </td>
+    <div style={styles.pageContainer}>
+      <Sidebar />
+      <Container fluid style={styles.contentContainer}>
+        <Row>
+          <Col>
+            <h2 style={styles.header}>List of Colleges</h2>
+            <Card style={styles.table}>
+              <Table striped bordered hover responsive>
+                <thead>
+                  <tr>
+                    <th style={styles.tableHeader}>College Name</th>
+                    <th style={styles.tableHeader}>Address</th>
+                    <th style={styles.tableHeader}>Email</th>
+                    <th style={styles.tableHeader}>Contact Person</th>
+                    <th style={styles.tableHeader}>Phone Number</th>
+                    <th style={styles.tableHeader}>Website</th>
+                    <th style={styles.tableHeader}>Status</th>
+                    <th style={styles.tableHeader}>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </Table>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+                </thead>
+                <tbody>
+                  {colleges.map((college) => (
+                    <tr key={college._id}>
+                      <td style={styles.tableCell}>{college.collegeName}</td>
+                      <td style={styles.tableCell}>{college.address}</td>
+                      <td style={styles.tableCell}>{college.email}</td>
+                      <td style={styles.tableCell}>{college.contactPerson}</td>
+                      <td style={styles.tableCell}>{college.phoneNumber}</td>
+                      <td style={styles.tableCell}>{college.website}</td>
+                      <td style={styles.tableCell}>
+                        <div style={styles.status}>
+                          {college.isApproved ? 'Approved' : 'Pending'}
+                        </div>
+                      </td>
+                      <td style={styles.tableCell}>
+                        <button
+                          onClick={() => disableCollege(college._id)}
+                          style={{
+                            backgroundColor: '#e74c3c', // Red background
+                            color: 'white', // White text
+                            border: 'none', // No border
+                            borderRadius: '5px', // Rounded corners
+                            padding: '10px 15px', // Padding for size
+                            cursor: 'pointer', // Pointer cursor on hover
+                            transition: 'background-color 0.3s', // Smooth transition
+                          }}
+                          onMouseEnter={(e) =>
+                            (e.target.style.backgroundColor = '#c0392b')
+                          } // Darker red on hover
+                          onMouseLeave={(e) =>
+                            (e.target.style.backgroundColor = '#e74c3c')
+                          } // Original red on leave
+                        >
+                          Unapprove
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+    </div>
   );
 };
 

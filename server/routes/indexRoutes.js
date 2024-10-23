@@ -38,4 +38,10 @@ router.get('/fetch-courses', educationCourseController.fetchCourses);
 
 router.get('/courses-count', educationCourseController.countCourses);
 
+router.put('/course-update/:id',educationCourseController.courseupdate);
+
+router.put('/course-disable/:courseId', educationCourseController.disableCourse);  // Route to disable a course
+
+router.get('/disabled-courses', educationCourseController.getDisabledCourses);
+
 module.exports = router;
