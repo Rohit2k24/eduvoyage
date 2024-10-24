@@ -41,6 +41,27 @@ const getAllUsers = async (req, res) => {
     }
   };
   
-  
+  // Update user details
+const updateUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { firstname, lastname, email } = req.body;
 
-module.exports = { getUserRoleCounts ,getAllUsers};
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { firstname, lastname, email },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error('Error updating user:', error);
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+module.exports = { getUserRoleCounts ,getAllUsers,updateUser};

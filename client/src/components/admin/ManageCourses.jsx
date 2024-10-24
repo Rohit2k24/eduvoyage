@@ -4,16 +4,16 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import Sidebar from '../Sidebar/Sidebar';
 import './ManageCourses.css'; // Import the external CSS file
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const ManageCourses = () => {
   const [courses, setCourses] = useState([]);
-  const [deletedCourses, setDeletedCourses] = useState([]); // State for deleted courses
-  const [showDeletedCourses, setShowDeletedCourses] = useState(false); // To toggle showing deleted courses
   const [showAddCourseModal, setShowAddCourseModal] = useState(false);
   const [newCourseName, setNewCourseName] = useState('');
   const [newCourseDescription, setNewCourseDescription] = useState('');
   const [isEditMode, setIsEditMode] = useState(false); // To track if we're adding or editing
   const [currentCourseId, setCurrentCourseId] = useState(null); // To store the course ID being edited
+  const navigate = useNavigate(); // Hook for navigation
 
   useEffect(() => {
     fetchCourses();
@@ -26,16 +26,6 @@ const ManageCourses = () => {
       setCourses(response.data.filter(course => !course.isDisabled)); // Fetch only active courses
     } catch (error) {
       console.error('Error fetching courses:', error);
-    }
-  };
-
-  // Fetch deleted (disabled) courses
-  const fetchDeletedCourses = async () => {
-    try {
-      const response = await axios.get('http://localhost:5000/api/disabled-courses');
-      setDeletedCourses(response.data);
-    } catch (error) {
-      console.error('Error fetching deleted courses:', error);
     }
   };
 
@@ -66,6 +56,16 @@ const ManageCourses = () => {
       } catch (error) {
         console.error('Error disabling course:', error);
       }
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await axios.post('http://localhost:5000/api/auth/logout');
+      localStorage.removeItem('token');
+      navigate('/login'); // Redirect to login page after logout
+    } catch (error) {
+      console.error('Error logging out:', error);
     }
   };
 
@@ -108,22 +108,21 @@ const ManageCourses = () => {
     }
   };
 
-  // Show deleted courses when button is clicked
-  const handleShowDeletedCourses = async () => {
-    await fetchDeletedCourses();
-    setShowDeletedCourses(true); // Show the deleted courses section
+  // Navigate to DeletedCourses page when the button is clicked
+  const handleShowDeletedCourses = () => {
+    navigate('/deleted-courses'); // Navigate to the DeletedCourses component/page
   };
 
   return (
     <div className="layout">
-      <Sidebar />
+      <Sidebar handleLogout={handleLogout}/>
       <div className="container">
         <h2 className="header">Manage Courses</h2>
-        <Button variant="primary" onClick={handleShowAddCourseModal} className="button">
+        <Button variant="primary" onClick={handleShowAddCourseModal} className="addbtn">
           Add Course
         </Button>
-        <Button variant="secondary" onClick={handleShowDeletedCourses} className="button">
-          Deleted Courses
+        <Button variant="secondary" onClick={handleShowDeletedCourses} className="disablebtn">
+          Disabled Courses
         </Button>
 
         <Table striped bordered hover className="table">
@@ -158,35 +157,6 @@ const ManageCourses = () => {
           </tbody>
         </Table>
 
-        {/* Deleted Courses Table */}
-        {showDeletedCourses && (
-          <div className="deleted-courses">
-            <h3>Deleted Courses</h3>
-            <Table striped bordered hover>
-              <thead>
-                <tr>
-                  <th>Course Name</th>
-                  <th>Description</th>
-                </tr>
-              </thead>
-              <tbody>
-                {deletedCourses.length > 0 ? (
-                  deletedCourses.map((course) => (
-                    <tr key={course._id}>
-                      <td>{course.courseName}</td>
-                      <td>{course.courseDescription}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="2" className="text-center">No deleted courses</td>
-                  </tr>
-                )}
-              </tbody>
-            </Table>
-          </div>
-        )}
-
         {/* Add/Edit Course Modal */}
         <Modal show={showAddCourseModal} onHide={handleCloseAddCourseModal}>
           <Modal.Header closeButton>
@@ -215,7 +185,7 @@ const ManageCourses = () => {
                   required
                 />
               </Form.Group>
-              <Button variant="primary" type="submit">
+              <Button className="addup" variant="primary" type="submit">
                 {isEditMode ? 'Update Course' : 'Add Course'}
               </Button>
             </Form>

@@ -37,7 +37,7 @@ const addCourses = async (req, res) => {
 };
 const fetchCourses = async (req, res) => {
     try {
-      const courses = await EducationCourse.find(); // Use EducationCourse instead of Course
+      const courses = await EducationCourse.find({isDisabled:false}); // Use EducationCourse instead of Course
       return res.status(200).json(courses);
     } catch (error) {
       console.error('Error fetching courses:', error);
@@ -88,16 +88,48 @@ const fetchCourses = async (req, res) => {
       res.status(500).json({ error: 'Failed to disable course' });
     }
   };
-
   const getDisabledCourses = async (req, res) => {
     try {
       const disabledCourses = await EducationCourse.find({ isDisabled: true });
+      
+      // Log the data to check if the courses are being fetched correctly
+      console.log("Disabled Courses fetched: ", disabledCourses);
+  
       res.status(200).json(disabledCourses);
     } catch (error) {
+      console.error('Error fetching disabled courses:', error);
       res.status(500).json({ error: 'Failed to fetch disabled courses' });
     }
   };
 
+  const enableCourse = async (req, res) => {
+    const { courseId } = req.params;
+    try {
+      await EducationCourse.findByIdAndUpdate(courseId, { isDisabled: false });
+      res.status(200).json({ message: 'Course enabled successfully' });
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to enable course' });
+    }
+  };
+
+  const delete1 = async (req, res) => {
+    try {
+      const courseId = req.params.id;
+      
+      // Find the course and delete it
+      const deletedCourse = await EducationCourse.findByIdAndDelete(courseId);
+  
+      if (!deletedCourse) {
+        return res.status(404).json({ message: 'Course not found' });
+      }
+  
+      res.status(200).json({ message: 'Course deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting course:', error);
+      res.status(500).json({ message: 'Server error while deleting the course' });
+    }
+  };
+
 module.exports = {
-  addCourses,fetchCourses,countCourses,courseupdate,disableCourse,getDisabledCourses
+  addCourses,fetchCourses,countCourses,courseupdate,disableCourse,getDisabledCourses,enableCourse,delete1
 };

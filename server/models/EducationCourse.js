@@ -4,11 +4,11 @@ const Schema = mongoose.Schema;
 const EducationCourseSchema = new Schema({
   courseName: {
     type: String,
-    // required: true,
+    required: true,
   },
   courseDescription: {
     type: String,
-    // required: true,
+    required: true,
   },
   isDisabled: { type: Boolean, default: false },  // New field to track course status
 });

@@ -1,0 +1,38 @@
+.reports {
+    padding: 20px;
+  }
+  
+  .reports h1 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+  }
+  
+  .reports table {
+    width: 100%;
+    margin-top: 20px;
+  }
+  
+  .reports th, .reports td {
+    text-align: center;
+  }
+  
+  .reports .btn {
+    margin: 5px;
+  }
+  
+  .reports .btn-info {
+    background-color: #17a2b8;
+    border: none;
+  }
+  
+  .reports .btn-success {
+    background-color: #28a745;
+    border: none;
+  }
+  
+  .reports .btn-info:hover,
+  .reports .btn-success:hover {
+    opacity: 0.8;
+  }
+  

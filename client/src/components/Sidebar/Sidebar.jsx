@@ -1,9 +1,20 @@
-// Sidebar.js
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Sidebar.css';
 
 const Sidebar = ({ handleLogout, setCurrentPage }) => {
+  const navigate = useNavigate();
+
+  const handleLogoutAndRedirect = async () => {
+    try {
+      await handleLogout(); // Call the handleLogout to perform logout logic
+      localStorage.removeItem('token');
+      navigate('/login');   // Redirect to login page after logout
+    } catch (error) {
+      console.error('Logout Error:', error);
+    }
+  };
+
   return (
     <div className="sidebar">
       <div className="sidebar-header">Admin Panel</div>
@@ -12,9 +23,9 @@ const Sidebar = ({ handleLogout, setCurrentPage }) => {
         <li><Link to="/admin/colleges">List Colleges</Link></li>
         <li><Link to="/admin/approve-colleges">Approve Colleges</Link></li>
         <li><Link to="/admin/manage-courses">Manage Courses</Link></li>
-        <li><a href="#" onClick={() => setCurrentPage('users')}>Manage Users</a></li>
+        <li><Link to="/admin/manage-users">Manage Users</Link></li>
         <li><Link to="/admin/reports">Reports</Link></li>
-        <li><a href="#" onClick={handleLogout}>Logout</a></li>
+        <li><a href="#" onClick={handleLogoutAndRedirect}>Logout</a></li>
       </ul>
     </div>
   );

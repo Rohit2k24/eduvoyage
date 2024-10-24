@@ -14,6 +14,9 @@ import PrivateRoutes from "./utils/PrivateRoutes";
 import CollegesList from "./components/Admin/CollegesList";
 import ApproveColleges from "./components/Admin/ApproveColleges";
 import ManageCourses from "./components/Admin/ManageCourses";
+import DisabledCourses from "./components/Admin/DisabledCourses";
+import ManageUsers from "./components/Admin/ManageUsers";
+import Reports from "./components/Admin/Reports";
 
 function App() {
   return (
@@ -28,10 +31,13 @@ function App() {
         <Route path="/studentDashboard" element={<PrivateRoutes><StudentDashboard /></PrivateRoutes>}/>
         <Route path="/adminDashboard" element={<PrivateRoutes><AdminDashboard/></PrivateRoutes>} />
         <Route path="/collegeadminDashboard" element={<PrivateRoutes><CollegeAdmin/></PrivateRoutes>} />
-        <Route path="/forgot-password" element={<ForgotPassword/>} />
-        <Route path="/admin/colleges" element={<CollegesList/>}/>
-        <Route path="/admin/approve-colleges" element={<ApproveColleges/>}/>
-        <Route path="/admin/manage-courses" element={<ManageCourses/>}/>
+        <Route path="/forgot-password" element={<PrivateRoutes><ForgotPassword/></PrivateRoutes>} />
+        <Route path="/admin/colleges" element={<PrivateRoutes><CollegesList/></PrivateRoutes>}/>
+        <Route path="/admin/approve-colleges" element={<PrivateRoutes><ApproveColleges/></PrivateRoutes>}/>
+        <Route path="/admin/manage-courses" element={<PrivateRoutes><ManageCourses/></PrivateRoutes>}/>
+        <Route path="/deleted-courses" element={<PrivateRoutes><DisabledCourses /></PrivateRoutes>} />
+        <Route path="/admin/manage-users" element={<PrivateRoutes><ManageUsers /></PrivateRoutes>} />
+        <Route path="/admin/reports" element={<PrivateRoutes><Reports /></PrivateRoutes>} />
       </Routes>
     </Router>
   );

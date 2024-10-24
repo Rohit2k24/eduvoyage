@@ -1,0 +1,76 @@
+/* General layout for the page */
+.layout {
+    display: flex;
+    height: 100vh;
+  }
+  
+  /* Container for the content */
+  .container {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #f8f9fa; /* Light gray background */
+    border-radius: 8px;
+    margin: 20px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  }
+  
+  /* Header styling */
+  .header {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #343a40; /* Dark gray for text */
+  }
+  
+  /* Button styling */
+  .button {
+    margin-bottom: 20px;
+    padding: 10px 15px;
+    background-color: #007bff; /* Bootstrap primary color */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+  }
+  
+  /* Table styling */
+  .table {
+    width: 100%;
+    background-color: white;
+    border-collapse: collapse;
+    margin-top: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Soft shadow for table */
+  }
+  
+  .table th,
+  .table td {
+    padding: 12px 15px;
+    border: 1px solid #dee2e6; /* Light border */
+    text-align: left;
+  }
+  
+  .table th {
+    background-color: #007bff; /* Primary color for table headers */
+    color: white;
+    font-weight: bold;
+  }
+  
+  .table td {
+    background-color: #f8f9fa; /* Light background for table rows */
+    color: #495057; /* Dark gray for text */
+  }
+  
+  /* Empty table message styling */
+  .text-center {
+    text-align: center;
+    padding: 20px;
+    color: #6c757d; /* Light gray for empty message */
+    font-size: 18px;
+  }
+  

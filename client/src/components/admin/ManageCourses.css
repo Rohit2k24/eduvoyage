@@ -37,3 +37,16 @@
     background-color: #34495e;
     color: #ecf0f1;
   }
+
+  .addbtn{
+    margin-right: 15px;
+    background-color: #0096FF;
+  }
+
+  .disablebtn{
+    background-color: #0096FF;
+  }
+
+  .addup{
+    margin-top: 10px;
+  }

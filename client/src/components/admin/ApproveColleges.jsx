@@ -31,6 +31,16 @@ const ApproveColleges = () => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await axios.post('http://localhost:5000/api/auth/logout');
+      localStorage.removeItem('token');
+      navigate('/login'); // Redirect to login page after logout
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
+
   const handleDeclineCollege = async (id) => {
     try {
       await axios.delete(`http://localhost:5000/api/auth/decline-college/${id}`);
@@ -127,7 +137,7 @@ const ApproveColleges = () => {
 
   return (
     <div style={styles.layout}>
-      <Sidebar />
+      <Sidebar handleLogout={handleLogout}/>
       <div style={styles.container}>
         <Container>
           <h2 style={styles.header}>Approve Colleges</h2>

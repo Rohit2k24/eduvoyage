@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Table, Card, Container, Row, Col } from 'react-bootstrap';
 import Swal from 'sweetalert2';
-import Sidebar from '../Sidebar/Sidebar';
+import Sidebar from '../Sidebar/Sidebar'; // Import Sidebar
 
 const CollegesList = () => {
   const [colleges, setColleges] = useState([]);
@@ -60,12 +60,21 @@ const CollegesList = () => {
   };
 
   const getStatusStyle = (status) => {
-    const safeStatus = status;
-    switch (safeStatus) {
+    switch (status) {
       case 'true':
         return { backgroundColor: '#2ecc71', color: 'white' };
       default:
         return { backgroundColor: '#f39c12', color: 'white' };
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await axios.post('http://localhost:5000/api/auth/logout');
+      localStorage.removeItem('token');
+      navigate('/login'); // Redirect to login page after logout
+    } catch (error) {
+      console.error('Error logging out:', error);
     }
   };
 
@@ -95,7 +104,7 @@ const CollegesList = () => {
 
   return (
     <div style={styles.pageContainer}>
-      <Sidebar />
+      <Sidebar handleLogout={handleLogout}/>
       <Container fluid style={styles.contentContainer}>
         <Row>
           <Col>

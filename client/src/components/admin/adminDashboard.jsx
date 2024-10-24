@@ -4,8 +4,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import { Modal, Button, Form, Table } from 'react-bootstrap';
 import Swal from 'sweetalert2';
-import { Link, Routes, Route } from 'react-router-dom'; // Import route and link components
+import { useNavigate } from 'react-router-dom'; 
 import Sidebar from '../Sidebar/Sidebar';
+
 const AdminDashboard = () => {
   const [roleCounts, setRoleCounts] = useState({
     studentCount: 0,
@@ -20,7 +21,10 @@ const AdminDashboard = () => {
   const [showAddCourseModal, setShowAddCourseModal] = useState(false);
   const [newCourseName, setNewCourseName] = useState('');
   const [newCourseDescription, setNewCourseDescription] = useState('');
-  
+
+  const navigate = useNavigate();
+
+  // Fetch data for dashboard
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -45,42 +49,22 @@ const AdminDashboard = () => {
     fetchData();
   }, []);
 
-  // Handle editing course
-  const handleEditCourse = (course) => {
-    setNewCourseName(course.courseName);
-    setNewCourseDescription(course.courseDescription);
-    setShowAddCourseModal(true); // Reusing the same modal for editing
-    // Add additional logic here for editing if necessary
-  };
-
-  // Handle deleting course
-  const handleDeleteCourse = async (courseId) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this course?");
-    if (confirmDelete) {
-      try {
-        await axios.delete(`http://localhost:5000/api/course-delete/${courseId}`);
-        // Refresh course list after deletion
-        const coursesData = await axios.get('http://localhost:5000/api/fetch-courses');
-        setCourses(coursesData.data);
-      } catch (error) {
-        console.error('Error deleting course:', error);
-      }
-    }
-  };
-
+  // Handle logout function
   const handleLogout = async () => {
     try {
       await axios.post('http://localhost:5000/api/auth/logout');
       localStorage.removeItem('token');
-      window.location.href = '/';
+      navigate('/login'); // Redirect to login page after logout
     } catch (error) {
       console.error('Error logging out:', error);
     }
   };
 
+  // Handle showing and closing modal for adding a course
   const handleShowAddCourseModal = () => setShowAddCourseModal(true);
   const handleCloseAddCourseModal = () => setShowAddCourseModal(false);
 
+  // Add new course logic
   const handleAddCourse = async (e) => {
     e.preventDefault();
     const newCourse = {
@@ -90,15 +74,14 @@ const AdminDashboard = () => {
 
     try {
       await axios.post('http://localhost:5000/api/course-add', newCourse);
-      // Refresh course list after adding the course
       const coursesData = await axios.get('http://localhost:5000/api/fetch-courses');
       setCourses(coursesData.data);
-      handleCloseAddCourseModal(); // Close the modal after success
+      handleCloseAddCourseModal(); 
       Swal.fire({
         title: 'Success!',
         text: 'Course Added Successfully',
         icon: 'success',
-        confirmButtonText: 'OK'
+        confirmButtonText: 'OK',
       });
     } catch (error) {
       console.error('Error adding course:', error);
@@ -107,7 +90,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="admin-dashboard">
-   <Sidebar handleLogout={handleLogout} setCurrentPage={setCurrentPage} />
+      <Sidebar handleLogout={handleLogout}/>
       <div className="main-content">
         {currentPage === 'dashboard' && (
           <>
@@ -148,7 +131,6 @@ const AdminDashboard = () => {
             </div>
           </>
         )}
-
       </div>
     </div>
   );
