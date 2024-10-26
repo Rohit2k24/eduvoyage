@@ -37,4 +37,8 @@ router.post('/login-for-all', authController.LoginForAll);
 
 router.delete('/decline-college/:id',authController.deletereqcollege);
 
+router.get('/approved-colleges', authController.getApprovedColleges);
+
+router.get('/offered-courses/:collegeId', authController.getOfferedCourses);
+
 module.exports = router;

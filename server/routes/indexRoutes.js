@@ -50,4 +50,8 @@ router.delete('/course-delete/:id', educationCourseController.delete1);
 
 router.put('/users/:id', userController.updateUser);
 
+router.post('/offer-course',educationCourseController.offerCourse);
+// In your routes file
+router.post('/remove-course-offer', educationCourseController.remove_course_offer);
+  
 module.exports = router;

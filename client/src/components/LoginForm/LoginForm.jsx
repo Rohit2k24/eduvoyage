@@ -61,16 +61,19 @@ function LoginForm() {
 
     if (Object.keys(newErrors).length === 0) {
       try {
-        // First login attempt for user
-        const userResponse = await axios.post(
+        const response = await axios.post(
           "http://localhost:5000/api/auth/login-for-all",
           formData
         );
 
-        const { status: userStatus, token: userToken, role } = userResponse.data;
+        const { status, token, role, collegeId } = response.data;
 
-        if (userStatus === 1) {
-          localStorage.setItem("token", userToken);
+        if (status === 1) {
+          localStorage.setItem("token", token);
+          localStorage.setItem("role", role);
+          if (role === "CollegeAdmin" && collegeId) {
+            localStorage.setItem("collegeId", collegeId);
+          }
           navigate(
             role === "Admin"
               ? "/adminDashboard"
@@ -79,25 +82,11 @@ function LoginForm() {
               : "/collegeadminDashboard"
           );
         } else {
-          // If the first login fails, attempt the second one for the college admin
-          const collegeResponse = await axios.post(
-            "http://localhost:5000/api/auth/college-login",
-            formData
-          );
-
-          const { status: collegeStatus, token: collegeToken } = collegeResponse.data;
-
-          if (collegeStatus === 1) {
-            localStorage.setItem("token", collegeToken);
-            navigate("/collegeadminDashboard");
-          } else {
-            Swal.fire("Error", "College not approved!", "error");
-          }
+          setErrors({ form: "Invalid credentials" });
         }
       } catch (error) {
         console.error("Login error:", error.response?.data || error.message);
-        // Extract message correctly and show in SweetAlert2
-        Swal.fire("Error", error.response?.data?.msg || error.message, "error");
+        setErrors({ form: error.response?.data?.msg || "An error occurred during login" });
       }
     }
   };

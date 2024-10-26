@@ -12,6 +12,7 @@ import {
 } from 'recharts';
 import axios from 'axios';
 import { Modal, Button, Form } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 // Sample data for the chart
 const data = [
   { day: 'Mon', hours: 2 },
@@ -121,7 +122,7 @@ const StudentDashboard = () => {
           <h2>Eduvoyage</h2>
           <ul>
             <li className={activeTab === 'Dashboard' ? 'active' : ''} onClick={() => setActiveTab('Dashboard')}>Dashboard</li>
-            <li className={activeTab === 'Study Programs' ? 'active' : ''} onClick={() => setActiveTab('Study Programs')}>Study Programs</li>
+            <li><Link to="/study-program">Study Programs</Link></li>
             <li className={activeTab === 'Resources' ? 'active' : ''} onClick={() => setActiveTab('Resources')}>Resources</li>
             <li className={activeTab === 'Tasks' ? 'active' : ''} onClick={() => setActiveTab('Tasks')}>Tasks</li>
             <li className={activeTab === 'Exams' ? 'active' : ''} onClick={() => setActiveTab('Exams')}>Exams</li>

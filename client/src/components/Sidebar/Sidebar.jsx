@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Sidebar.css';
 
-const Sidebar = ({ handleLogout, setCurrentPage }) => {
+const Sidebar = ({ handleLogout}) => {
   const navigate = useNavigate();
 
   const handleLogoutAndRedirect = async () => {

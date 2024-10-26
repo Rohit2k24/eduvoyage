@@ -6,6 +6,7 @@ const nodemailer = require("nodemailer");
 const College = require("../models/College");
 const path = require("path");
 const fs = require("fs");
+const OfferedCourse = require("../models/OfferedCourse");
 
 exports.userRegister = async (req, res) => {
   const {
@@ -330,7 +331,7 @@ exports.collegeLogin = async (req, res) => {
     const payload = {
       user: {
         id: college.id,
-        role: "college",
+        role: "CollegeAdmin",
       },
     };
 
@@ -344,7 +345,8 @@ exports.collegeLogin = async (req, res) => {
           status: 1,
           message: "Login Successful!",
           token,
-          role: "college",
+          role: "CollegeAdmin",
+          collegeId: college.id
         });
       }
     );
@@ -489,7 +491,8 @@ exports.LoginForAll = async (req, res) => {
       const payload = {
         user: {
           id: college.id,
-          role: "college",
+          role: "CollegeAdmin",
+          collegeId: college.id
         },
       };
 
@@ -503,7 +506,8 @@ exports.LoginForAll = async (req, res) => {
             status: 1,
             message: "Login Successful!",
             token,
-            role: "college",
+            role: "CollegeAdmin",
+            collegeId: college.id
           });
         }
       );
@@ -513,3 +517,28 @@ exports.LoginForAll = async (req, res) => {
     res.status(500).send("Server error");
   }
 }
+
+
+
+exports.getOfferedCourses = async (req, res) => {
+  try {
+    const { collegeId } = req.params;
+    const offeredCourses = await OfferedCourse.find({ collegeId });
+    res.status(200).json(offeredCourses);
+  } catch (error) {
+    console.error('Error fetching offered courses:', error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+
+exports.getApprovedColleges = async (req, res) => {
+  console.log("Entered the backend");
+  try {
+    const approvedColleges = await College.find({ isApproved: true });
+    res.json(approvedColleges);
+  } catch (error) {
+    console.error("Server error:", error.message);
+    res.status(500).send("Server error");
+  }
+};

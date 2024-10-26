@@ -14,7 +14,6 @@ const CollegeRegistrationForm = () => {
     address: "",
     country: "",
     contactPerson: "",
-    phoneNumber: "",
     website: "",
   });
   const [phone, setPhone] = useState("");

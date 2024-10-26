@@ -17,7 +17,10 @@ import ManageCourses from "./components/Admin/ManageCourses";
 import DisabledCourses from "./components/Admin/DisabledCourses";
 import ManageUsers from "./components/Admin/ManageUsers";
 import Reports from "./components/Admin/Reports";
-
+import ExamsAndCertifications from './components/collegeAdmin/ExamsAndCertifications';
+import PublicQueries from './components/collegeAdmin/PublicQueries';
+import CourseOffered from "./components/collegeAdmin/CourseOffered";
+import StudyProgram from "./components/student/StudyProgram";
 function App() {
   return (
     <Router>
@@ -38,6 +41,10 @@ function App() {
         <Route path="/deleted-courses" element={<PrivateRoutes><DisabledCourses /></PrivateRoutes>} />
         <Route path="/admin/manage-users" element={<PrivateRoutes><ManageUsers /></PrivateRoutes>} />
         <Route path="/admin/reports" element={<PrivateRoutes><Reports /></PrivateRoutes>} />
+        <Route path="/course-offered" element={<PrivateRoutes><CourseOffered /></PrivateRoutes>} />
+        <Route path="/exams-certifications" element={<PrivateRoutes><ExamsAndCertifications /></PrivateRoutes>} />
+        <Route path="/public-queries" element={<PrivateRoutes><PublicQueries /></PrivateRoutes>} />
+        <Route path="/study-program" element={<PrivateRoutes><StudyProgram /></PrivateRoutes>} />
       </Routes>
     </Router>
   );

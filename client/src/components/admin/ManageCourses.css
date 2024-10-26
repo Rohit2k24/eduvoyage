@@ -1,52 +1,56 @@
-/* ManageCourses.css */
 .layout {
-    display: flex;
-    height: 100vh; /* Full viewport height */
-  }
-  
-  .container {
-    padding: 20px;
-    margin: 0 auto;
-    flex-grow: 1;
-    overflow-y: auto;
-  }
-  
-  .header {
-    color: #2c3e50;
-    margin-bottom: 20px;
-    text-align: center;
-    font-weight: bold;
-    font-size: 24px;
-  }
-  
-  .button {
-    margin-bottom: 20px;
-  }
-  
-  .table {
-    width: 100%;
-    text-align: center;
-  }
+  display: flex;
+  height: 100vh; /* Full viewport height */
+}
 
-  .editc{
-    margin-right: 5px;
-    background-color: #0096FF;
-  }
+.container {
+  padding: 20px;
+  margin: 0 auto;
+  flex-grow: 1;
+  overflow-y: auto;
+}
 
-  .tableHeader {
-    background-color: #34495e;
-    color: #ecf0f1;
-  }
+.header {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 24px;
+}
 
-  .addbtn{
-    margin-right: 15px;
-    background-color: #0096FF;
-  }
+.button {
+  margin-bottom: 20px;
+}
 
-  .disablebtn{
-    background-color: #0096FF;
-  }
+.table {
+  width: 100%;
+  text-align: center;
+  border-collapse: collapse;
+}
 
-  .addup{
-    margin-top: 10px;
-  }
+.tableHeader {
+  background-color: #34495e;
+  color: #ecf0f1;
+}
+
+.addbtn, .disablebtn {
+  margin-right: 15px;
+  background-color: #0096FF;
+}
+
+.editc{
+  margin-right: 5px;
+  background-color: #0096FF;
+}
+
+.addup {
+  margin-top: 10px;
+}
+
+/* New styling to wrap long descriptions */
+.table td {
+  padding: 12px;
+  vertical-align: top;
+  white-space: normal; /* Allows text to wrap */
+  word-wrap: break-word; /* Breaks long words if necessary */
+}

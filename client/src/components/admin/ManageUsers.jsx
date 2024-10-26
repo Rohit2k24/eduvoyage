@@ -130,7 +130,6 @@ const ManageUsers = () => {
           {user.role !== 'Admin' && (
             <>
               <Button className="editu" onClick={() => handleEditUser(user)}>Edit</Button>
-              <Button variant="danger" className="deleteu">Delete</Button>
             </>
           )}
         </td>
