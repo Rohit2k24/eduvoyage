@@ -13,7 +13,9 @@ const CollegeSidebar = ({ handleLogout }) => { // Accept handleLogout as a prop
         <li>
           <Link to="/course-offered">Courses Offered</Link>
         </li>
-        
+        <li>
+          <Link to="/application-recieved">Applications Received</Link>
+        </li>
         <li>
           <Link to="/exams-certifications">Exams and Certifications</Link>
         </li>

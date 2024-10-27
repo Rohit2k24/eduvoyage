@@ -185,6 +185,7 @@ const StudyProgram = () => {
       {showApplicationForm && (
         <ApplicationForm
           course={selectedCourse}
+          college={selectedCollege}
           onClose={() => setShowApplicationForm(false)}
         />
       )}

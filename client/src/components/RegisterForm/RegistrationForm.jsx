@@ -1,7 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
+import { CountryDropdown } from 'react-country-region-selector';
+import { parsePhoneNumber, isValidPhoneNumber } from 'libphonenumber-js';
 
 const RegistrationForm = () => {
   const [formData, setFormData] = useState({
@@ -29,13 +33,19 @@ const RegistrationForm = () => {
     return re.test(email);
   };
 
-  const validatePhone = (phone) => {
-    if (phone.length !== 10) return false;
-    if (phone[0] === '0') return false;
-    if (/^(.)\1+$/.test(phone)) return false; // Check for repeated digits
-    if (phone === '1234567890') return false;
-    if (phone.startsWith('12345')) return false;
-    return /^\d{10}$/.test(phone);
+  const validatePhone = (phone, country) => {
+    if (!phone) return 'Phone number is required';
+    if (!country) return 'Please select a country first';
+    
+    try {
+      if (!isValidPhoneNumber(phone, country)) {
+        return 'Invalid phone number for the selected country';
+      }
+      return '';
+    } catch (error) {
+      console.error('Phone validation error:', error);
+      return 'Invalid phone number';
+    }
   };
 
   const validatePassword = (password) => {
@@ -67,7 +77,7 @@ const RegistrationForm = () => {
     } else if (name === 'phone') {
       setErrors({
         ...errors,
-        phone: validatePhone(value) ? '' : 'Invalid phone number',
+        phone: validatePhone(value, formData.country),
       });
     } else if (name === 'password') {
       setErrors({
@@ -98,7 +108,7 @@ const RegistrationForm = () => {
     } else if (name === 'phone') {
       setErrors({
         ...errors,
-        phone: validatePhone(value) ? '' : 'Invalid phone number',
+        phone: validatePhone(value, formData.country),
       });
     } else if (name === 'password') {
       setErrors({
@@ -127,7 +137,7 @@ const RegistrationForm = () => {
     if (!validateEmail(formData.email)) {
       newErrors.email = 'Invalid email format';
     }
-    if (!validatePhone(formData.phone)) {
+    if (!validatePhone(formData.phone, formData.country)) {
       newErrors.phone = 'Invalid phone number';
     }
     if (!validatePassword(formData.password)) {
@@ -158,6 +168,17 @@ const RegistrationForm = () => {
       alert(error.response?.data?.msg || "Error during registration");
       console.error("Error:", error);
     }
+  };
+
+  useEffect(() => {
+    if (formData.phone && formData.country) {
+      const phoneError = validatePhone(formData.phone, formData.country);
+      setErrors(prev => ({ ...prev, phone: phoneError }));
+    }
+  }, [formData.phone, formData.country]);
+
+  const handleCountryChange = (val) => {
+    setFormData(prev => ({ ...prev, country: val }));
   };
 
   return (
@@ -194,7 +215,39 @@ const RegistrationForm = () => {
             }}>
               {field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}
             </label>
-            {field === "role" ? (
+            {field === "country" ? (
+              <CountryDropdown
+                value={formData.country}
+                onChange={handleCountryChange}
+                style={{
+                  width: '100%',
+                  padding: '0.5rem',
+                  border: '1px solid #ccc',
+                  borderRadius: '4px',
+                  fontSize: '16px'
+                }}
+              />
+            ) : field === "phone" ? (
+              <PhoneInput
+                international
+                countryCallingCodeEditable={false}
+                defaultCountry={formData.country}
+                value={formData.phone}
+                onChange={(value) => {
+                  setFormData(prev => ({ ...prev, phone: value }));
+                }}
+                onCountryChange={(country) => {
+                  setFormData(prev => ({ ...prev, country: country }));
+                }}
+                style={{
+                  width: '100%',
+                  padding: '0.5rem',
+                  border: '1px solid #ccc',
+                  borderRadius: '4px',
+                  fontSize: '16px'
+                }}
+              />
+            ) : field === "role" ? (
               <select
                 id={field}
                 name={field}

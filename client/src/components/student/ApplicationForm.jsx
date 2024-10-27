@@ -6,7 +6,7 @@ import 'react-phone-number-input/style.css';
 // import { CountryDropdown } from 'react-country-region-selector';
 import { parsePhoneNumber, isValidPhoneNumber } from 'libphonenumber-js';
 
-const ApplicationForm = ({ course, onClose }) => {
+const ApplicationForm = ({ course, onClose, college }) => {
   const [formData, setFormData] = useState({
     fullName: '',
     dateOfBirth: '',
@@ -16,12 +16,9 @@ const ApplicationForm = ({ course, onClose }) => {
     phone: '',
     identification: '',
     previousEducation: '',
-    academicTranscripts: null,
     englishProficiencyScore: '',
-    preferredStartDate: '',
     studyMode: '',
     fundingSource: '',
-    scholarshipApplication: null,
   });
 
   const [errors, setErrors] = useState({});
@@ -96,14 +93,6 @@ const ApplicationForm = ({ course, onClose }) => {
     }));
   };
 
-  const handleFileChange = (e) => {
-    const { name, files } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: files[0]
-    }));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (Object.values(errors).some(error => error !== '')) {
@@ -111,22 +100,25 @@ const ApplicationForm = ({ course, onClose }) => {
       return;
     }
     try {
-      const formDataToSend = new FormData();
-      for (const key in formData) {
-        formDataToSend.append(key, formData[key]);
-      }
-      formDataToSend.append('courseId', course._id);
-
-      await axios.post('http://localhost:5000/api/apply', formDataToSend, {
+      const dataToSend = {
+        ...formData,
+        courseId: course._id,
+        collegeId: college._id
+      };
+  
+      console.log('Data being sent:', dataToSend); 
+  
+      const response = await axios.post('http://localhost:5000/api/auth/student-enroll-course', dataToSend, {
         headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+          'Content-Type': 'application/json'
+        }
       });
+      console.log('Response received:', response.data);
       alert('Application submitted successfully!');
       onClose();
     } catch (error) {
-      console.error('Error submitting application:', error);
-      alert('Failed to submit application. Please try again.');
+      console.error('Error submitting application:', error.response ? error.response.data : error.message);
+      alert(`Failed to submit application. ${error.response ? error.response.data.message : 'Please try again.'}`);
     }
   };
 
@@ -286,18 +278,8 @@ const ApplicationForm = ({ course, onClose }) => {
         </div>
 
         <div style={styles.inputGroup}>
-          <label style={styles.label}>Academic Transcripts</label>
-          <input type="file" name="academicTranscripts" onChange={handleFileChange} required style={styles.input} />
-        </div>
-
-        <div style={styles.inputGroup}>
           <label style={styles.label}>English Proficiency Score (if applicable)</label>
           <input type="text" name="englishProficiencyScore" onChange={handleChange} style={styles.input} />
-        </div>
-
-        <div style={styles.inputGroup}>
-          <label style={styles.label}>Preferred Start Date</label>
-          <input type="date" name="preferredStartDate" onChange={handleChange} required style={styles.input} />
         </div>
 
         <div style={styles.inputGroup}>
@@ -318,11 +300,6 @@ const ApplicationForm = ({ course, onClose }) => {
             <option value="scholarship">Scholarship</option>
             <option value="other">Other</option>
           </select>
-        </div>
-
-        <div style={styles.inputGroup}>
-          <label style={styles.label}>Scholarship Application (if applicable)</label>
-          <input type="file" name="scholarshipApplication" onChange={handleFileChange} style={styles.input} />
         </div>
 
         <div style={styles.buttonGroup}>

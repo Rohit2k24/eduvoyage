@@ -3,6 +3,7 @@ const router = express.Router();
 const authController = require('../controller/authController');
 const multer = require('multer');
 const upload = multer({ storage: multer.memoryStorage() });
+const educationCourseController = require('../controller/educationCourseController');
 
 router.post('/register', authController.userRegister);
 
@@ -40,5 +41,9 @@ router.delete('/decline-college/:id',authController.deletereqcollege);
 router.get('/approved-colleges', authController.getApprovedColleges);
 
 router.get('/offered-courses/:collegeId', authController.getOfferedCourses);
+
+router.post('/student-enroll-course', educationCourseController.studentEnrollCourse);
+
+router.get('/student-enroll-course', educationCourseController.getStudentEnroll);
 
 module.exports = router;

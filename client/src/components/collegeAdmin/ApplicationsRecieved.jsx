@@ -1,11 +1,10 @@
 import React from 'react';
+import axios from 'axios'; 
 import { useNavigate } from "react-router-dom";
-import axios from 'axios'; // Add this import
-import '../Sidebar/CollegeSidebar.css'; // Ensure this is your CSS for the sidebar
 import CollegeSidebar from '../Sidebar/CollegeSidebar'; // Import CollegeSidebar
 
 
-const ExamsAndCertifications = () => {
+const ApplicationRecieved = () => {
   const navigate = useNavigate(); 
 
   const handleLogout = async () => {
@@ -21,16 +20,16 @@ const ExamsAndCertifications = () => {
   };
   return (
     <div className="college-admin-dashboard-container">
-    <CollegeSidebar handleLogout={handleLogout} />
+      <CollegeSidebar handleLogout={handleLogout} />
       <div className="content">
         <div className="dashboard-header">
-          <h1>Exams and Certifications</h1>
+          <h1>Applications Recieved</h1>
         </div>
-        <p>Manage exams and certifications for the courses.</p>
+        <p>Manage Applications Recieved for the courses.</p>
         {/* Add additional functionalities for managing exams and certifications here */}
       </div>
     </div>
   );
 };
 
-export default ExamsAndCertifications;
+export default ApplicationRecieved;
