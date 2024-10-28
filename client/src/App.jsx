@@ -21,7 +21,6 @@ import ExamsAndCertifications from './components/collegeAdmin/ExamsAndCertificat
 import PublicQueries from './components/collegeAdmin/PublicQueries';
 import CourseOffered from "./components/collegeAdmin/CourseOffered";
 import StudyProgram from "./components/student/StudyProgram";
-import ApplicationReceived from "./components/collegeAdmin/ApplicationsRecieved.jsx";
 import ApplicationRecieved from "./components/collegeAdmin/ApplicationsRecieved.jsx";
 
 function App() {
