@@ -300,6 +300,16 @@ const getStudentEnroll = async (req, res) => {
   }
 };
 
+const getOfferedCourses = async (req, res) => {
+  const { collegeId } = req.params;
+  try {
+    const courses = await OfferedCourse.find({ collegeId }); // Adjust based on your database structure
+    res.status(200).json(courses);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching offered courses.' });
+  }
+};
+
 module.exports = {
   addCourses,
   fetchCourses,
@@ -313,4 +323,5 @@ module.exports = {
   remove_course_offer,
   studentEnrollCourse,
   getStudentEnroll,
+  getOfferedCourses
 };

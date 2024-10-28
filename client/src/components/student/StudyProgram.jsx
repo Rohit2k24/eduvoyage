@@ -50,17 +50,19 @@ const StudyProgram = () => {
       margin: '0 auto',
       padding: '40px 20px',
       fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-      backgroundColor: '#f0f4f8',
+      backgroundColor: '#f8f9fa',
       minHeight: '100vh',
     },
     header: {
-      fontSize: '2.8rem',
-      color: '#2c3e50',
+      fontSize: '2.5rem',
+      color: '#343a40',
       marginBottom: '40px',
       textAlign: 'center',
       textTransform: 'uppercase',
-      letterSpacing: '2px',
+      letterSpacing: '1px',
       fontWeight: '700',
+      borderBottom: '2px solid #007bff',
+      paddingBottom: '10px',
     },
     collegeList: {
       display: 'grid',
@@ -71,21 +73,23 @@ const StudyProgram = () => {
     collegeCard: {
       padding: '25px',
       borderRadius: '12px',
-      boxShadow: '0 10px 20px rgba(0, 0, 0, 0.1)',
+      boxShadow: '0 10px 20px rgba(0, 0, 0, 0.15)',
       cursor: 'pointer',
       transition: 'all 0.3s ease',
       backgroundColor: '#fff',
-      border: '1px solid #e0e0e0',
+      border: '1px solid #dee2e6',
+      position: 'relative',
+      overflow: 'hidden',
     },
     collegeName: {
-      fontSize: '1.4rem',
+      fontSize: '1.5rem',
       fontWeight: 'bold',
       marginBottom: '15px',
-      color: '#34495e',
+      color: '#007bff',
     },
     collegeInfo: {
       fontSize: '1rem',
-      color: '#7f8c8d',
+      color: '#6c757d',
       marginBottom: '5px',
     },
     courseList: {
@@ -93,7 +97,7 @@ const StudyProgram = () => {
     },
     courseListHeader: {
       fontSize: '2rem',
-      color: '#2c3e50',
+      color: '#343a40',
       marginBottom: '25px',
       textAlign: 'center',
       fontWeight: '600',
@@ -103,23 +107,23 @@ const StudyProgram = () => {
       borderRadius: '12px',
       padding: '25px',
       marginBottom: '25px',
-      boxShadow: '0 5px 15px rgba(0, 0, 0, 0.08)',
+      boxShadow: '0 5px 15px rgba(0, 0, 0, 0.1)',
       transition: 'transform 0.3s ease',
     },
     courseName: {
-      fontSize: '1.3rem',
+      fontSize: '1.4rem',
       fontWeight: 'bold',
-      color: '#2c3e50',
+      color: '#343a40',
       marginBottom: '15px',
     },
     courseDetails: {
       fontSize: '1rem',
-      color: '#34495e',
+      color: '#495057',
       marginBottom: '20px',
       lineHeight: '1.6',
     },
     applyButton: {
-      backgroundColor: '#3498db',
+      backgroundColor: '#007bff',
       color: '#fff',
       border: 'none',
       padding: '12px 25px',
@@ -130,6 +134,7 @@ const StudyProgram = () => {
       fontWeight: '600',
       textTransform: 'uppercase',
       letterSpacing: '1px',
+      boxShadow: '0 4px 8px rgba(0, 123, 255, 0.2)',
     },
   };
 
@@ -143,12 +148,12 @@ const StudyProgram = () => {
             style={styles.collegeCard}
             onClick={() => handleCollegeClick(college)}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-5px)';
-              e.currentTarget.style.boxShadow = '0 15px 30px rgba(0, 0, 0, 0.15)';
+              e.currentTarget.style.transform = 'scale(1.05)';
+              e.currentTarget.style.boxShadow = '0 15px 30px rgba(0, 0, 0, 0.2)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 10px 20px rgba(0, 0, 0, 0.1)';
+              e.currentTarget.style.transform = 'scale(1)';
+              e.currentTarget.style.boxShadow = '0 10px 20px rgba(0, 0, 0, 0.15)';
             }}
           >
             <h2 style={styles.collegeName}>{college.collegeName}</h2>
@@ -173,8 +178,8 @@ const StudyProgram = () => {
               <button
                 style={styles.applyButton}
                 onClick={() => handleApply(course)}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#2980b9'}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#3498db'}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#0056b3'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#007bff'}
               >
                 Apply Now
               </button>

@@ -6,76 +6,39 @@ import axios from 'axios';
 import CollegeSidebar from '../Sidebar/CollegeSidebar';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate for redirect
 
-const CollegeAdmin = () => {
+const CollegeAdminDashboard = () => {
   const navigate = useNavigate(); // Initialize navigate
+
+  // State for dashboard data and offered courses
   const [dashboardData, setDashboardData] = useState({
     studentCount: 150,
     courseCount: 0,
     revenue: 50000,
   });
+  const [offeredCourses, setOfferedCourses] = useState([]);
 
-  const [showAddCourseModal, setShowAddCourseModal] = useState(false);
-  const [newCourse, setNewCourse] = useState({
-    courseName: '',
-    courseDuration: '',
-    coursePrice: '',
-    maxEnrollment: '',
-    courseDescription: ''
-  });
-
+  // Fetch offered courses and update course count
   useEffect(() => {
-    const fetchCourseCount = async () => {
+    const fetchOfferedCourses = async () => {
       try {
-        const countResponse = await axios.get('http://localhost:5000/api/course-count');
+        const collegeId = localStorage.getItem('collegeId');
+        const response = await axios.get(`http://localhost:5000/api/offered-courses/${collegeId}`);
+        setOfferedCourses(response.data);
+        
+        // Update the course count in dashboardData
         setDashboardData(prevData => ({
           ...prevData,
-          courseCount: countResponse.data.count
+          courseCount: response.data.length
         }));
       } catch (error) {
-        console.error('Error fetching course count:', error);
+        console.error('Error fetching offered courses:', error);
       }
     };
-    fetchCourseCount();
+
+    fetchOfferedCourses();
   }, []);
 
-  const handleAddCourse = () => {
-    setShowAddCourseModal(true);
-  };
-
-  const handleCloseAddCourseModal = () => {
-    setShowAddCourseModal(false);
-    setNewCourse({
-      courseName: '',
-      courseDuration: '',
-      coursePrice: '',
-      maxEnrollment: '',
-      courseDescription: ''
-    });
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewCourse(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
-  };
-
-  const handleSubmitCourse = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post('http://localhost:5000/api/courses', newCourse);
-      handleCloseAddCourseModal();
-      const countResponse = await axios.get('http://localhost:5000/api/course-count');
-      setDashboardData(prevData => ({
-        ...prevData,
-        courseCount: countResponse.data.count
-      }));
-    } catch (error) {
-      console.error('Error adding course:', error);
-    }
-  };
-
+  // Logout handler
   const handleLogout = async () => {
     try {
       await axios.post('http://localhost:5000/api/auth/logout');
@@ -109,88 +72,28 @@ const CollegeAdmin = () => {
             <h3>Total Revenue</h3>
             <p>${dashboardData.revenue}</p>
           </div>
-          {/* <div className="dashboard-card add-course-card" onClick={handleAddCourse}>
-            <h3>Add Courses</h3>
-            <Button variant="primary">+ Add Course</Button>
-          </div> */}
         </div>
 
-        <Modal show={showAddCourseModal} onHide={handleCloseAddCourseModal}>
-          <Modal.Header closeButton>
-            <Modal.Title>Add Course</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form onSubmit={handleSubmitCourse}>
-              <Form.Group controlId="formCourseName">
-                <Form.Label>Course Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="courseName"
-                  value={newCourse.courseName}
-                  placeholder="Enter course name"
-                  onChange={handleInputChange}
-                  required
-                />
-              </Form.Group>
-
-              <Form.Group controlId="formCourseDuration">
-                <Form.Label>Course Duration</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="courseDuration"
-                  value={newCourse.courseDuration}
-                  placeholder="Enter course duration"
-                  onChange={handleInputChange}
-                  required
-                />
-              </Form.Group>
-
-              <Form.Group controlId="formCoursePrice">
-                <Form.Label>Price</Form.Label>
-                <Form.Control
-                  type="number"
-                  name="coursePrice"
-                  value={newCourse.coursePrice}
-                  placeholder="Enter course price"
-                  onChange={handleInputChange}
-                  required
-                />
-              </Form.Group>
-
-              <Form.Group controlId="formMaxEnrollment">
-                <Form.Label>Maximum Enrollment</Form.Label>
-                <Form.Control
-                  type="number"
-                  name="maxEnrollment"
-                  value={newCourse.maxEnrollment}
-                  placeholder="Enter max number of students"
-                  onChange={handleInputChange}
-                  required
-                />
-              </Form.Group>
-
-              <Form.Group controlId="formCourseDescription">
-                <Form.Label>Course Description</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  name="courseDescription"
-                  value={newCourse.courseDescription}
-                  rows={3}
-                  placeholder="Enter a brief description of the course"
-                  onChange={handleInputChange}
-                  required
-                />
-              </Form.Group>
-
-              <Button variant="primary" type="submit">
-                Add Course
-              </Button>
-            </Form>
-          </Modal.Body>
-        </Modal>
+        <div className="courses-offered">
+          <h2>Offered Courses</h2>
+          {offeredCourses.length > 0 ? (
+            <ul>
+              {offeredCourses.map(course => (
+                <li key={course.id}>
+                  <h3>{course.courseName}</h3>
+                  <p>{course.courseDescription}</p>
+                  <p>Duration: {course.duration}</p>
+                  <p>Price: ${course.price}</p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No courses offered.</p>
+          )}
+        </div>
       </div>
     </div>
   );
 };
 
-export default CollegeAdmin;
+export default CollegeAdminDashboard;

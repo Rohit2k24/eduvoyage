@@ -93,7 +93,7 @@ const DisabledCourses = () => {
     <div className="layout">
       <Sidebar handleLogout={handleLogout}/>
       <div className="container">
-        <h2 className="header">Deleted Courses</h2>
+        <h2 className="header">Disabled Courses</h2>
         <Table striped bordered hover className="table">
           <thead className="tableHeader">
             <tr>

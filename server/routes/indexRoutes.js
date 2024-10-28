@@ -54,5 +54,7 @@ router.post('/offer-course',educationCourseController.offerCourse);
 // In your routes file
 router.post('/remove-course-offer', educationCourseController.remove_course_offer);
 
+router.get('/offered-courses/:collegeId', educationCourseController.getOfferedCourses);
+
   
 module.exports = router;

@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { isValid, subYears } from 'date-fns';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-// import { CountryDropdown } from 'react-country-region-selector';
-import { parsePhoneNumber, isValidPhoneNumber } from 'libphonenumber-js';
+import { isValidPhoneNumber } from 'libphonenumber-js';
 
 const ApplicationForm = ({ course, onClose, college }) => {
   const [formData, setFormData] = useState({
@@ -15,87 +13,41 @@ const ApplicationForm = ({ course, onClose, college }) => {
     email: '',
     phone: '',
     identification: '',
-    previousEducation: '',
+    academicBackground: '',
+    highestQualification: '',
+    degreeName: '',
+    institution: '',
+    yearOfCompletion: '',
+    gpa: '',
     englishProficiencyScore: '',
     studyMode: '',
-    fundingSource: '',
   });
 
   const [errors, setErrors] = useState({});
 
-  const validateFullName = (name) => {
-    const regex = /^[a-zA-Z\s.]+$/;
-    return regex.test(name) ? '' : 'Full name should only contain letters, spaces, and dots.';
-  };
-
-  const validateDateOfBirth = (dob) => {
-    const date = new Date(dob);
-    const eighteenYearsAgo = subYears(new Date(), 18);
-    return isValid(date) && date <= eighteenYearsAgo ? '' : 'You must be at least 18 years old.';
-  };
-
-  const validateNationality = (nationality) => {
-    const regex = /^[a-zA-Z\s]+$/;
-    return regex.test(nationality) ? '' : 'Nationality should only contain letters and spaces.';
-  };
-
-  const validatePhone = (phone, country) => {
-    if (!phone) return 'Phone number is required';
-    
-    try {
-      const phoneNumber = parsePhoneNumber(phone, country);
-      if (!phoneNumber) return 'Invalid phone number';
-      
-      if (!isValidPhoneNumber(phone, country)) {
-        return 'Invalid phone number for the selected country';
-      }
-      
-      const expectedLength = phoneNumber.countryCallingCode.length + phoneNumber.nationalNumber.length;
-      const actualLength = phone.replace(/\D/g, '').length;
-      
-      if (actualLength !== expectedLength) {
-        return `Phone number should be ${expectedLength - phoneNumber.countryCallingCode.length} digits for ${country}`;
-      }
-      
-      return '';
-    } catch (error) {
-      return 'Invalid phone number';
-    }
-  };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevState => ({
+    setFormData((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
     }));
 
-    let error = '';
-    switch (name) {
-      case 'fullName':
-        error = validateFullName(value);
-        break;
-      case 'dateOfBirth':
-        error = validateDateOfBirth(value);
-        break;
-      case 'nationality':
-        error = validateNationality(value);
-        break;
-      case 'phone':
-        error = validatePhone(value, formData.countryOfResidence);
-        break;
-      // Add more validations for other fields as needed
+    if (name === 'email' && !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(value)) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        email: 'Invalid email format',
+      }));
+    } else {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: '',
+      }));
     }
-
-    setErrors(prevErrors => ({
-      ...prevErrors,
-      [name]: error
-    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (Object.values(errors).some(error => error !== '')) {
+    if (Object.values(errors).some((error) => error !== '')) {
       alert('Please correct the errors before submitting.');
       return;
     }
@@ -103,22 +55,21 @@ const ApplicationForm = ({ course, onClose, college }) => {
       const dataToSend = {
         ...formData,
         courseId: course._id,
-        collegeId: college._id
+        collegeId: college._id,
       };
-  
-      console.log('Data being sent:', dataToSend); 
-  
-      const response = await axios.post('http://localhost:5000/api/auth/student-enroll-course', dataToSend, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      console.log('Response received:', response.data);
+      const response = await axios.post(
+        'http://localhost:5000/api/auth/student-enroll-course',
+        dataToSend,
+        { headers: { 'Content-Type': 'application/json' } }
+      );
       alert('Application submitted successfully!');
       onClose();
     } catch (error) {
-      console.error('Error submitting application:', error.response ? error.response.data : error.message);
-      alert(`Failed to submit application. ${error.response ? error.response.data.message : 'Please try again.'}`);
+      alert(
+        `Failed to submit application. ${
+          error.response ? error.response.data.message : 'Please try again.'
+        }`
+      );
     }
   };
 
@@ -129,35 +80,49 @@ const ApplicationForm = ({ course, onClose, college }) => {
       left: 0,
       right: 0,
       bottom: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0.7)',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
       display: 'flex',
-      justifyContent: 'center',
       alignItems: 'center',
+      justifyContent: 'center',
+      overflow: 'hidden',
     },
-    form: {
+    formContainer: {
       backgroundColor: '#fff',
       padding: '20px',
-      borderRadius: '10px',
-      maxWidth: '500px',
-      width: '100%',
-      maxHeight: '80vh',
-      overflowY: 'auto',
+      borderRadius: '8px',
+      width: '80%',
+      maxWidth: '600px',
+      maxHeight: '80vh', // Restrict height of the form container
+      overflowY: 'auto',  // Enable vertical scroll
+      position: 'relative',
+    },
+    closeButton: {
+      position: 'absolute',
+      top: '10px',
+      right: '10px',
+      fontSize: '20px',
+      border: 'none',
+      background: 'none',
+      cursor: 'pointer',
     },
     title: {
+      fontSize: '24px',
       textAlign: 'center',
       marginBottom: '20px',
     },
     inputGroup: {
-      marginBottom: '15px',
+      display: 'flex',
+      flexDirection: 'column',
+      marginBottom: '10px',
     },
     label: {
-      display: 'block',
+      fontSize: '14px',
       marginBottom: '5px',
     },
     input: {
-      width: '100%',
       padding: '8px',
-      borderRadius: '5px',
+      fontSize: '14px',
+      borderRadius: '4px',
       border: '1px solid #ddd',
     },
     error: {
@@ -165,148 +130,249 @@ const ApplicationForm = ({ course, onClose, college }) => {
       fontSize: '12px',
       marginTop: '5px',
     },
-    closeButton: {
-      position: 'absolute',
-      top: '10px',
-      right: '10px',
-      fontSize: '24px',
-      background: 'none',
-      border: 'none',
-      cursor: 'pointer',
-    },
     buttonGroup: {
       display: 'flex',
       justifyContent: 'space-between',
       marginTop: '20px',
     },
     cancelButton: {
-      backgroundColor: '#e74c3c',
-      color: '#fff',
-      border: 'none',
       padding: '10px 20px',
-      borderRadius: '5px',
+      backgroundColor: '#ccc',
+      border: 'none',
+      borderRadius: '4px',
       cursor: 'pointer',
-      width: '48%',
     },
     submitButton: {
-      backgroundColor: '#3498db',
+      padding: '10px 20px',
+      backgroundColor: '#007bff',
       color: '#fff',
       border: 'none',
-      padding: '10px 20px',
-      borderRadius: '5px',
+      borderRadius: '4px',
       cursor: 'pointer',
-      width: '48%',
     },
   };
 
   return (
     <div style={styles.overlay}>
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <button onClick={onClose} style={styles.closeButton}>&times;</button>
+      <div style={styles.formContainer}>
+        <button onClick={onClose} style={styles.closeButton}>
+          &times;
+        </button>
         <h2 style={styles.title}>Application for {course.courseName}</h2>
-        
-        <div style={styles.inputGroup}>
-          <label style={styles.label}>Full Name</label>
-          <input type="text" name="fullName" onChange={handleChange} required style={styles.input} />
-          {errors.fullName && <span style={styles.error}>{errors.fullName}</span>}
-        </div>
+        <form onSubmit={handleSubmit}>
+          {/* Full Name */}
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Full Name</label>
+            <input
+              type="text"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleChange}
+              required
+              style={styles.input}
+            />
+          </div>
 
-        <div style={styles.inputGroup}>
-          <label style={styles.label}>Date of Birth</label>
-          <input type="date" name="dateOfBirth" onChange={handleChange} required style={styles.input} />
-          {errors.dateOfBirth && <span style={styles.error}>{errors.dateOfBirth}</span>}
-        </div>
+          {/* Date of Birth */}
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Date of Birth</label>
+            <input
+              type="date"
+              name="dateOfBirth"
+              value={formData.dateOfBirth}
+              onChange={handleChange}
+              required
+              style={styles.input}
+            />
+          </div>
 
-        <div style={styles.inputGroup}>
-          <label style={styles.label}>Gender</label>
-          <select name="gender" onChange={handleChange} required style={styles.input}>
-            <option value="">Select Gender</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
+          {/* Gender */}
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Gender</label>
+            <select
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+              required
+              style={styles.input}
+            >
+              <option value="">Select</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
 
-        {/* <div style={styles.inputGroup}>
-          <label style={styles.label}>Country of Residence</label>
-          <CountryDropdown
-            value={formData.countryOfResidence}
-            onChange={(val) => setFormData(prev => ({ ...prev, countryOfResidence: val }))}
-            style={styles.input}
-          />
-        </div> */}
+          {/* Nationality */}
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Nationality</label>
+            <input
+              type="text"
+              name="nationality"
+              value={formData.nationality}
+              onChange={handleChange}
+              required
+              style={styles.input}
+            />
+          </div>
 
-        <div style={styles.inputGroup}>
-          <label style={styles.label}>Nationality</label>
-          <input type="text" name="nationality" onChange={handleChange} required style={styles.input} />
-          {errors.nationality && <span style={styles.error}>{errors.nationality}</span>}
-        </div>
+          {/* Contact Information */}
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Email</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              style={styles.input}
+            />
+            {errors.email && <span style={styles.error}>{errors.email}</span>}
+          </div>
 
-        <div style={styles.inputGroup}>
-          <label style={styles.label}>Email</label>
-          <input type="email" name="email" onChange={handleChange} required style={styles.input} />
-        </div>
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Phone</label>
+            <PhoneInput
+              international
+              defaultCountry="US"
+              value={formData.phone}
+              onChange={(phone) =>
+                setFormData((prevState) => ({
+                  ...prevState,
+                  phone,
+                }))
+              }
+              required
+            />
+          </div>
 
-        <div style={styles.inputGroup}>
-          <label style={styles.label}>Phone</label>
-          <PhoneInput
-            international
-            countryCallingCodeEditable={false}
-            defaultCountry={formData.countryOfResidence}
-            value={formData.phone}
-            onChange={(value) => {
-              setFormData(prev => ({ ...prev, phone: value }));
-              setErrors(prev => ({ ...prev, phone: validatePhone(value, formData.countryOfResidence) }));
-            }}
-            onCountryChange={(country) => {
-              setFormData(prev => ({ ...prev, countryOfResidence: country }));
-              setErrors(prev => ({ ...prev, phone: validatePhone(formData.phone, country) }));
-            }}
-            style={styles.input}
-          />
-          {errors.phone && <span style={styles.error}>{errors.phone}</span>}
-        </div>
+          {/* Identification Number */}
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Identification Number</label>
+            <input
+              type="text"
+              name="identification"
+              value={formData.identification}
+              onChange={handleChange}
+              required
+              style={styles.input}
+            />
+          </div>
 
-        <div style={styles.inputGroup}>
-          <label style={styles.label}>Identification (Passport/ID number)</label>
-          <input type="text" name="identification" onChange={handleChange} required style={styles.input} />
-        </div>
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>English Proficiency Score</label>
+            <input
+              type="text"
+              name="englishProficiencyScore"
+              value={formData.englishProficiencyScore}
+              onChange={handleChange}
+              required
+              style={styles.input}
+            />
+          </div>  
 
-        <div style={styles.inputGroup}>
-          <label style={styles.label}>Previous Education</label>
-          <textarea name="previousEducation" onChange={handleChange} required style={styles.input}></textarea>
-        </div>
+          {/* Previous Education Section */}
+          <h3>Previous Education</h3>
 
-        <div style={styles.inputGroup}>
-          <label style={styles.label}>English Proficiency Score (if applicable)</label>
-          <input type="text" name="englishProficiencyScore" onChange={handleChange} style={styles.input} />
-        </div>
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Highest Qualification</label>
+            <input
+              type="text"
+              name="highestQualification"
+              value={formData.highestQualification}
+              onChange={handleChange}
+              required
+              style={styles.input}
+            />
+          </div>
 
-        <div style={styles.inputGroup}>
-          <label style={styles.label}>Study Mode</label>
-          <select name="studyMode" onChange={handleChange} required style={styles.input}>
-            <option value="">Select Study Mode</option>
-            <option value="onCampus">On Campus</option>
-            <option value="online">Online</option>
-            <option value="hybrid">Hybrid</option>
-          </select>
-        </div>
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Degree Name</label>
+            <input
+              type="text"
+              name="degreeName"
+              value={formData.degreeName}
+              onChange={handleChange}
+              required
+              style={styles.input}
+            />
+          </div>
 
-        <div style={styles.inputGroup}>
-          <label style={styles.label}>Funding Source</label>
-          <select name="fundingSource" onChange={handleChange} required style={styles.input}>
-            <option value="">Select Funding Source</option>
-            <option value="selfFunded">Self-funded</option>
-            <option value="scholarship">Scholarship</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>University/Institution</label>
+            <input
+              type="text"
+              name="institution"
+              value={formData.institution}
+              onChange={handleChange}
+              required
+              style={styles.input}
+            />
+          </div>
 
-        <div style={styles.buttonGroup}>
-          <button type="button" onClick={onClose} style={styles.cancelButton}>Cancel</button>
-          <button type="submit" style={styles.submitButton}>Submit Application</button>
-        </div>
-      </form>
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Year of Completion</label>
+            <input
+              type="number"
+              name="yearOfCompletion"
+              value={formData.yearOfCompletion}
+              onChange={handleChange}
+              required
+              style={styles.input}
+            />
+          </div>
+
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Percentage/GPA</label>
+            <input
+              type="text"
+              name="gpa"
+              value={formData.gpa}
+              onChange={handleChange}
+              required
+              style={styles.input}
+            />
+          </div>
+
+          {/* Other Fields */}
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>English Proficiency Score</label>
+            <input
+              type="text"
+              name="englishProficiencyScore"
+              value={formData.englishProficiencyScore}
+              onChange={handleChange}
+              required
+              style={styles.input}
+            />
+          </div>
+
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Study Mode</label>
+            <select
+              name="studyMode"
+              value={formData.studyMode}
+              onChange={handleChange}
+              required
+              style={styles.input}
+            >
+              <option value="">Select</option>
+              <option value="online">Online</option>
+              <option value="on-campus">On-Campus</option>
+            </select>
+          </div>
+
+          {/* Submit/Cancel Button */}
+          <div style={styles.buttonGroup}>
+            <button type="button" onClick={onClose} style={styles.cancelButton}>
+              Cancel
+            </button>
+            <button type="submit" style={styles.submitButton}>
+              Submit Application
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
