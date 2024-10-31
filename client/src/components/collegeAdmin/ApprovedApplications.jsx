@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import CollegeSidebar from '../Sidebar/CollegeSidebar';
-import './ApplicationReceived.css';
+import './ApprovedApplications.css';
 
-const ApplicationRecieved = () => {
-  const [applications, setApplications] = useState([]);
+const ApprovedApplications = () => {
+  const [approvedApplications, setApprovedApplications] = useState([]);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -20,40 +20,25 @@ const ApplicationRecieved = () => {
     }
   };
 
-  const fetchApplicationReceived = async () => {
+  const fetchApprovedApplications = async () => {
     try {
       const collegeId = localStorage.getItem('collegeId');
       if (collegeId) {
         const response = await axios.get(`http://localhost:5000/api/auth/student-enroll-course/${collegeId}`);
-        setApplications(response.data.data);
+        
+        // Filter for approved applications
+        const approvedApps = response.data.data.filter(application => application.status === "approved");
+        setApprovedApplications(approvedApps);
       } else {
         console.error("College ID not found in local storage");
       }
     } catch (error) {
-      console.log("Error fetching applications received:", error);
-    }
-  };
-
-  const handleApprove = async (applicationId) => {
-    try {
-      await axios.put(`http://localhost:5000/api/auth/approve-application/${applicationId}`, { status: "approved" });
-      fetchApplicationReceived()
-    } catch (error) {
-      console.error("Error approving application:", error);
-    }
-  };
-
-  const handleReject = async (applicationId) => {
-    try {
-      await axios.put(`http://localhost:5000/api/auth/reject-application/${applicationId}`, { status: "rejected" });
-      fetchApplicationReceived()
-    } catch (error) {
-      console.error("Error rejecting application:", error);
+      console.error("Error fetching approved applications:", error);
     }
   };
 
   useEffect(() => {
-    fetchApplicationReceived();
+    fetchApprovedApplications();
   }, []);
 
   return (
@@ -61,7 +46,7 @@ const ApplicationRecieved = () => {
       <CollegeSidebar handleLogout={handleLogout} />
       <div className="content">
         <div className="dashboard-header">
-          <h1>Applications Received</h1>
+          <h1>Approved Applications</h1>
         </div>
         <table className="application-table">
           <thead>
@@ -72,28 +57,17 @@ const ApplicationRecieved = () => {
               <th>Highest Qualification</th>
               <th>GPA</th>
               <th>Status</th>
-              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {applications.map((application) => (
+            {approvedApplications.map((application) => (
               <tr key={application._id}>
                 <td>{application.fullName}</td>
                 <td>{application.email}</td>
                 <td>{application.phone}</td>
                 <td>{application.previousEducation?.highestQualification || 'N/A'}</td>
                 <td>{application.previousEducation?.gpa || 'N/A'}</td>
-                <td>{application.status}</td>
-                <td>
-                  {application.status === "pending" ? (
-                    <>
-                      <button onClick={() => handleApprove(application._id)} className="approve-btn">Approve</button>
-                      <button onClick={() => handleReject(application._id)} className="reject-btn">Reject</button>
-                    </>
-                  ) : (
-                    <span>{application.status.charAt(0).toUpperCase() + application.status.slice(1)}</span>
-                  )}
-                </td>
+                <td>{application.status.charAt(0).toUpperCase() + application.status.slice(1)}</td>
               </tr>
             ))}
           </tbody>
@@ -103,4 +77,4 @@ const ApplicationRecieved = () => {
   );
 };
 
-export default ApplicationRecieved;
+export default ApprovedApplications;

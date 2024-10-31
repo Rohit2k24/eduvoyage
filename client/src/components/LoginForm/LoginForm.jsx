@@ -66,11 +66,12 @@ function LoginForm() {
           formData
         );
 
-        const { status, token, role, collegeId } = response.data;
+        const { status, token, role, collegeId, studentId } = response.data;
 
         if (status === 1) {
           localStorage.setItem("token", token);
           localStorage.setItem("role", role);
+          localStorage.setItem("studentId", studentId)
           if (role === "CollegeAdmin" && collegeId) {
             localStorage.setItem("collegeId", collegeId);
           }

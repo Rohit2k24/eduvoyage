@@ -80,6 +80,7 @@ exports.userLogin = async (req, res) => {
           message: "Login Successful!",
           token,
           role: user.role,
+
         });
       }
     );
@@ -470,6 +471,7 @@ exports.LoginForAll = async (req, res) => {
             message: "Login Successful!",
             token,
             role: user.role,
+            studentId: user?._id
           });
         }
       );

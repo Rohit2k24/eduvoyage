@@ -13,7 +13,6 @@ const Home = () => {
     const fetchCourses = async () => {
       // Simulating a delay
       setTimeout(() => {
-        setCourses(['Course 1', 'Course 2', 'Course 3', 'Course 4']);
         setLoading(false);
       }, 2000); // 2 seconds delay for loading simulation
     };

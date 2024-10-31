@@ -42,8 +42,15 @@ router.get('/approved-colleges', authController.getApprovedColleges);
 
 router.get('/offered-courses/:collegeId', authController.getOfferedCourses);
 
-router.post('/student-enroll-course', educationCourseController.studentEnrollCourse);
 
-router.get('/student-enroll-course', educationCourseController.getStudentEnroll);
+// ENROLL ROUTES
+
+router.post('/student-enroll-course',upload.single('percentageFile'), educationCourseController.studentEnrollCourse);
+
+router.get('/student-enroll-course/:collegeId', educationCourseController.getStudentEnroll);
+
+router.put('/approve-application/:applicationId', educationCourseController.approveApplication);
+
+router.put('/reject-application/:applicationId', educationCourseController.rejectApplication);
 
 module.exports = router;

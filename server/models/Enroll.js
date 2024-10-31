@@ -1,68 +1,29 @@
 const mongoose = require('mongoose');
 
 const enrollSchema = new mongoose.Schema({
-  fullName: {
-    type: String,
-    required: true,
-  },
-  dateOfBirth: {
-    type: Date,
-    required: true,
-  },
-  gender: {
-    type: String,
-    required: true,
-  },
-  nationality: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-  },
-  phone: {
-    type: String,
-    required: true,
-  },
-  identification: {
-    type: String,
-    required: true,
-  },
+  fullName: { type: String },
+  dateOfBirth: { type: Date },
+  gender: { type: String },
+  nationality: { type: String },
+  email: { type: String },
+  phone: { type: String },
+  identification: { type: String },
+  englishProficiencyScore: { type: Number },
+  studyMode: { type: String },
   previousEducation: {
-    type: String,
-    required: true,
+    highestQualification: { type: String },
+    degreeName: { type: String },
+    institution: { type: String },
+    yearOfCompletion: { type: Number },
+    gpa: { type: String },
   },
-  englishProficiencyScore: {
-    type: Number,
-    required: true,
-  },
-  studyMode: {
-    type: String,
-    required: true,
-  },
-  fundingSource: {
-    type: String,
-    required: true,
-  },
-  courseId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Course',
-    required: true,
-  },
-  collegeId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'College',
-    required: true,
-  },
-  enrolledDate: {
-    type: Date,
-    default: Date.now,
-  },
-  status: {
-    type: String,
-    default: "pending"
-  }
+  percentageFilePath: { type: String }, // Save file path here after upload
+  fundingSource: { type: String },
+  studentId: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+  courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Course' },
+  collegeId: { type: mongoose.Schema.Types.ObjectId, ref: 'College' },
+  enrolledDate: { type: Date, default: Date.now },
+  status: { type: String, default: "pending" }
 });
 
 module.exports = mongoose.model('Enroll', enrollSchema);

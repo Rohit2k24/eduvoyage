@@ -3,6 +3,8 @@ const EducationCourse = require("../models/EducationCourse");
 const OfferedCourse = require("../models/OfferedCourse");
 const College = require("../models/College");
 const Enroll = require("../models/Enroll");
+const path = require("path");
+const fs = require("fs");
 
 // Add a new course
 const addCourses = async (req, res) => {
@@ -194,12 +196,10 @@ const offerCourse = async (req, res) => {
       const savedCourse = await newOfferedCourse.save();
       console.log("Saved course:", savedCourse);
 
-      res
-        .status(201)
-        .json({
-          message: "Course offered successfully",
-          offeredCourse: savedCourse,
-        });
+      res.status(201).json({
+        message: "Course offered successfully",
+        offeredCourse: savedCourse,
+      });
     }
   } catch (error) {
     console.error("Error offering course:", error);
@@ -230,7 +230,6 @@ const remove_course_offer = async (req, res) => {
 };
 
 const studentEnrollCourse = async (req, res) => {
-  console.log(req.body);
   try {
     const {
       fullName,
@@ -240,14 +239,33 @@ const studentEnrollCourse = async (req, res) => {
       email,
       phone,
       identification,
-      previousEducation,
       englishProficiencyScore,
       studyMode,
       fundingSource,
       courseId,
       collegeId,
+      highestQualification,
+      degreeName,
+      institution,
+      yearOfCompletion,
+      gpa,
+      studentId
     } = req.body;
 
+    // Save the uploaded file to the uploads directory
+    let percentageFilePath = "";
+    if (req.file) {
+      const uploadPath = path.join(
+        __dirname,
+        "..",
+        "uploads",
+        req.file.originalname
+      );
+      fs.writeFileSync(uploadPath, req.file.buffer);
+      percentageFilePath = uploadPath; // Store the file path in the variable
+    }
+
+    // Create a new enrollment document with nested previousEducation fields
     const enrollment = new Enroll({
       fullName,
       dateOfBirth,
@@ -256,12 +274,21 @@ const studentEnrollCourse = async (req, res) => {
       email,
       phone,
       identification,
-      previousEducation,
       englishProficiencyScore,
       studyMode,
       fundingSource,
       courseId,
       collegeId,
+      studentId,
+      previousEducation: {
+        highestQualification,
+        degreeName,
+        institution,
+        yearOfCompletion,
+        gpa,
+      },
+      percentageFilePath,
+      status: "pending",
     });
 
     await enrollment.save();
@@ -274,12 +301,13 @@ const studentEnrollCourse = async (req, res) => {
 };
 
 const getStudentEnroll = async (req, res) => {
+  const { collegeId } = req.params;
+  console.log(collegeId);
   try {
-   
-    const enrollments = await StudentEnrollment.find()
-      .populate("studentId", "fullName email") 
-      .populate("courseId", "courseName") 
-      .populate("collegeId", "name"); 
+    const enrollments = await Enroll.find({collegeId : collegeId})
+      .populate("studentId")
+      .populate("courseId")
+      .populate("collegeId");
 
     if (enrollments.length === 0) {
       return res.status(404).json({ message: "No student enrollments found" });
@@ -291,12 +319,10 @@ const getStudentEnroll = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in getStudentEnroll:", error);
-    res
-      .status(500)
-      .json({
-        message: "Error retrieving student enrollments",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Error retrieving student enrollments",
+      error: error.message,
+    });
   }
 };
 
@@ -306,9 +332,37 @@ const getOfferedCourses = async (req, res) => {
     const courses = await OfferedCourse.find({ collegeId }); // Adjust based on your database structure
     res.status(200).json(courses);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching offered courses.' });
+    res.status(500).json({ message: "Error fetching offered courses." });
   }
 };
+
+const approveApplication = async (req, res) => {
+  const { applicationId } = req.params;
+  try {
+    const application = await Enroll.findByIdAndUpdate(applicationId, { status: "approved" }, { new: true });
+    if (!application) {
+      return res.status(404).json({ message: "Application not found" });
+    }
+    res.status(200).json({ message: "Application approved successfully", data: application });
+  } catch (error) {
+    console.error("Error approving application:", error);
+    res.status(500).json({ message: "Error approving application" });
+  }
+}
+
+const rejectApplication = async (req, res) => {
+  const { applicationId } = req.params;
+  try {
+    const application = await Enroll.findByIdAndUpdate(applicationId, { status: "rejected" }, { new: true });
+    if (!application) {
+      return res.status(404).json({ message: "Application not found" });
+    }
+    res.status(200).json({ message: "Application rejected successfully", data: application });
+  } catch (error) {
+    console.error("Error rejecting application:", error);
+    res.status(500).json({ message: "Error rejecting application" });
+  }
+}
 
 module.exports = {
   addCourses,
@@ -323,5 +377,7 @@ module.exports = {
   remove_course_offer,
   studentEnrollCourse,
   getStudentEnroll,
-  getOfferedCourses
+  getOfferedCourses,
+  approveApplication,
+  rejectApplication
 };

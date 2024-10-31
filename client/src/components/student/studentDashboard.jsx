@@ -61,6 +61,8 @@ const StudentDashboard = () => {
     try {
       await axios.post('http://localhost:5000/api/auth/logout');
       localStorage.removeItem("token");
+      localStorage.removeItem('studentId');
+      localStorage.removeItem("role")
       window.location.href = '/'; // Adjust to your login route
     } catch (error) {
       console.error('Error logging out:', error);

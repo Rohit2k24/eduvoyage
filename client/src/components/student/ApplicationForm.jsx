@@ -21,6 +21,7 @@ const ApplicationForm = ({ course, onClose, college }) => {
     gpa: '',
     englishProficiencyScore: '',
     studyMode: '',
+    percentageFile: null, 
   });
 
   const [errors, setErrors] = useState({});
@@ -32,6 +33,7 @@ const ApplicationForm = ({ course, onClose, college }) => {
       [name]: value,
     }));
 
+    // Email validation
     if (name === 'email' && !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(value)) {
       setErrors((prevErrors) => ({
         ...prevErrors,
@@ -45,22 +47,37 @@ const ApplicationForm = ({ course, onClose, college }) => {
     }
   };
 
+  // New handler for file uploads
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setFormData((prevState) => ({
+      ...prevState,
+      percentageFile: file,
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const studentId = localStorage.getItem('studentId');
     if (Object.values(errors).some((error) => error !== '')) {
       alert('Please correct the errors before submitting.');
       return;
     }
+
+    // Create FormData to include the file in the request
+    const formDataToSend = new FormData();
+    Object.keys(formData).forEach((key) => {
+      formDataToSend.append(key, formData[key]);
+    });
+    formDataToSend.append('courseId', course._id);
+    formDataToSend.append('collegeId', college._id);
+    formDataToSend.append('studentId', studentId );
+
     try {
-      const dataToSend = {
-        ...formData,
-        courseId: course._id,
-        collegeId: college._id,
-      };
       const response = await axios.post(
         'http://localhost:5000/api/auth/student-enroll-course',
-        dataToSend,
-        { headers: { 'Content-Type': 'application/json' } }
+        formDataToSend,
+        { headers: { 'Content-Type': 'multipart/form-data' } } // Change content type to multipart
       );
       alert('Application submitted successfully!');
       onClose();
@@ -92,8 +109,8 @@ const ApplicationForm = ({ course, onClose, college }) => {
       borderRadius: '8px',
       width: '80%',
       maxWidth: '600px',
-      maxHeight: '80vh', // Restrict height of the form container
-      overflowY: 'auto',  // Enable vertical scroll
+      maxHeight: '80vh',
+      overflowY: 'auto',
       position: 'relative',
     },
     closeButton: {
@@ -259,6 +276,7 @@ const ApplicationForm = ({ course, onClose, college }) => {
             />
           </div>
 
+          {/* English Proficiency Score */}
           <div style={styles.inputGroup}>
             <label style={styles.label}>English Proficiency Score</label>
             <input
@@ -269,7 +287,7 @@ const ApplicationForm = ({ course, onClose, college }) => {
               required
               style={styles.input}
             />
-          </div>  
+          </div>
 
           {/* Previous Education Section */}
           <h3>Previous Education</h3>
@@ -299,7 +317,7 @@ const ApplicationForm = ({ course, onClose, college }) => {
           </div>
 
           <div style={styles.inputGroup}>
-            <label style={styles.label}>University/Institution</label>
+            <label style={styles.label}>Institution</label>
             <input
               type="text"
               name="institution"
@@ -334,19 +352,21 @@ const ApplicationForm = ({ course, onClose, college }) => {
             />
           </div>
 
-          {/* Other Fields */}
+          {/* File Upload for Percentage */}
           <div style={styles.inputGroup}>
-            <label style={styles.label}>English Proficiency Score</label>
+            <label style={styles.label}>Upload Percentage Document</label>
             <input
-              type="text"
-              name="englishProficiencyScore"
-              value={formData.englishProficiencyScore}
-              onChange={handleChange}
+              type="file"
+              accept="application/pdf,image/*" // Accept PDF or images
+              onChange={handleFileChange}
               required
-              style={styles.input}
             />
+            {formData.percentageFile && (
+              <p>File Selected: {formData.percentageFile.name}</p>
+            )}
           </div>
 
+          {/* Study Mode */}
           <div style={styles.inputGroup}>
             <label style={styles.label}>Study Mode</label>
             <select
@@ -357,12 +377,12 @@ const ApplicationForm = ({ course, onClose, college }) => {
               style={styles.input}
             >
               <option value="">Select</option>
-              <option value="online">Online</option>
-              <option value="on-campus">On-Campus</option>
+              <option value="full-time">Offline</option>
+              <option value="part-time">Online</option>
             </select>
           </div>
 
-          {/* Submit/Cancel Button */}
+          {/* Button Group */}
           <div style={styles.buttonGroup}>
             <button type="button" onClick={onClose} style={styles.cancelButton}>
               Cancel

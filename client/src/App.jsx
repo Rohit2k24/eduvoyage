@@ -21,7 +21,8 @@ import ExamsAndCertifications from './components/collegeAdmin/ExamsAndCertificat
 import PublicQueries from './components/collegeAdmin/PublicQueries';
 import CourseOffered from "./components/collegeAdmin/CourseOffered";
 import StudyProgram from "./components/student/StudyProgram";
-import ApplicationRecieved from "./components/collegeAdmin/ApplicationsRecieved.jsx";
+import ApplicationRecieved from "./components/collegeAdmin/ApplicationsRecieved";
+import ApprovedApplications from "./components/collegeAdmin/ApprovedApplications";
 
 function App() {
   return (
@@ -48,6 +49,7 @@ function App() {
         <Route path="/application-recieved" element={<PrivateRoutes><ApplicationRecieved /></PrivateRoutes>} />
         <Route path="/public-queries" element={<PrivateRoutes><PublicQueries /></PrivateRoutes>} />
         <Route path="/study-program" element={<PrivateRoutes><StudyProgram /></PrivateRoutes>} />
+        <Route path="/approved-application" element={<PrivateRoutes><ApprovedApplications/></PrivateRoutes>}/>
       </Routes>
     </Router>
   );
