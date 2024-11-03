@@ -5,6 +5,15 @@ const College = require("../models/College");
 const Enroll = require("../models/Enroll");
 const path = require("path");
 const fs = require("fs");
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
 
 // Add a new course
 const addCourses = async (req, res) => {
@@ -249,7 +258,8 @@ const studentEnrollCourse = async (req, res) => {
       institution,
       yearOfCompletion,
       gpa,
-      studentId
+      studentId,
+      passportnumber
     } = req.body;
 
     // Save the uploaded file to the uploads directory
@@ -280,6 +290,7 @@ const studentEnrollCourse = async (req, res) => {
       courseId,
       collegeId,
       studentId,
+      passportnumber,
       previousEducation: {
         highestQualification,
         degreeName,
@@ -343,6 +354,16 @@ const approveApplication = async (req, res) => {
     if (!application) {
       return res.status(404).json({ message: "Application not found" });
     }
+
+    const userEmail = application.email;
+
+    // Send email notification
+    await sendEmailNotification(
+      userEmail,
+      "Application Approved",
+      "Congratulations! Your application has been approved."
+    );
+
     res.status(200).json({ message: "Application approved successfully", data: application });
   } catch (error) {
     console.error("Error approving application:", error);
@@ -357,12 +378,38 @@ const rejectApplication = async (req, res) => {
     if (!application) {
       return res.status(404).json({ message: "Application not found" });
     }
+
+    const userEmail = application.email;
+
+    await sendEmailNotification(
+      userEmail,
+      "Application Rejected",
+      "We regret to inform you that your application has been rejected."
+    );
+
     res.status(200).json({ message: "Application rejected successfully", data: application });
   } catch (error) {
     console.error("Error rejecting application:", error);
     res.status(500).json({ message: "Error rejecting application" });
   }
 }
+
+
+const sendEmailNotification = async (email, subject, message) => {
+  console.log(email, subject, message);
+  try {
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: subject,
+      text: message,
+    });
+    console.log("Email sent successfully");
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
+};
+
 
 module.exports = {
   addCourses,

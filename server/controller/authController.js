@@ -2,11 +2,19 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const nodemailer = require("nodemailer");
 const College = require("../models/College");
 const path = require("path");
 const fs = require("fs");
 const OfferedCourse = require("../models/OfferedCourse");
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
 
 exports.userRegister = async (req, res) => {
   const {
@@ -80,7 +88,6 @@ exports.userLogin = async (req, res) => {
           message: "Login Successful!",
           token,
           role: user.role,
-
         });
       }
     );
@@ -211,7 +218,7 @@ exports.registerCollege = async (req, res) => {
       address,
       country,
       contactPerson,
-      phoneNumber,
+      // phoneNumber,
       website,
     } = req.body;
 
@@ -252,7 +259,7 @@ exports.registerCollege = async (req, res) => {
       address,
       country,
       contactPerson,
-      phoneNumber,
+      // phoneNumber,
       website,
       accreditationCertificate: accreditationPath,
       legalDocuments: legalDocumentsPath,
@@ -292,6 +299,18 @@ exports.approvecollege = async (req, res) => {
     if (!college) {
       return res.status(404).json({ message: "College not found" });
     }
+
+    const collegeEmail = college.email;  // Make sure this field exists in your College model
+    if (collegeEmail) {
+      await sendEmailNotification(
+        collegeEmail,
+        "College Approval Notification",
+        `Dear ${college.collegeName}, we are pleased to inform you that your college has been approved.`
+      );
+    } else {
+      console.warn("College email not found. Approval email not sent.");
+    }
+
     res.json({ message: "College approved successfully", college });
   } catch (error) {
     res
@@ -299,6 +318,51 @@ exports.approvecollege = async (req, res) => {
       .json({ message: "Error approving college", error: error.message });
   }
 };
+
+exports.deletereqcollege = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const college = await College.findById(id);
+    if (!college) {
+      return res.status(404).json({ message: "College not found" });
+    }
+
+    const collegeEmail = college.email;  // Make sure this field exists in your College model
+    if (collegeEmail) {
+      await sendEmailNotification(
+        collegeEmail,
+        "College Decline Notification",
+        `Dear ${college.collegeName}, we are pleased to inform you that your college has been declined.`
+      );
+    } else {
+      console.warn("College email not found. Decline email not sent.");
+    }
+
+    // Delete the college from the database
+    await College.findByIdAndDelete(id);
+    res.status(200).json({ message: "College request declined and deleted" });
+  } catch (error) {
+    console.error("Error declining college:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const sendEmailNotification = async (email, subject, message) => {
+  console.log(email, subject, message);
+  try {
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: subject,
+      text: message,
+    });
+    console.log("Email sent successfully");
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
+};
+
 
 exports.getAllColleges = async (req, res) => {
   try {
@@ -316,7 +380,9 @@ exports.collegeLogin = async (req, res) => {
   try {
     let college = await College.findOne({ email, isApproved: true });
     if (!college) {
-      return res.status(400).json({ status: 0, message: "College Not Found OR Not Approved" });
+      return res
+        .status(400)
+        .json({ status: 0, message: "College Not Found OR Not Approved" });
     }
 
     const isMatch = await bcrypt.compare(password, college.password);
@@ -347,11 +413,10 @@ exports.collegeLogin = async (req, res) => {
           message: "Login Successful!",
           token,
           role: "CollegeAdmin",
-          collegeId: college.id
+          collegeId: college.id,
         });
       }
     );
-    
   } catch (error) {
     console.error("Server error:", error.message);
     res.status(500).send("Server error");
@@ -360,13 +425,10 @@ exports.collegeLogin = async (req, res) => {
 
 exports.disableCollege = async (req, res) => {
   const { id } = req.params; // Get the college ID from the request parameters
-  console.log(req.params)
+  console.log(req.params);
   try {
     // Find the college by ID and update the isApproved field to false
-    const college = await College.findByIdAndUpdate(
-      id,
-      { isApproved: false }
-    );
+    const college = await College.findByIdAndUpdate(id, { isApproved: false });
     if (!college) {
       return res.status(404).json({ message: "College not found" });
     }
@@ -374,29 +436,12 @@ exports.disableCollege = async (req, res) => {
     res.json({ message: "College disabled successfully", college });
   } catch (error) {
     console.error("Error disabling college:", error.message);
-    res.status(500).json({ message: "Error disabling college", error: error.message });
-  }
-
-  
-};
-
-exports.deletereqcollege= async (req, res) => {
-  const { id } = req.params;
-  
-  try {
-    const college = await College.findById(id);
-    if (!college) {
-      return res.status(404).json({ message: 'College not found' });
-    }
-    
-    // Delete the college from the database
-    await College.findByIdAndDelete(id);
-    res.status(200).json({ message: 'College request declined and deleted' });
-  } catch (error) {
-    console.error('Error declining college:', error);
-    res.status(500).json({ message: 'Server error' });
+    res
+      .status(500)
+      .json({ message: "Error disabling college", error: error.message });
   }
 };
+
 
 const getFilePath = (basePath, fileNameWithoutExtension) => {
   const jpgPath = path.join(basePath, `${fileNameWithoutExtension}.jpg`);
@@ -413,8 +458,11 @@ const getFilePath = (basePath, fileNameWithoutExtension) => {
 };
 
 exports.downloadAccreditation = async (req, res) => {
-  const collegeName = decodeURIComponent(req.params.collegeName); 
-  const basePath = path.join("C:/Users/rohit/EduVoyage/server/uploads/colleges", collegeName);
+  const collegeName = decodeURIComponent(req.params.collegeName);
+  const basePath = path.join(
+    "C:/Users/rohit/EduVoyage/server/uploads/colleges",
+    collegeName
+  );
 
   const accreditationPath = getFilePath(basePath, "accreditation");
 
@@ -426,8 +474,11 @@ exports.downloadAccreditation = async (req, res) => {
 };
 
 exports.downloadLegal = async (req, res) => {
-  const collegeName = decodeURIComponent(req.params.collegeName); 
-  const basePath = path.join("C:/Users/rohit/EduVoyage/server/uploads/colleges", collegeName);
+  const collegeName = decodeURIComponent(req.params.collegeName);
+  const basePath = path.join(
+    "C:/Users/rohit/EduVoyage/server/uploads/colleges",
+    collegeName
+  );
 
   const legalDocumentsPath = getFilePath(basePath, "legal");
 
@@ -438,6 +489,29 @@ exports.downloadLegal = async (req, res) => {
   }
 };
 
+exports.downloadPercentageFile = async (req, res) => {
+  // Decode the URL-encoded file path
+  const filePath = decodeURIComponent(req.params.filePath);
+  console.log(filePath)
+  // Define the full file path by joining the `uploads` directory and the provided file path
+  const fileLocation = path.join( 'C:/Users/rohit/EduVoyage/server/uploads', filePath);
+
+  console.log("File path:", fileLocation);
+
+  // Check if the file exists
+  if (fs.existsSync(fileLocation)) {
+    // Send the file for download
+    res.download(fileLocation, path.basename(fileLocation), (err) => {
+      if (err) {
+        console.error("Error in downloading file:", err);
+        res.status(500).json({ msg: "Error in downloading file" });
+      }
+    });
+  } else {
+    // If file not found, send a 404 response
+    res.status(404).json({ msg: "File not found" });
+  }
+};
 
 exports.LoginForAll = async (req, res) => {
   const { email, password } = req.body;
@@ -471,17 +545,19 @@ exports.LoginForAll = async (req, res) => {
             message: "Login Successful!",
             token,
             role: user.role,
-            studentId: user?._id
+            studentId: user?._id,
           });
         }
       );
-    } 
+    }
     // If not a regular user, check if it's a college admin
     else {
       let college = await College.findOne({ email, isApproved: true });
 
       if (!college) {
-        return res.status(400).json({ msg: "College Not Found OR Not Approved" });
+        return res
+          .status(400)
+          .json({ msg: "College Not Found OR Not Approved" });
       }
 
       const isMatch = await bcrypt.compare(password, college.password);
@@ -494,7 +570,7 @@ exports.LoginForAll = async (req, res) => {
         user: {
           id: college.id,
           role: "CollegeAdmin",
-          collegeId: college.id
+          collegeId: college.id,
         },
       };
 
@@ -509,7 +585,7 @@ exports.LoginForAll = async (req, res) => {
             message: "Login Successful!",
             token,
             role: "CollegeAdmin",
-            collegeId: college.id
+            collegeId: college.id,
           });
         }
       );
@@ -518,9 +594,7 @@ exports.LoginForAll = async (req, res) => {
     console.error("Server error:", error.message);
     res.status(500).send("Server error");
   }
-}
-
-
+};
 
 exports.getOfferedCourses = async (req, res) => {
   try {
@@ -528,11 +602,12 @@ exports.getOfferedCourses = async (req, res) => {
     const offeredCourses = await OfferedCourse.find({ collegeId });
     res.status(200).json(offeredCourses);
   } catch (error) {
-    console.error('Error fetching offered courses:', error);
-    res.status(500).json({ message: 'Internal server error', error: error.message });
+    console.error("Error fetching offered courses:", error);
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 };
-
 
 exports.getApprovedColleges = async (req, res) => {
   console.log("Entered the backend");

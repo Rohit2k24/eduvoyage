@@ -12,14 +12,13 @@ const ApplicationForm = ({ course, onClose, college }) => {
     nationality: '',
     email: '',
     phone: '',
-    identification: '',
+    passportnumber: '',
     academicBackground: '',
     highestQualification: '',
     degreeName: '',
     institution: '',
     yearOfCompletion: '',
     gpa: '',
-    englishProficiencyScore: '',
     studyMode: '',
     percentageFile: null, 
   });
@@ -236,7 +235,7 @@ const ApplicationForm = ({ course, onClose, college }) => {
           {/* Contact Information */}
           <div style={styles.inputGroup}>
             <label style={styles.label}>Email</label>
-            <input
+            <input  
               type="email"
               name="email"
               value={formData.email}
@@ -265,24 +264,11 @@ const ApplicationForm = ({ course, onClose, college }) => {
 
           {/* Identification Number */}
           <div style={styles.inputGroup}>
-            <label style={styles.label}>Identification Number</label>
+            <label style={styles.label}>Passport Number</label>
             <input
               type="text"
-              name="identification"
-              value={formData.identification}
-              onChange={handleChange}
-              required
-              style={styles.input}
-            />
-          </div>
-
-          {/* English Proficiency Score */}
-          <div style={styles.inputGroup}>
-            <label style={styles.label}>English Proficiency Score</label>
-            <input
-              type="text"
-              name="englishProficiencyScore"
-              value={formData.englishProficiencyScore}
+              name="passportnumber"
+              value={formData.passportnumber}
               onChange={handleChange}
               required
               style={styles.input}

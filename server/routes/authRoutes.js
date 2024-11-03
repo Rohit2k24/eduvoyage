@@ -22,7 +22,12 @@ router.put('/reset-password/:resetToken', authController.resetPassword);
 
 router.get('/unapproved-colleges', authController.unapprovedColleges);
 
-router.put('/approve-college/:id', authController.approvecollege)
+// COLLEGE APPROVAL & DECLINE
+
+router.put('/approve-college/:id', authController.approvecollege);
+
+router.delete('/decline-college/:id',authController.deletereqcollege);
+
 
 router.get('/colleges', authController.getAllColleges)
 
@@ -34,9 +39,9 @@ router.get('/download/accreditation/:collegeName', authController.downloadAccred
 
 router.get('/download/legal/:collegeName', authController.downloadLegal)
 
-router.post('/login-for-all', authController.LoginForAll);
+router.get('/download/:filePath', authController.downloadPercentageFile)
 
-router.delete('/decline-college/:id',authController.deletereqcollege);
+router.post('/login-for-all', authController.LoginForAll);
 
 router.get('/approved-colleges', authController.getApprovedColleges);
 

@@ -1,29 +1,96 @@
+.college-admin-dashboard-container {
+  display: flex;
+  height: 100vh; /* Full height of the viewport */
+  background-color: #f8f9fa;
+}
+
+.content {
+  flex-grow: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center content horizontally */
+}
+
+.dashboard-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: #2c3e50;
+}
+
 .application-table {
-    width: 100%;
-    border-collapse: collapse;
+  width: 90%; /* Slight margin on each side for visual appeal */
+  max-width: 1200px; /* Limit the table width */
+  border-collapse: collapse;
+  margin: 0 auto;
+}
+
+.application-table th, .application-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  font-size: 0.9rem;
+}
+
+.application-table th {
+  background-color: #f4f4f4;
+  color: #34495e;
+  font-weight: 600;
+  text-align: center;
+}
+
+.application-table td {
+  background-color: #ffffff;
+  text-align: center;
+  transition: background-color 0.3s;
+}
+
+.application-table tr:hover td {
+  background-color: #ecf0f1;
+}
+
+.approve-btn, .reject-btn {
+  margin: 5px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.approve-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.approve-btn:hover {
+  background-color: #45a049;
+}
+
+.reject-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.reject-btn:hover {
+  background-color: #e53935;
+}
+
+@media (max-width: 768px) {
+  .application-table, .application-table th, .application-table td {
+    font-size: 0.8rem;
   }
-  
-  .application-table th, .application-table td {
-    padding: 10px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
+
+  .dashboard-header {
+    font-size: 1.3rem;
   }
-  
+
   .approve-btn, .reject-btn {
-    margin: 5px;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+    padding: 5px 8px;
   }
-  
-  .approve-btn {
-    background-color: #4CAF50;
-    color: white;
-  }
-  
-  .reject-btn {
-    background-color: #f44336;
-    color: white;
-  }
-  
+}

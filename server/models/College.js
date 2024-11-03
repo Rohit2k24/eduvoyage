@@ -7,7 +7,7 @@ const collegeSchema = new mongoose.Schema({
   address: { type: String, required: true },
   country: { type: String, required: true },
   contactPerson: { type: String, required: true },
-  phoneNumber: { type: String, required: true },
+  phoneNumber: { type: String },
   website: { type: String },
   accreditationCertificate: { type: String },
   legalDocuments: { type: String },

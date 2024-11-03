@@ -7,8 +7,7 @@ const enrollSchema = new mongoose.Schema({
   nationality: { type: String },
   email: { type: String },
   phone: { type: String },
-  identification: { type: String },
-  englishProficiencyScore: { type: Number },
+  passportnumber: { type: String },
   studyMode: { type: String },
   previousEducation: {
     highestQualification: { type: String },

@@ -54,8 +54,16 @@ const ApprovedApplications = () => {
               <th>Full Name</th>
               <th>Email</th>
               <th>Phone</th>
+              <th>Date of Birth</th>
+              <th>Gender</th>
+              <th>Nationality</th>
+              <th>Passport Number</th>
               <th>Highest Qualification</th>
+              <th>Degree Name</th>
+              <th>Institution</th>
+              <th>Year of Completion</th>
               <th>GPA</th>
+              <th>Study Mode</th>
               <th>Status</th>
             </tr>
           </thead>
@@ -65,8 +73,16 @@ const ApprovedApplications = () => {
                 <td>{application.fullName}</td>
                 <td>{application.email}</td>
                 <td>{application.phone}</td>
+                <td>{application.dateOfBirth ? new Date(application.dateOfBirth).toISOString().split('T')[0] : 'N/A'}</td>
+                <td>{application.gender || 'N/A'}</td>
+                <td>{application.nationality || 'N/A'}</td>
+                <td>{application.passportnumber || 'N/A'}</td>
                 <td>{application.previousEducation?.highestQualification || 'N/A'}</td>
+                <td>{application.previousEducation?.degreeName || 'N/A'}</td>
+                <td>{application.previousEducation?.institution || 'N/A'}</td>
+                <td>{application.previousEducation?.yearOfCompletion || 'N/A'}</td>
                 <td>{application.previousEducation?.gpa || 'N/A'}</td>
+                <td>{application.studyMode || 'N/A'}</td>
                 <td>{application.status.charAt(0).toUpperCase() + application.status.slice(1)}</td>
               </tr>
             ))}
