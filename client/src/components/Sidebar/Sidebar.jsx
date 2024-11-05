@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Sidebar.css';
 
-const Sidebar = ({ handleLogout}) => {
+const Sidebar = ({ handleLogout }) => {
   const navigate = useNavigate();
 
   const handleLogoutAndRedirect = async () => {
@@ -16,7 +16,7 @@ const Sidebar = ({ handleLogout}) => {
   };
 
   return (
-    <div className="sidebar">
+    <div className="admin-sidebar"> {/* Use a unique class for the admin sidebar */}
       <div className="sidebar-header">Admin Panel</div>
       <ul className="sidebar-menu">
         <li><Link to="/adminDashboard">Dashboard</Link></li>

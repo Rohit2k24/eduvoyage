@@ -11,9 +11,9 @@ const CollegeAdminDashboard = () => {
 
   // State for dashboard data and offered courses
   const [dashboardData, setDashboardData] = useState({
-    studentCount: 150,
+    studentCount: 0,
     courseCount: 0,
-    revenue: 50000,
+    revenue: 0,
   });
   const [offeredCourses, setOfferedCourses] = useState([]);
 

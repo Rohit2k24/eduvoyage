@@ -117,7 +117,7 @@ const CollegesList = () => {
                     <th style={styles.tableHeader}>Address</th>
                     <th style={styles.tableHeader}>Email</th>
                     <th style={styles.tableHeader}>Contact Person</th>
-                    <th style={styles.tableHeader}>Phone Number</th>
+                    {/* <th style={styles.tableHeader}>Phone Number</th> */}
                     <th style={styles.tableHeader}>Website</th>
                     <th style={styles.tableHeader}>Status</th>
                     <th style={styles.tableHeader}>Actions</th>
@@ -130,7 +130,7 @@ const CollegesList = () => {
                       <td style={styles.tableCell}>{college.address}</td>
                       <td style={styles.tableCell}>{college.email}</td>
                       <td style={styles.tableCell}>{college.contactPerson}</td>
-                      <td style={styles.tableCell}>{college.phoneNumber}</td>
+                      {/* <td style={styles.tableCell}>{college.phoneNumber}</td> */}
                       <td style={styles.tableCell}>{college.website}</td>
                       <td style={styles.tableCell}>
                         <div style={styles.status}>

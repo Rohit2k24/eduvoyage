@@ -158,13 +158,22 @@ const ManageCourses = () => {
         </Table>
 
         {/* Add/Edit Course Modal */}
-        <Modal show={showAddCourseModal} onHide={handleCloseAddCourseModal}>
+        <Modal 
+          show={showAddCourseModal} 
+          onHide={handleCloseAddCourseModal}
+          style={{ zIndex: 1050 }}
+          backdrop="static"
+        >
           <Modal.Header closeButton>
             <Modal.Title>{isEditMode ? 'Edit Course' : 'Add New Course'}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Form onSubmit={handleAddOrEditCourse}>
-              <Form.Group controlId="formCourseName">
+            <Form onSubmit={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleAddOrEditCourse(e);
+            }}>
+              <Form.Group controlId="formCourseName" className="mb-3">
                 <Form.Label>Course Name</Form.Label>
                 <Form.Control
                   type="text"
@@ -174,7 +183,7 @@ const ManageCourses = () => {
                   required
                 />
               </Form.Group>
-              <Form.Group controlId="formCourseDescription">
+              <Form.Group controlId="formCourseDescription" className="mb-3">
                 <Form.Label>Course Description</Form.Label>
                 <Form.Control
                   as="textarea"

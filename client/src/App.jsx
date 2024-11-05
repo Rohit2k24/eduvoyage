@@ -4,10 +4,10 @@ import Advertisement from "./components/Home/Advertisement";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import "./App.css"; 
-import StudentDashboard from "./components/student/studentDashboard";
-import CollegeAdmin from "./components/collegeAdmin/collegeadminDashboard";
+import StudentDashboard from "./components/student/StudentDashboard";
+import CollegeAdmin from "./components/collegeAdmin/CollegeAdminDashboard";
 import ForgotPassword from "./components/ForgotPassword";
-import AdminDashboard from "./components/Admin/adminDashboard";
+import AdminDashboard from "./components/Admin/AdminDashboard";
 import RegisterRedirect from "./components/RegisterForm/RegisterRedirect";
 import CollegeRegistrationForm from "./components/RegisterForm/CollegeRegistrationForm";
 import PrivateRoutes from "./utils/PrivateRoutes";
@@ -23,6 +23,12 @@ import CourseOffered from "./components/collegeAdmin/CourseOffered";
 import StudyProgram from "./components/student/StudyProgram";
 import ApplicationRecieved from "./components/collegeAdmin/ApplicationsRecieved";
 import ApprovedApplications from "./components/collegeAdmin/ApprovedApplications";
+import Resources from "./components/student/Resources";
+import Tasks from "./components/student/Tasks";
+import Exams from "./components/student/Exams";
+import Analytics from "./components/student/Analytics";
+import Groups from "./components/student/Groups";
+import Messages from "./components/student/Messages";
 
 function App() {
   return (
@@ -34,13 +40,13 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/college-register" element={<CollegeRegistrationForm />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/studentDashboard" element={<PrivateRoutes><StudentDashboard /></PrivateRoutes>}/>
-        <Route path="/adminDashboard" element={<PrivateRoutes><AdminDashboard/></PrivateRoutes>} />
-        <Route path="/collegeadminDashboard" element={<PrivateRoutes><CollegeAdmin/></PrivateRoutes>} />
-        <Route path="/forgot-password" element={<PrivateRoutes><ForgotPassword/></PrivateRoutes>} />
-        <Route path="/admin/colleges" element={<PrivateRoutes><CollegesList/></PrivateRoutes>}/>
-        <Route path="/admin/approve-colleges" element={<PrivateRoutes><ApproveColleges/></PrivateRoutes>}/>
-        <Route path="/admin/manage-courses" element={<PrivateRoutes><ManageCourses/></PrivateRoutes>}/>
+        <Route path="/studentDashboard" element={<PrivateRoutes><StudentDashboard /></PrivateRoutes>} />
+        <Route path="/adminDashboard" element={<PrivateRoutes><AdminDashboard /></PrivateRoutes>} />
+        <Route path="/collegeadminDashboard" element={<PrivateRoutes><CollegeAdmin /></PrivateRoutes>} />
+        <Route path="/forgot-password" element={<PrivateRoutes><ForgotPassword /></PrivateRoutes>} />
+        <Route path="/admin/colleges" element={<PrivateRoutes><CollegesList /></PrivateRoutes>} />
+        <Route path="/admin/approve-colleges" element={<PrivateRoutes><ApproveColleges /></PrivateRoutes>} />
+        <Route path="/admin/manage-courses" element={<PrivateRoutes><ManageCourses /></PrivateRoutes>} />
         <Route path="/deleted-courses" element={<PrivateRoutes><DisabledCourses /></PrivateRoutes>} />
         <Route path="/admin/manage-users" element={<PrivateRoutes><ManageUsers /></PrivateRoutes>} />
         <Route path="/admin/reports" element={<PrivateRoutes><Reports /></PrivateRoutes>} />
@@ -49,7 +55,13 @@ function App() {
         <Route path="/application-recieved" element={<PrivateRoutes><ApplicationRecieved /></PrivateRoutes>} />
         <Route path="/public-queries" element={<PrivateRoutes><PublicQueries /></PrivateRoutes>} />
         <Route path="/study-program" element={<PrivateRoutes><StudyProgram /></PrivateRoutes>} />
-        <Route path="/approved-application" element={<PrivateRoutes><ApprovedApplications/></PrivateRoutes>}/>
+        <Route path="/approved-application" element={<PrivateRoutes><ApprovedApplications /></PrivateRoutes>} />
+        <Route path="/resources" element={<PrivateRoutes><Resources /></PrivateRoutes>} />
+        <Route path="/tasks" element={<PrivateRoutes><Tasks /></PrivateRoutes>} />
+        <Route path="/exams" element={<PrivateRoutes><Exams /></PrivateRoutes>} />
+        <Route path="/analytics" element={<PrivateRoutes><Analytics /></PrivateRoutes>} />
+        <Route path="/groups" element={<PrivateRoutes><Groups /></PrivateRoutes>} />
+        <Route path="/messages" element={<PrivateRoutes><Messages /></PrivateRoutes>} />
       </Routes>
     </Router>
   );
