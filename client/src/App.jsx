@@ -40,7 +40,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/college-register" element={<CollegeRegistrationForm />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/studentDashboard" element={<PrivateRoutes><StudentDashboard /></PrivateRoutes>} />
+        <Route path="/studentDashboard/*" element={<PrivateRoutes><StudentDashboard /></PrivateRoutes>} />
         <Route path="/adminDashboard" element={<PrivateRoutes><AdminDashboard /></PrivateRoutes>} />
         <Route path="/collegeadminDashboard" element={<PrivateRoutes><CollegeAdmin /></PrivateRoutes>} />
         <Route path="/forgot-password" element={<PrivateRoutes><ForgotPassword /></PrivateRoutes>} />
