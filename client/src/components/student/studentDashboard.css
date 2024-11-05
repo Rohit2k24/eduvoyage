@@ -9,7 +9,17 @@ body, html {
 }
 
 .student-dashboard {
-  display: flex; /* Align sidebar and content side by side */
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  margin-left: 250px;
+  overflow-y: auto;
+  background-color: #f8f9fa;
 }
 
 .dashboard-container {
@@ -71,30 +81,19 @@ body, html {
   margin-top: 60px; /* Add margin to prevent overlap with fixed header */
 }
 
-/* Sidebar */
-.sidebar {
-  width: 250px;
-  background-color: #282c34;
-  color: #fff;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
-}
-
-.sidebar h2 {
+.student-sidebar h2 {
   font-size: 24px;
   margin-bottom: 30px;
   text-align: center;
   letter-spacing: 2px;
 }
 
-.sidebar ul {
+.student-sidebar ul {
   list-style: none;
   padding: 0;
 }
 
-.sidebar ul li {
+.student-sidebar ul li {
   padding: 15px;
   margin: 10px 0;
   cursor: pointer;
@@ -102,8 +101,8 @@ body, html {
   transition: background-color 0.3s, color 0.3s;
 }
 
-.sidebar ul li:hover,
-.sidebar ul li.active {
+.student-sidebar ul li:hover,
+.student-sidebar ul li.active {
   background-color: #61dafb;
   color: #282c34;
 }
@@ -111,10 +110,9 @@ body, html {
 /* Main Content */
 .main-content {
   flex: 1;
-  background-color: #f4f7fc;
-  padding: 30px;
+  padding: 20px;
+  margin-left: 250px; /* Match sidebar width */
   overflow-y: auto;
-  margin-top: 60px; /* Add margin to align with header */
 }
 
 /* Dashboard Section */
@@ -364,7 +362,7 @@ label {
     margin-left: 0; /* Remove sidebar margin on small screens */
   }
 
-  .sidebar {
+  .student-sidebar {
     width: 100%; /* Full width sidebar */
     position: relative; /* Allow stacking */
   }
@@ -440,4 +438,13 @@ label {
   margin-bottom: 30px;
   color: #343a40;
   font-size: 2rem;
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 900;
+  background-color: #fff;
+  padding: 15px 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

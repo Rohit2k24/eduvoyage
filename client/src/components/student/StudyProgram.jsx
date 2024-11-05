@@ -8,6 +8,7 @@ import Header from './Header'; // Import the Header component
 import './studentDashboard.css'; // Import your CSS for global styles
 
 const StudyProgram = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState({ firstname: '', lastname: '' });
   const [colleges, setColleges] = useState([]);
   const [selectedCollege, setSelectedCollege] = useState(null);
@@ -41,8 +42,17 @@ const StudyProgram = () => {
   };
 
   const handleCollegeClick = (college) => {
-    setSelectedCollege(college);
-    fetchOfferedCourses(college._id);
+    navigate('/studentDashboard/college-details', { 
+      state: { 
+        college: {
+          ...college,
+          _id: college._id,
+          collegeName: college.collegeName,
+          address: college.address,
+          country: college.country
+        } 
+      }
+    });
   };
 
   const handleApply = (course) => {

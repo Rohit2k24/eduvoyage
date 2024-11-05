@@ -90,47 +90,42 @@ const AdminDashboard = () => {
 
   return (
     <div className="admin-dashboard">
-      <Sidebar handleLogout={handleLogout}/>
-      <div className="main-content">
-        {currentPage === 'dashboard' && (
-          <>
-            <div className="admin-dashboard-header">
-              <h1>Admin Dashboard</h1>
-              <p>Welcome back, Admin! Here's an overview of the latest metrics.</p>
-            </div>
-            <div className="admin-dashboard-overview">
-              <div className="admin-dashboard-card">
-                <h3>Total Students</h3>
-                <p>{roleCounts.studentCount}</p>
-              </div>
-              <div className="admin-dashboard-card">
-                <h3>Current Courses</h3>
-                <p>{roleCounts.courseCount}</p>
-              </div>
-            </div>
-            <div className="admin-dashboard-recent-activity">
-              <h2>Recent Activity</h2>
-              <Table striped bordered hover>
-                <thead>
-                  <tr>
-                    <th>User</th>
-                    <th>Action</th>
-                    <th>Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {recentActivity.slice(0, 5).map((activity, index) => (
-                    <tr key={index}>
-                      <td>{activity.firstname} {activity.lastname}</td>
-                      <td>{activity.role} registered</td>
-                      <td>{new Date(activity.createdAt).toLocaleDateString()}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </div>
-          </>
-        )}
+      <Sidebar handleLogout={handleLogout} />
+      <div className="admin-content">
+        <div className="admin-dashboard-header">
+          <h2>Admin Dashboard</h2>
+        </div>
+        <div className="admin-dashboard-overview">
+          <div className="admin-dashboard-card">
+            <h3>Total Students</h3>
+            <p>{roleCounts.studentCount}</p>
+          </div>
+          <div className="admin-dashboard-card">
+            <h3>Current Courses</h3>
+            <p>{roleCounts.courseCount}</p>
+          </div>
+        </div>
+        <div className="admin-dashboard-recent-activity">
+          <h2>Recent Activity</h2>
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Action</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {recentActivity.slice(0, 5).map((activity, index) => (
+                <tr key={index}>
+                  <td>{activity.firstname} {activity.lastname}</td>
+                  <td>{activity.role} registered</td>
+                  <td>{new Date(activity.createdAt).toLocaleDateString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </div>
       </div>
     </div>
   );

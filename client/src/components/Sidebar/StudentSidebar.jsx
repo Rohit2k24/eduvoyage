@@ -6,7 +6,7 @@ import './studentSidebar.css';
 
 const StudentSidebar = ({ activeTab, setActiveTab }) => {
   return (
-    <aside className="sidebar">
+    <aside className="student-sidebar">
       <h2>Eduvoyage</h2>
       <ul>
         <li className={activeTab === 'Dashboard' ? 'active' : ''}>

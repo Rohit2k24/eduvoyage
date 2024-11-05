@@ -29,6 +29,10 @@ import Exams from "./components/student/Exams";
 import Analytics from "./components/student/Analytics";
 import Groups from "./components/student/Groups";
 import Messages from "./components/student/Messages";
+import CollegeDetails from "./components/student/CollegeDetails";
+import AvailableCourses from "./components/student/AvailableCourses";
+import HelpSupport from "./components/student/HelpSupport";
+import ScholarshipPrograms from "./components/student/ScholarshipPrograms";
 
 function App() {
   return (
@@ -40,7 +44,12 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/college-register" element={<CollegeRegistrationForm />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/studentDashboard/*" element={<PrivateRoutes><StudentDashboard /></PrivateRoutes>} />
+        <Route path="/studentDashboard" element={<PrivateRoutes><StudentDashboard /></PrivateRoutes>} />
+        <Route path="/studentDashboard/study-program" element={<PrivateRoutes><StudyProgram /></PrivateRoutes>} />
+        <Route path="/studentDashboard/college-details" element={<PrivateRoutes><CollegeDetails /></PrivateRoutes>} />
+        <Route path="/studentDashboard/available-courses" element={<PrivateRoutes><AvailableCourses /></PrivateRoutes>} />
+        <Route path="/studentDashboard/help-support" element={<PrivateRoutes><HelpSupport /></PrivateRoutes>} />
+        <Route path="/studentDashboard/scholarships" element={<PrivateRoutes><ScholarshipPrograms /></PrivateRoutes>} />
         <Route path="/adminDashboard" element={<PrivateRoutes><AdminDashboard /></PrivateRoutes>} />
         <Route path="/collegeadminDashboard" element={<PrivateRoutes><CollegeAdmin /></PrivateRoutes>} />
         <Route path="/forgot-password" element={<PrivateRoutes><ForgotPassword /></PrivateRoutes>} />

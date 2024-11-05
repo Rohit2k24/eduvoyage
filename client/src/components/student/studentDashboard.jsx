@@ -6,7 +6,7 @@ import StudentSidebar from '../Sidebar/StudentSidebar';
 import './studentDashboard.css';
 import Header from './Header';
 import axios from 'axios';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Outlet } from 'react-router-dom';
 import Resources from './Resources';
 import Tasks from './Tasks';
 import Exams from './Exams';
@@ -23,7 +23,6 @@ const StudentDashboard = () => {
     address: '',
     country: ''
   });
-  const [activeTab, setActiveTab] = useState('Dashboard');
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
@@ -101,27 +100,15 @@ const StudentDashboard = () => {
 
   return (
     <div className="student-dashboard">
-      <StudentSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-      <div className="dashboard-container">
+      <StudentSidebar />
+      <div className="main-content">
         <Header user={user} onLogout={handleLogout} />
-        <div className="main-content">
-          {errorMessage && <div className="error-message">{errorMessage}</div>}
-          <Routes>
-            <Route path="/" element={
-              <div className="dashboard-welcome">
-                <h2>Welcome to Your Dashboard!</h2>
-                <UserProfileCard />
-              </div>
-            } />
-            <Route path="/study-program" element={<h2>Study Programs</h2>} />
-            <Route path="/resources" element={<Resources />} />
-            <Route path="/tasks" element={<Tasks />} />
-            <Route path="/exams" element={<Exams />} />
-            <Route path="/analytics" element={<Analytics />} />
-            <Route path="/groups" element={<Groups />} />
-            <Route path="/messages" element={<Messages />} />
-          </Routes>
-        </div>
+        <UserProfileCard />
+        {errorMessage && (
+          <div className="error-message">
+            {errorMessage}
+          </div>
+        )}
       </div>
     </div>
   );

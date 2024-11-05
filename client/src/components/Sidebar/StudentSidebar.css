@@ -1,47 +1,47 @@
-.sidebar {
+.student-sidebar {
     width: 250px; /* Adjust the width of the sidebar */
-    background-color: #343a40; /* Dark background for the sidebar */
+    background-color:#282c34; /* Changed to match header color */
     color: white; /* Text color */
     height: 100vh; /* Full height */
     padding: 20px; /* Padding inside the sidebar */
     position: fixed; /* Fix the sidebar on the left */
   }
   
-  .sidebar h2 {
+  .student-sidebar h2 {
     text-align: center;
     margin-bottom: 20px;
     color: #ffffff; /* Heading color */
   }
   
-  .sidebar ul {
+  .student-sidebar ul {
     list-style-type: none; /* Remove bullet points */
     padding: 0; /* Remove padding */
   }
   
-  .sidebar li {
+  .student-sidebar li {
     padding: 10px 15px; /* Padding for each item */
     cursor: pointer; /* Change cursor on hover */
     transition: background-color 0.3s; /* Smooth transition for hover effect */
   }
   
-  .sidebar li:hover {
-    background-color: #495057; /* Darker background on hover */
+  .student-sidebar li:hover {
+    background-color: #34495e; /* Slightly lighter shade for hover */
   }
   
-  .sidebar .active {
-    background-color: #007bff; /* Active item color */
+  .student-sidebar .active {
+    background-color: #3498db; /* Changed to match the theme */
   }
   
-  .sidebar .active:hover {
-    background-color: #0056b3; /* Active item hover color */
+  .student-sidebar .active:hover {
+    background-color: #2980b9; /* Darker shade of active color */
   }
   
-  .sidebar a {
+  .student-sidebar a {
     color: white; /* Link color */
     text-decoration: none; /* Remove underline from links */
   }
   
-  .sidebar a:hover {
+  .student-sidebar a:hover {
     text-decoration: underline; /* Underline on hover */
   }
   
