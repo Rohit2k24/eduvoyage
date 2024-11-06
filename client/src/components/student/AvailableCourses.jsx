@@ -11,9 +11,11 @@ const AvailableCourses = () => {
   const [offeredCourses, setOfferedCourses] = useState([]);
   const [showApplicationForm, setShowApplicationForm] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState(null);
+  const [applications, setApplications] = useState([]);
 
   useEffect(() => {
     fetchOfferedCourses(college._id);
+    fetchApplications();
   }, [college._id]);
 
   const fetchOfferedCourses = async (collegeId) => {
@@ -25,9 +27,110 @@ const AvailableCourses = () => {
     }
   };
 
+  const fetchApplications = async () => {
+    try {
+      const studentId = localStorage.getItem('studentId');
+      const response = await axios.get(`http://localhost:5000/api/auth/student-applications/${studentId}`);
+      setApplications(response.data);
+    } catch (error) {
+      console.error('Error fetching applications:', error);
+    }
+  };
+
+  const getApplicationStatus = (courseId) => {
+    const courseApplications = applications
+      .filter(app => app.courseId === courseId)
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    
+    return courseApplications.length > 0 ? courseApplications[0].status : null;
+  };
+
+  const renderActionButton = (course) => {
+    const status = getApplicationStatus(course._id);
+    
+    switch(status) {
+      case 'pending':
+        return (
+          <button
+            style={{...styles.applyButton, backgroundColor: '#f39c12'}}
+            disabled
+          >
+            Application Under Process
+          </button>
+        );
+      case 'approved':
+        return (
+          <button
+            style={{...styles.applyButton, backgroundColor: '#27ae60'}}
+            onClick={() => handlePayment(course)}
+          >
+            Pay Now
+          </button>
+        );
+      case 'rejected':
+        return (
+          <button 
+            style={{
+              backgroundColor: '#ff4444',
+              color: 'white',
+              padding: '10px 20px',
+              border: 'none',
+              borderRadius: '5px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+              width: '100%',
+              maxWidth: '250px',
+              margin: '10px 0',
+              fontSize: '0.9rem',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px',
+              position: 'relative',
+              overflow: 'hidden'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#ff6666';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#ff4444';
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.2)';
+            }}
+            onClick={() => {
+              setSelectedCourse(course);
+              setShowApplicationForm(true);
+            }}
+          >
+            Application Rejected - Apply Again
+          </button>
+        );
+      default:
+        return (
+          <button
+            style={styles.applyButton}
+            onClick={() => {
+              setSelectedCourse(course);
+              setShowApplicationForm(true);
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#0056b3')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#007bff')}
+          >
+            Apply Now
+          </button>
+        );
+    }
+  };
+
   const handleApply = (course) => {
     setSelectedCourse(course);
     setShowApplicationForm(true);
+  };
+
+  const handlePayment = (course) => {
+    console.log('Handle payment for course:', course);
   };
 
   // Reusing styles from StudyProgram.jsx
@@ -88,6 +191,13 @@ const AvailableCourses = () => {
       letterSpacing: '1px',
       boxShadow: '0 4px 8px rgba(0, 123, 255, 0.2)',
     },
+    rejected: {
+      backgroundColor: '#ff4444',
+      color: 'white',
+      '&:hover': {
+        backgroundColor: '#cc0000'
+      }
+    }
   };
 
   return (
@@ -107,14 +217,7 @@ const AvailableCourses = () => {
               <h3 style={styles.courseName}>{course.courseName}</h3>
               <p style={styles.courseDetails}>Duration: {course.duration}</p>
               <p style={styles.courseDetails}>Price: ${course.price}</p>
-              <button
-                style={styles.applyButton}
-                onClick={() => handleApply(course)}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#0056b3')}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#007bff')}
-              >
-                Apply Now
-              </button>
+              {renderActionButton(course)}
             </div>
           ))}
         </div>
@@ -122,7 +225,10 @@ const AvailableCourses = () => {
           <ApplicationForm
             course={selectedCourse}
             college={college}
-            onClose={() => setShowApplicationForm(false)}
+            onClose={() => {
+              setShowApplicationForm(false);
+              fetchApplications();
+            }}
           />
         )}
       </div>

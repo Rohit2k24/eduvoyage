@@ -16,13 +16,18 @@ const enrollSchema = new mongoose.Schema({
     yearOfCompletion: { type: Number },
     gpa: { type: String },
   },
-  percentageFilePath: { type: String }, // Save file path here after upload
+  percentageFilePath: { type: String },
   fundingSource: { type: String },
   studentId: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
   courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Course' },
   collegeId: { type: mongoose.Schema.Types.ObjectId, ref: 'College' },
   enrolledDate: { type: Date, default: Date.now },
   status: { type: String, default: "pending" }
+}, { 
+  timestamps: true 
 });
+
+// Add compound index for studentId and courseId
+enrollSchema.index({ studentId: 1, courseId: 1 });
 
 module.exports = mongoose.model('Enroll', enrollSchema);

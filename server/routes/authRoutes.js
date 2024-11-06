@@ -58,4 +58,6 @@ router.put('/approve-application/:applicationId', educationCourseController.appr
 
 router.put('/reject-application/:applicationId', educationCourseController.rejectApplication);
 
+router.get('/student-applications/:studentId', educationCourseController.getStudentApplications);
+
 module.exports = router;

@@ -240,6 +240,37 @@ const remove_course_offer = async (req, res) => {
 
 const studentEnrollCourse = async (req, res) => {
   try {
+    // File validation
+    if (req.file) {
+      const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+      const maxSize = 5 * 1024 * 1024; // 5MB
+
+      if (!allowedTypes.includes(req.file.mimetype)) {
+        return res.status(400).json({ 
+          message: "Invalid file type. Only PDF, JPEG, and PNG files are allowed." 
+        });
+      }
+
+      if (req.file.size > maxSize) {
+        return res.status(400).json({ 
+          message: "File size too large. Maximum size is 5MB." 
+        });
+      }
+    }
+
+    // Check for existing application
+    const existingApplication = await Enroll.findOne({
+      studentId: req.body.studentId,
+      courseId: req.body.courseId,
+      status: "pending"
+    });
+
+    if (existingApplication) {
+      return res.status(400).json({ 
+        message: "You already have a pending application for this course" 
+      });
+    }
+
     const {
       fullName,
       dateOfBirth,
@@ -307,7 +338,10 @@ const studentEnrollCourse = async (req, res) => {
     res.status(201).json({ message: "Application submitted successfully" });
   } catch (error) {
     console.error("Error enrolling student:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ 
+      message: "Error submitting application",
+      error: error.message 
+    });
   }
 };
 
@@ -374,7 +408,15 @@ const approveApplication = async (req, res) => {
 const rejectApplication = async (req, res) => {
   const { applicationId } = req.params;
   try {
-    const application = await Enroll.findByIdAndUpdate(applicationId, { status: "rejected" }, { new: true });
+    const application = await Enroll.findByIdAndUpdate(
+      applicationId, 
+      { 
+        status: "rejected",
+        updatedAt: new Date()
+      }, 
+      { new: true }
+    );
+    
     if (!application) {
       return res.status(404).json({ message: "Application not found" });
     }
@@ -410,6 +452,17 @@ const sendEmailNotification = async (email, subject, message) => {
   }
 };
 
+const getStudentApplications = async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const applications = await Enroll.find({ studentId })
+      .sort({ createdAt: -1 }); // Sort by creation date, newest first
+    res.status(200).json(applications);
+  } catch (error) {
+    console.error('Error fetching student applications:', error);
+    res.status(500).json({ message: 'Error fetching applications' });
+  }
+};
 
 module.exports = {
   addCourses,
@@ -426,5 +479,6 @@ module.exports = {
   getStudentEnroll,
   getOfferedCourses,
   approveApplication,
-  rejectApplication
+  rejectApplication,
+  getStudentApplications,
 };
