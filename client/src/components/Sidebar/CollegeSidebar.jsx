@@ -5,7 +5,7 @@ import './CollegeSidebar.css'; // Assuming you have a CSS file for styling
 const CollegeSidebar = ({ handleLogout }) => { // Accept handleLogout as a prop
   return (
     <div className="college-sidebar">
-      <h2>College Admin</h2>
+      <h2>COLLEGE</h2>
       <ul>
         <li>
           <Link to="/collegeadminDashboard">Dashboard</Link>

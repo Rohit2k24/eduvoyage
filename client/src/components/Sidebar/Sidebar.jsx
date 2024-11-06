@@ -17,7 +17,7 @@ const Sidebar = ({ handleLogout }) => {
 
   return (
     <div className="admin-sidebar"> {/* Use a unique class for the admin sidebar */}
-      <div className="sidebar-header">Admin Panel</div>
+      <div className="sidebar-header">ADMIN PANEL</div>
       <ul className="sidebar-menu">
         <li><Link to="/adminDashboard">Dashboard</Link></li>
         <li><Link to="/admin/colleges">List Colleges</Link></li>
