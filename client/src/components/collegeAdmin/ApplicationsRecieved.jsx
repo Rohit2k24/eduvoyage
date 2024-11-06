@@ -138,42 +138,17 @@ const ApplicationRecieved = () => {
   const totalPages = Math.ceil(filteredApplications.length / applicationsPerPage);
 
   return (
-    <div className="college-admin-dashboard-container">
+    <div className="applications-container">
       <CollegeSidebar handleLogout={handleLogout} />
-      <div className="content">
-        <div className="dashboard-header">
-          <h1>Applications Received</h1>
+      <div className="applications-content">
+        <div className="applications-header">
+          <h1 className="applications-title">Applications Received</h1>
           <input
             type="text"
+            className="search-input"
             placeholder="Search applications..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{
-              marginLeft: '20px',
-              padding: '12px 20px',
-              margin: '20px 0',
-              width: '300px',
-              borderRadius: '25px',
-              border: '2px solid #e0e0e0',
-              fontSize: '14px',
-              outline: 'none',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-              backgroundColor: '#ffffff',
-              color: '#333333',
-              '&::placeholder': {
-                color: '#999999'
-              },
-              '&:focus': {
-                borderColor: '#007bff',
-                boxShadow: '0 2px 8px rgba(0,123,255,0.25)'
-              },
-              position: 'relative',
-              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23999' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'%3E%3C/path%3E%3C/svg%3E")`,
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: '15px center',
-              paddingLeft: '45px'
-            }}
           />
         </div>
         
@@ -182,65 +157,86 @@ const ApplicationRecieved = () => {
         
         {!loading && !error && (
           <>
-            <table className="application-table">
-              <thead>
-                <tr>
-                  <th>Full Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Date of Birth</th>
-                  <th>Gender</th>
-                  <th>Nationality</th>
-                  <th>Passport Number</th>
-                  <th>Highest Qualification</th>
-                  <th>Degree Name</th>
-                  <th>Institution</th>
-                  <th>Year of Completion</th>
-                  <th>GPA</th>
-                  <th>File</th>
-                  <th>Study Mode</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentApplications.map((application) => (
-                  <tr key={application._id}>
-                    <td>{application.fullName}</td>
-                    <td>{application.email}</td>
-                    <td>{application.phone}</td>
-                    <td>{application.dateOfBirth ? new Date(application.dateOfBirth).toISOString().split('T')[0] : 'N/A'}</td>
-                    <td>{application.gender || 'N/A'}</td>
-                    <td>{application.nationality || 'N/A'}</td>
-                    <td>{application.passportnumber || 'N/A'}</td>
-                    <td>{application.previousEducation?.highestQualification || 'N/A'}</td>
-                    <td>{application.previousEducation?.degreeName || 'N/A'}</td>
-                    <td>{application.previousEducation?.institution || 'N/A'}</td>
-                    <td>{application.previousEducation?.yearOfCompletion || 'N/A'}</td>
-                    <td>{application.previousEducation?.gpa || 'N/A'}</td>
-                    <td>
-                      {application.percentageFilePath && (
-                        <>
-                          <button onClick={() => handleFileDownload(application.percentageFilePath)} className="approve-btn">File</button>
-                        </>
-                      ) }
-                    </td>
-                    <td>{application.studyMode || 'N/A'}</td>
-                    <td>{application.status}</td>
-                    <td>
-                      {application.status === "pending" ? (
-                        <>
-                          <button onClick={() => handleApprove(application._id)} className="approve-btn">Approve</button>
-                          <button onClick={() => handleReject(application._id)} className="reject-btn">Reject</button>
-                        </>
-                      ) : (
-                        <span>{application.status.charAt(0).toUpperCase() + application.status.slice(1)}</span>
-                      )}
-                    </td>
+            <div className="applications-table-container">
+              <table className="applications-table">
+                <thead>
+                  <tr>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Date of Birth</th>
+                    <th>Gender</th>
+                    <th>Nationality</th>
+                    <th>Passport Number</th>
+                    <th>Highest Qualification</th>
+                    <th>Degree Name</th>
+                    <th>Institution</th>
+                    <th>Year of Completion</th>
+                    <th>GPA</th>
+                    <th>File</th>
+                    <th>Study Mode</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {currentApplications.map((application) => (
+                    <tr key={application._id}>
+                      <td>{application.fullName}</td>
+                      <td>{application.email}</td>
+                      <td>{application.phone}</td>
+                      <td>{application.dateOfBirth ? new Date(application.dateOfBirth).toISOString().split('T')[0] : 'N/A'}</td>
+                      <td>{application.gender || 'N/A'}</td>
+                      <td>{application.nationality || 'N/A'}</td>
+                      <td>{application.passportnumber || 'N/A'}</td>
+                      <td>{application.previousEducation?.highestQualification || 'N/A'}</td>
+                      <td>{application.previousEducation?.degreeName || 'N/A'}</td>
+                      <td>{application.previousEducation?.institution || 'N/A'}</td>
+                      <td>{application.previousEducation?.yearOfCompletion || 'N/A'}</td>
+                      <td>{application.previousEducation?.gpa || 'N/A'}</td>
+                      <td>
+                        {application.percentageFilePath && (
+                          <button 
+                            onClick={() => handleFileDownload(application.percentageFilePath)} 
+                            className="file-button"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                              <polyline points="13 2 13 9 20 9"></polyline>
+                            </svg>
+                            View
+                          </button>
+                        )}
+                      </td>
+                      <td>{application.studyMode || 'N/A'}</td>
+                      <td>{application.status}</td>
+                      <td>
+                        {application.status === "pending" ? (
+                          <div className="action-buttons-container">
+                            <button 
+                              onClick={() => handleApprove(application._id)} 
+                              className="action-button approve-button"
+                            >
+                              Approve
+                            </button>
+                            <button 
+                              onClick={() => handleReject(application._id)} 
+                              className="action-button reject-button"
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        ) : (
+                          <span className={`status-${application.status.toLowerCase()}`}>
+                            {application.status.charAt(0).toUpperCase() + application.status.slice(1)}
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
             
             <div style={{ marginTop: '20px', textAlign: 'center' }}>
               {Array.from({ length: totalPages }, (_, i) => (

@@ -60,4 +60,8 @@ router.put('/reject-application/:applicationId', educationCourseController.rejec
 
 router.get('/student-applications/:studentId', educationCourseController.getStudentApplications);
 
+router.get('/college/:collegeId', educationCourseController.getCollegeInfo);
+
+router.get('/dashboard-stats/:collegeId', educationCourseController.getDashboardStats);
+
 module.exports = router;

@@ -464,6 +464,48 @@ const getStudentApplications = async (req, res) => {
   }
 };
 
+const getCollegeInfo = async (req, res) => {
+  try {
+    const { collegeId } = req.params;
+    const college = await College.findById(collegeId);
+    
+    if (!college) {
+      return res.status(404).json({ message: "College not found" });
+    }
+
+    res.status(200).json(college);
+  } catch (error) {
+    console.error("Error fetching college info:", error);
+    res.status(500).json({ message: "Error fetching college information" });
+  }
+};
+
+const getDashboardStats = async (req, res) => {
+  try {
+    const { collegeId } = req.params;
+
+    // Get all applications for the college
+    const applications = await Enroll.find({ collegeId });
+    
+    // Get all courses offered by the college
+    const courses = await OfferedCourse.find({ collegeId });
+
+    // Calculate statistics
+    const stats = {
+      totalApplications: applications.length,
+      pendingApplications: applications.filter(app => app.status === 'pending').length,
+      approvedApplications: applications.filter(app => app.status === 'approved').length,
+      rejectedApplications: applications.filter(app => app.status === 'rejected').length,
+      totalCourses: courses.length
+    };
+
+    res.status(200).json(stats);
+  } catch (error) {
+    console.error("Error fetching dashboard stats:", error);
+    res.status(500).json({ message: "Error fetching dashboard statistics" });
+  }
+};
+
 module.exports = {
   addCourses,
   fetchCourses,
@@ -481,4 +523,6 @@ module.exports = {
   approveApplication,
   rejectApplication,
   getStudentApplications,
+  getCollegeInfo,
+  getDashboardStats,
 };

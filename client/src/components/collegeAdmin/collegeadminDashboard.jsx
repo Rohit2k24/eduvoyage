@@ -4,41 +4,20 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 import CollegeSidebar from '../Sidebar/CollegeSidebar';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for redirect
+import { useNavigate } from 'react-router-dom';
 
 const CollegeAdminDashboard = () => {
-  const navigate = useNavigate(); // Initialize navigate
-
-  // State for dashboard data and offered courses
-  const [dashboardData, setDashboardData] = useState({
-    studentCount: 0,
-    courseCount: 0,
-    revenue: 0,
+  const [collegeInfo, setCollegeInfo] = useState({});
+  const [stats, setStats] = useState({
+    totalApplications: 0,
+    pendingApplications: 0,
+    approvedApplications: 0,
+    rejectedApplications: 0,
+    totalCourses: 0
   });
-  const [offeredCourses, setOfferedCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-  // Fetch offered courses and update course count
-  useEffect(() => {
-    const fetchOfferedCourses = async () => {
-      try {
-        const collegeId = localStorage.getItem('collegeId');
-        const response = await axios.get(`http://localhost:5000/api/offered-courses/${collegeId}`);
-        setOfferedCourses(response.data);
-        
-        // Update the course count in dashboardData
-        setDashboardData(prevData => ({
-          ...prevData,
-          courseCount: response.data.length
-        }));
-      } catch (error) {
-        console.error('Error fetching offered courses:', error);
-      }
-    };
-
-    fetchOfferedCourses();
-  }, []);
-
-  // Logout handler
   const handleLogout = async () => {
     try {
       await axios.post('http://localhost:5000/api/auth/logout');
@@ -51,46 +30,91 @@ const CollegeAdminDashboard = () => {
     }
   };
 
+  const fetchDashboardData = async () => {
+    try {
+      const collegeId = localStorage.getItem('collegeId');
+      // Fetch college info
+      const collegeResponse = await axios.get(`http://localhost:5000/api/auth/college/${collegeId}`);
+      setCollegeInfo(collegeResponse.data);
+        
+      // Fetch applications
+      const applicationsResponse = await axios.get(`http://localhost:5000/api/auth/student-enroll-course/${collegeId}`);
+      const applications = applicationsResponse.data.data;
+
+      // Calculate statistics
+      setStats({
+        totalApplications: applications.length,
+        pendingApplications: applications.filter(app => app.status === 'pending').length,
+        approvedApplications: applications.filter(app => app.status === 'approved').length,
+        rejectedApplications: applications.filter(app => app.status === 'rejected').length,
+        totalCourses: collegeResponse.data.courses?.length || 0
+      });
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
   return (
-    <div className="college-admin-dashboard-container">
+    <div className="college-admin-dashboard">
       <CollegeSidebar handleLogout={handleLogout} />
-      <div className="content">
-        <div className="dashboard-header">
-          <h1>College Admin Dashboard</h1>
-        </div>
+      <div className="college-dashboard-content">
+        {loading ? (
+          <div>Loading dashboard data...</div>
+        ) : (
+          <>
+            <div className="college-welcome-section">
+              <h1>Welcome, {collegeInfo.collegeName}</h1>
+              <p>Manage your college applications and courses from this dashboard</p>
+            </div>
 
-        <div className="dashboard-overview">
-          <div className="dashboard-card">
-            <h3>Total Students Enrolled</h3>
-            <p>{dashboardData.studentCount}</p>
-          </div>
-          <div className="dashboard-card">
-            <h3>Courses Offered</h3>
-            <p>{dashboardData.courseCount}</p>
-          </div>
-          <div className="dashboard-card">
-            <h3>Total Revenue</h3>
-            <p>${dashboardData.revenue}</p>
-          </div>
-        </div>
+            <div className="college-stats-container">
+              <div className="college-stat-card">
+                <div className="college-stat-number">{stats.totalApplications}</div>
+                <div className="college-stat-label">Total Applications</div>
+              </div>
+              <div className="college-stat-card">
+                <div className="college-stat-number">{stats.pendingApplications}</div>
+                <div className="college-stat-label">Pending Applications</div>
+              </div>
+              <div className="college-stat-card">
+                <div className="college-stat-number">{stats.approvedApplications}</div>
+                <div className="college-stat-label">Approved Applications</div>
+              </div>
+              <div className="college-stat-card">
+                <div className="college-stat-number">{stats.totalCourses}</div>
+                <div className="college-stat-label">Total Courses</div>
+              </div>
+            </div>
 
-        <div className="courses-offered">
-          <h2>Offered Courses</h2>
-          {offeredCourses.length > 0 ? (
-            <ul>
-              {offeredCourses.map(course => (
-                <li key={course.id}>
-                  <h3>{course.courseName}</h3>
-                  <p>{course.courseDescription}</p>
-                  <p>Duration: {course.duration}</p>
-                  <p>Price: ${course.price}</p>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No courses offered.</p>
-          )}
-        </div>
+            <div className="college-info-section">
+              <h2>College Information</h2>
+              <div className="college-info-grid">
+                <div className="college-info-item">
+                  <div className="college-info-label">Email</div>
+                  <div className="college-info-value">{collegeInfo.email}</div>
+                </div>
+                <div className="college-info-item">
+                  <div className="college-info-label">Address</div>
+                  <div className="college-info-value">{collegeInfo.address}</div>
+                </div>
+                <div className="college-info-item">
+                  <div className="college-info-label">Country</div>
+                  <div className="college-info-value">{collegeInfo.country}</div>
+                </div>
+                <div className="college-info-item">
+                  <div className="college-info-label">Contact Person</div>
+                  <div className="college-info-value">{collegeInfo.contactPerson}</div>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

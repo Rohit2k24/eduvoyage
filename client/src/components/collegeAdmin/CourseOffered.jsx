@@ -137,134 +137,127 @@ const CourseOffered = () => {
     }
   };
 
-  const tableHeaderStyle = {
-    padding: "12px",
-    textAlign: "left",
-    backgroundColor: "#007bff",
-    color: "white",
-    fontWeight: "bold",
-  };
-
-  const tableCellStyle = {
-    padding: "12px",
-    borderBottom: "1px solid #ddd",
-  };
-
-  const courseNameStyle = {
-    ...tableCellStyle,
-    fontWeight: "bold",
-    color: "#007bff",
-  };
-
-  const descriptionStyle = {
-    ...tableCellStyle,
-    maxWidth: "500px",
-    whiteSpace: "normal",
-    overflow: "visible",
-    textOverflow: "clip",
-    lineHeight: "1.4",
-  };
-
-  const offerButtonStyle = {
-    backgroundColor: "#28a745",
-    color: "white",
-    border: "none",
-    padding: "8px 12px",
-    borderRadius: "4px",
-    cursor: "pointer",
-    transition: "background-color 0.3s",
-  };
-
-  const notOfferingButtonStyle = {
-    backgroundColor: "#dc3545",
-    color: "white",
-    border: "none",
-    padding: "8px 12px",
-    borderRadius: "4px",
-    cursor: "pointer",
-    marginLeft: "10px",
-    transition: "background-color 0.3s",
+  const styles = {
+    mainContainer: {
+      display: 'flex',
+      minHeight: '100vh',
+      backgroundColor: '#f8f9fa'
+    },
+    contentWrapper: {
+      flex: 1,
+      padding: '2rem',
+      marginLeft: '250px',
+      backgroundColor: '#f4f4f4'
+    },
+    headerSection: {
+      marginBottom: '20px'
+    },
+    headerTitle: {
+      color: '#333',
+      borderBottom: '2px solid #007bff',
+      paddingBottom: '10px'
+    },
+    tableContainer: {
+      backgroundColor: 'white',
+      borderRadius: '8px',
+      overflow: 'hidden',
+      boxShadow: '0 0 20px rgba(0, 0, 0, 0.1)'
+    },
+    table: {
+      width: '100%',
+      borderCollapse: 'collapse'
+    },
+    tableHeader: {
+      padding: '12px',
+      textAlign: 'left',
+      backgroundColor: '#007bff',
+      color: 'white',
+      fontWeight: 'bold'
+    },
+    tableCell: {
+      padding: '12px',
+      borderBottom: '1px solid #ddd'
+    },
+    courseName: {
+      padding: '12px',
+      borderBottom: '1px solid #ddd',
+      fontWeight: 'bold',
+      color: '#007bff'
+    },
+    description: {
+      padding: '12px',
+      borderBottom: '1px solid #ddd',
+      maxWidth: '500px',
+      whiteSpace: 'normal',
+      overflow: 'visible',
+      textOverflow: 'clip',
+      lineHeight: '1.4'
+    },
+    offerButton: {
+      backgroundColor: '#28a745',
+      color: 'white',
+      border: 'none',
+      padding: '8px 12px',
+      borderRadius: '4px',
+      cursor: 'pointer',
+      transition: 'background-color 0.3s'
+    },
+    disabledButton: {
+      backgroundColor: '#6c757d',
+      color: 'white',
+      border: 'none',
+      padding: '8px 12px',
+      borderRadius: '4px',
+      cursor: 'not-allowed'
+    },
+    removeButton: {
+      backgroundColor: '#dc3545',
+      color: 'white',
+      border: 'none',
+      padding: '8px 12px',
+      borderRadius: '4px',
+      cursor: 'pointer',
+      marginLeft: '10px',
+      transition: 'background-color 0.3s'
+    }
   };
 
   return (
-    <div className="college-admin-dashboard-container">
+    <div style={styles.mainContainer}>
       <CollegeSidebar handleLogout={handleLogout} />
-      <div
-        className="content"
-        style={{ padding: "20px", backgroundColor: "#f4f4f4" }}
-      >
-        <div className="dashboard-header" style={{ marginBottom: "20px" }}>
-          <h1
-            style={{
-              color: "#333",
-              borderBottom: "2px solid #007bff",
-              paddingBottom: "10px",
-            }}
-          >
-            Courses Offered
-          </h1>
+      <div style={styles.contentWrapper}>
+        <div style={styles.headerSection}>
+          <h1 style={styles.headerTitle}>Courses Offered</h1>
         </div>
-        <div
-          className="courses-table"
-          style={{
-            backgroundColor: "white",
-            borderRadius: "8px",
-            overflow: "hidden",
-          }}
-        >
-          <table
-            style={{
-              width: "100%",
-              borderCollapse: "collapse",
-              boxShadow: "0 0 20px rgba(0, 0, 0, 0.1)",
-            }}
-          >
+        <div style={styles.tableContainer}>
+          <table style={styles.table}>
             <thead>
               <tr>
-                <th style={{ ...tableHeaderStyle, width: "30%" }}>
-                  Course Name
-                </th>
-                <th style={{ ...tableHeaderStyle, width: "50%" }}>
-                  Description
-                </th>
-                <th style={{ ...tableHeaderStyle, width: "20%" }}>Action</th>
+                <th style={{ ...styles.tableHeader, width: '30%' }}>Course Name</th>
+                <th style={{ ...styles.tableHeader, width: '50%' }}>Description</th>
+                <th style={{ ...styles.tableHeader, width: '20%' }}>Action</th>
               </tr>
             </thead>
             <tbody>
               {courses.map((course) => {
-                // Check if the course is already offered by checking if any `offeredCourse` has a matching `courseId`
                 const isOffered = offeredCourses.some(
                   (offered) => offered.courseId === course._id
                 );
-
-                console.log(isOffered); // This will now output `true` or `false`
-
                 return (
                   <tr key={course._id}>
-                    <td style={courseNameStyle}>{course.courseName}</td>
-                    <td style={descriptionStyle}>{course.courseDescription}</td>
-                    <td style={tableCellStyle}>
+                    <td style={styles.courseName}>{course.courseName}</td>
+                    <td style={styles.description}>{course.courseDescription}</td>
+                    <td style={styles.tableCell}>
                       {isOffered ? (
                         <>
-                          <button
-                            style={{
-                              ...offerButtonStyle,
-                              backgroundColor: "#6c757d",
-                              cursor: "not-allowed",
-                            }}
-                            disabled
-                          >
+                          <button style={styles.disabledButton} disabled>
                             Offered
                           </button>
                           <button
                             onClick={() => handleRemoveOffer(course)}
-                            style={notOfferingButtonStyle}
-                            onMouseOver={(e) =>
-                              (e.target.style.backgroundColor = "#c82333")
-                            }
-                            onMouseOut={(e) =>
-                              (e.target.style.backgroundColor = "#dc3545")
-                            }
+                            style={styles.removeButton}
+                            onMouseOver={(e) => e.target.style.backgroundColor = '#c82333'}
+                            onMouseOut={(e) => e.target.style.backgroundColor = '#dc3545'}
                           >
                             Not Offering
                           </button>
@@ -272,13 +265,9 @@ const CourseOffered = () => {
                       ) : (
                         <button
                           onClick={() => handleOfferCourse(course)}
-                          style={offerButtonStyle}
-                          onMouseOver={(e) =>
-                            (e.target.style.backgroundColor = "#218838")
-                          }
-                          onMouseOut={(e) =>
-                            (e.target.style.backgroundColor = "#28a745")
-                          }
+                          style={styles.offerButton}
+                          onMouseOver={(e) => e.target.style.backgroundColor = '#218838'}
+                          onMouseOut={(e) => e.target.style.backgroundColor = '#28a745'}
                         >
                           Offer Course
                         </button>
