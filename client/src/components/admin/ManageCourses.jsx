@@ -102,7 +102,7 @@ const ManageCourses = () => {
         Swal.fire("Success", "Course updated successfully", "success");
       } else {
         // Add new course
-        await axios.post('http://localhost:5000/api/add-course', courseData);
+        await axios.post('http://localhost:5000/api/course-add', courseData);
         Swal.fire("Success", "Course added successfully", "success");
       }
 

@@ -157,65 +157,32 @@ const delete1 = async (req, res) => {
 
 // Offer a course
 const offerCourse = async (req, res) => {
-  console.log("Entered the backend");
-  try {
-    console.log("Received offer course request:", req.body);
+  const { courseId, collegeId, duration, price } = req.body;
 
-    const {
-      courseId,
-      courseName,
-      courseDescription,
+  try {
+    const course = await EducationCourse.findById(courseId); // Fetch the course details
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+
+    const newOfferedCourse = new OfferedCourse({
+      courseId: course._id,
+      courseName: course.courseName,
+      courseDescription: course.courseDescription,
+      courseField: course.courseField, // Include the course field
       duration,
       price,
       collegeId,
-    } = req.body;
-
-    if (!collegeId) {
-      return res.status(400).json({ message: "College ID is required" });
-    }
-
-    if (!mongoose.Types.ObjectId.isValid(collegeId)) {
-      return res.status(400).json({ message: "Invalid College ID" });
-    }
-
-    const college = await College.findById(collegeId);
-    if (!college) {
-      return res.status(400).json({ message: "College not found" });
-    }
-
-    const alreadyOfferedCourse = await OfferedCourse.find({
-      collegeId,
-      courseId,
     });
-    console.log(alreadyOfferedCourse);
 
-    if (alreadyOfferedCourse.length > 0) {
-      return res.status(400).json({ message: "Course already offered" });
-    } else {
-      const newOfferedCourse = new OfferedCourse({
-        collegeId,
-        courseId,
-        courseName,
-        courseDescription,
-        duration,
-        price: parseFloat(price),
-      });
-
-      console.log("New offered course object:", newOfferedCourse);
-
-      const savedCourse = await newOfferedCourse.save();
-      console.log("Saved course:", savedCourse);
-
-      res.status(201).json({
-        message: "Course offered successfully",
-        offeredCourse: savedCourse,
-      });
-    }
+    const savedCourse = await newOfferedCourse.save();
+    res.status(201).json({
+      message: "Course offered successfully",
+      offeredCourse: savedCourse,
+    });
   } catch (error) {
     console.error("Error offering course:", error);
-    res
-      .status(500)
-      .json({ message: "Internal server error", error: error.message });
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
