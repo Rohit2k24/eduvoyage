@@ -19,7 +19,6 @@ const StudentDashboard = () => {
     firstname: '',
     lastname: '',
     email: '',
-    phone: '',
     address: '',
     country: ''
   });
@@ -43,8 +42,8 @@ const StudentDashboard = () => {
         const currentStudent = response.data.find(student => student._id === studentId);
         
         if (currentStudent) {
-          const { firstname, lastname, email, phone, address, country } = currentStudent;
-          setUser({ firstname, lastname, email, phone, address, country });
+          const { firstname, lastname, email, address, country } = currentStudent;
+          setUser({ firstname, lastname, email, address, country });
         } else {
           setErrorMessage('Student data not found');
         }
@@ -81,10 +80,6 @@ const StudentDashboard = () => {
         <div className="info-item">
           <span className="info-label">Email:</span>
           <span className="info-value">{user.email}</span>
-        </div>
-        <div className="info-item">
-          <span className="info-label">Phone:</span>
-          <span className="info-value">{user.phone || 'Not provided'}</span>
         </div>
         <div className="info-item">
           <span className="info-label">Address:</span>

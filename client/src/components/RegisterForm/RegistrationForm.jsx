@@ -1,11 +1,8 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import Swal from "sweetalert2";
-import PhoneInput from 'react-phone-number-input';
-import 'react-phone-number-input/style.css';
 import { CountryDropdown } from 'react-country-region-selector';
-import { parsePhoneNumber, isValidPhoneNumber } from 'libphonenumber-js';
 
 const RegistrationForm = () => {
   const [formData, setFormData] = useState({
@@ -14,7 +11,6 @@ const RegistrationForm = () => {
     email: "",
     password: "",
     confirmPassword: "",
-    phone: "",
     address: "",
     country: "",
     role: "",
@@ -31,21 +27,6 @@ const RegistrationForm = () => {
   const validateEmail = (email) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
-  };
-
-  const validatePhone = (phone, country) => {
-    if (!phone) return 'Phone number is required';
-    if (!country) return 'Please select a country first';
-    
-    try {
-      if (!isValidPhoneNumber(phone, country)) {
-        return 'Invalid phone number for the selected country';
-      }
-      return '';
-    } catch (error) {
-      console.error('Phone validation error:', error);
-      return 'Invalid phone number';
-    }
   };
 
   const validatePassword = (password) => {
@@ -74,11 +55,6 @@ const RegistrationForm = () => {
         ...errors,
         email: validateEmail(value) ? '' : 'Invalid email format',
       });
-    } else if (name === 'phone') {
-      setErrors({
-        ...errors,
-        phone: validatePhone(value, formData.country),
-      });
     } else if (name === 'password') {
       setErrors({
         ...errors,
@@ -104,11 +80,6 @@ const RegistrationForm = () => {
       setErrors({
         ...errors,
         email: validateEmail(value) ? '' : 'Invalid email format',
-      });
-    } else if (name === 'phone') {
-      setErrors({
-        ...errors,
-        phone: validatePhone(value, formData.country),
       });
     } else if (name === 'password') {
       setErrors({
@@ -137,9 +108,6 @@ const RegistrationForm = () => {
     if (!validateEmail(formData.email)) {
       newErrors.email = 'Invalid email format';
     }
-    if (!validatePhone(formData.phone, formData.country)) {
-      newErrors.phone = 'Invalid phone number';
-    }
     if (!validatePassword(formData.password)) {
       newErrors.password = 'Password must be at least 8 characters long';
     }
@@ -150,10 +118,8 @@ const RegistrationForm = () => {
       newErrors.country = 'Country should only contain letters';
     }
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) return;
 
     try {
       const response = await axios.post("http://localhost:5000/api/auth/register", formData);
@@ -168,17 +134,6 @@ const RegistrationForm = () => {
       alert(error.response?.data?.msg || "Error during registration");
       console.error("Error:", error);
     }
-  };
-
-  useEffect(() => {
-    if (formData.phone && formData.country) {
-      const phoneError = validatePhone(formData.phone, formData.country);
-      setErrors(prev => ({ ...prev, phone: phoneError }));
-    }
-  }, [formData.phone, formData.country]);
-
-  const handleCountryChange = (val) => {
-    setFormData(prev => ({ ...prev, country: val }));
   };
 
   return (
@@ -218,27 +173,7 @@ const RegistrationForm = () => {
             {field === "country" ? (
               <CountryDropdown
                 value={formData.country}
-                onChange={handleCountryChange}
-                style={{
-                  width: '100%',
-                  padding: '0.5rem',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  fontSize: '16px'
-                }}
-              />
-            ) : field === "phone" ? (
-              <PhoneInput
-                international
-                countryCallingCodeEditable={false}
-                defaultCountry={formData.country}
-                value={formData.phone}
-                onChange={(value) => {
-                  setFormData(prev => ({ ...prev, phone: value }));
-                }}
-                onCountryChange={(country) => {
-                  setFormData(prev => ({ ...prev, country: country }));
-                }}
+                onChange={(val) => setFormData(prev => ({ ...prev, country: val }))}
                 style={{
                   width: '100%',
                   padding: '0.5rem',
@@ -251,7 +186,7 @@ const RegistrationForm = () => {
               <select
                 id={field}
                 name={field}
-                value={formData[field]}
+                value={formData.role}
                 onChange={handleChange}
                 required
                 style={{
@@ -262,20 +197,12 @@ const RegistrationForm = () => {
                   fontSize: '16px'
                 }}
               >
-                <option value="">Select Role</option>
+                <option value="">Select Field</option>
                 <option value="Student">Student</option>
               </select>
             ) : (
               <input
-                type={
-                  field === "email"
-                    ? "email"
-                    : field === "password" || field === "confirmPassword"
-                    ? "password"
-                    : field === "phone"
-                    ? "tel"
-                    : "text"
-                }
+                type={field === "email" ? "email" : field === "password" || field === "confirmPassword" ? "password" : "text"}
                 id={field}
                 name={field}
                 value={formData[field]}
