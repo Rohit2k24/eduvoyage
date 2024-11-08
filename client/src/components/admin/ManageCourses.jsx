@@ -11,6 +11,7 @@ const ManageCourses = () => {
   const [showAddCourseModal, setShowAddCourseModal] = useState(false);
   const [newCourseName, setNewCourseName] = useState('');
   const [newCourseDescription, setNewCourseDescription] = useState('');
+  const [newCourseField, setNewCourseField] = useState(''); // New state for Course Field
   const [isEditMode, setIsEditMode] = useState(false); // To track if we're adding or editing
   const [currentCourseId, setCurrentCourseId] = useState(null); // To store the course ID being edited
   const navigate = useNavigate(); // Hook for navigation
@@ -33,6 +34,7 @@ const ManageCourses = () => {
   const handleEditCourse = (course) => {
     setNewCourseName(course.courseName);
     setNewCourseDescription(course.courseDescription);
+    setNewCourseField(course.courseField); // Set the course field for editing
     setCurrentCourseId(course._id); // Store the course ID being edited
     setIsEditMode(true); // Switch to edit mode
     setShowAddCourseModal(true); // Open the modal
@@ -74,6 +76,7 @@ const ManageCourses = () => {
     setIsEditMode(false); // Ensure we are in add mode
     setNewCourseName('');
     setNewCourseDescription('');
+    setNewCourseField(''); // Reset the course field
     setCurrentCourseId(null); // Reset the current course ID
     setShowAddCourseModal(true);
   };
@@ -86,25 +89,28 @@ const ManageCourses = () => {
   // Handle adding or editing a course
   const handleAddOrEditCourse = async (e) => {
     e.preventDefault();
-
-    const courseData = {
-      courseName: newCourseName,
-      courseDescription: newCourseDescription,
-    };
-
     try {
+      const courseData = {
+        courseName: newCourseName,
+        courseDescription: newCourseDescription,
+        courseField: newCourseField, // Ensure this is included
+      };
+
       if (isEditMode) {
+        // Update existing course
         await axios.put(`http://localhost:5000/api/course-update/${currentCourseId}`, courseData);
-        Swal.fire('Success', 'Course updated successfully', 'success');
+        Swal.fire("Success", "Course updated successfully", "success");
       } else {
-        await axios.post('http://localhost:5000/api/course-add', courseData);
-        Swal.fire('Success', 'Course added successfully', 'success');
+        // Add new course
+        await axios.post('http://localhost:5000/api/add-course', courseData);
+        Swal.fire("Success", "Course added successfully", "success");
       }
 
       fetchCourses(); // Refresh the course list
-      handleCloseAddCourseModal(); // Close the modal after success
+      handleCloseAddCourseModal(); // Close the modal
     } catch (error) {
-      console.error('Error adding/updating course:', error);
+      console.error("Error adding/updating course:", error);
+      Swal.fire("Error", "Failed to add/update course", "error");
     }
   };
 
@@ -130,6 +136,7 @@ const ManageCourses = () => {
             <tr>
               <th>Course Name</th>
               <th>Description</th>
+              <th>Field</th> {/* New column for Course Field */}
               <th>Action</th>
             </tr>
           </thead>
@@ -139,6 +146,7 @@ const ManageCourses = () => {
                 <tr key={course._id}>
                   <td>{course.courseName}</td>
                   <td>{course.courseDescription}</td>
+                  <td>{course.courseField}</td> {/* Display Course Field */}
                   <td>
                     <Button onClick={() => handleEditCourse(course)} className="editc">
                       Edit
@@ -151,7 +159,7 @@ const ManageCourses = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="3" className="text-center">No courses available</td>
+                <td colSpan="4" className="text-center">No courses available</td>
               </tr>
             )}
           </tbody>
@@ -191,6 +199,16 @@ const ManageCourses = () => {
                   placeholder="Enter course description"
                   value={newCourseDescription}
                   onChange={(e) => setNewCourseDescription(e.target.value)}
+                  required
+                />
+              </Form.Group>
+              <Form.Group controlId="formCourseField" className="mb-3">
+                <Form.Label>Course Field</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter course field"
+                  value={newCourseField}
+                  onChange={(e) => setNewCourseField(e.target.value)}
                   required
                 />
               </Form.Group>

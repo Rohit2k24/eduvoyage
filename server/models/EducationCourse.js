@@ -10,6 +10,10 @@ const EducationCourseSchema = new Schema({
     type: String,
     required: true,
   },
+  courseField: {
+    type: String,
+    required: true,
+  },
   isDisabled: { type: Boolean, default: false },  // New field to track course status
 });
 

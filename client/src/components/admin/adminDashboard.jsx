@@ -21,6 +21,7 @@ const AdminDashboard = () => {
   const [showAddCourseModal, setShowAddCourseModal] = useState(false);
   const [newCourseName, setNewCourseName] = useState('');
   const [newCourseDescription, setNewCourseDescription] = useState('');
+  const [newCourseField, setNewCourseField] = useState('');
 
   const navigate = useNavigate();
 
@@ -62,7 +63,12 @@ const AdminDashboard = () => {
 
   // Handle showing and closing modal for adding a course
   const handleShowAddCourseModal = () => setShowAddCourseModal(true);
-  const handleCloseAddCourseModal = () => setShowAddCourseModal(false);
+  const handleCloseAddCourseModal = () => {
+    setShowAddCourseModal(false);
+    setNewCourseName('');
+    setNewCourseDescription('');
+    setNewCourseField('');
+  };
 
   // Add new course logic
   const handleAddCourse = async (e) => {
@@ -70,6 +76,7 @@ const AdminDashboard = () => {
     const newCourse = {
       courseName: newCourseName,
       courseDescription: newCourseDescription,
+      courseField: newCourseField,
     };
 
     try {
@@ -126,6 +133,49 @@ const AdminDashboard = () => {
             </tbody>
           </Table>
         </div>
+
+        <Modal show={showAddCourseModal} onHide={handleCloseAddCourseModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>Add New Course</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form onSubmit={handleAddCourse}>
+              <Form.Group controlId="formCourseName">
+                <Form.Label>Course Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter course name"
+                  value={newCourseName}
+                  onChange={(e) => setNewCourseName(e.target.value)}
+                  required
+                />
+              </Form.Group>
+              <Form.Group controlId="formCourseDescription">
+                <Form.Label>Course Description</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter course description"
+                  value={newCourseDescription}
+                  onChange={(e) => setNewCourseDescription(e.target.value)}
+                  required
+                />
+              </Form.Group>
+              <Form.Group controlId="formCourseField">
+                <Form.Label>Course Field</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter course field"
+                  value={newCourseField}
+                  onChange={(e) => setNewCourseField(e.target.value)}
+                  required
+                />
+              </Form.Group>
+              <Button variant="primary" type="submit">
+                Add Course
+              </Button>
+            </Form>
+          </Modal.Body>
+        </Modal>
       </div>
     </div>
   );

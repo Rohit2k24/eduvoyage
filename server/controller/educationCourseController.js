@@ -19,19 +19,20 @@ const transporter = nodemailer.createTransport({
 const addCourses = async (req, res) => {
   try {
     console.log(req.body); // Log the incoming request data
-    const { courseName, courseDescription } = req.body;
+    const { courseName, courseDescription, courseField } = req.body;
 
     // Validate input data
-    if (!courseName || !courseDescription) {
+    if (!courseName || !courseDescription || !courseField) {
       return res
         .status(400)
-        .json({ message: "Course name and description are required." });
+        .json({ message: "Course name, description, and field are required." });
     }
 
     // Create a new course instance
     const newCourse = new EducationCourse({
       courseName,
       courseDescription,
+      courseField,
     });
 
     // Save the course to the database
@@ -82,13 +83,13 @@ const countCourses = async (req, res) => {
 // Update a course
 const courseupdate = async (req, res) => {
   const { id } = req.params;
-  const { courseName, courseDescription } = req.body;
+  const { courseName, courseDescription, courseField } = req.body;
 
   try {
     const updatedCourse = await EducationCourse.findByIdAndUpdate(
       id,
-      { courseName, courseDescription },
-      { new: true } // Returns the modified document rather than the original
+      { courseName, courseDescription, courseField },
+      { new: true }
     );
 
     if (!updatedCourse) {
@@ -506,6 +507,25 @@ const getDashboardStats = async (req, res) => {
   }
 };
 
+const recommendCourses = async (req, res) => {
+  const { interests, studyMode, budget } = req.body;
+
+  try {
+    const recommendedCourses = await OfferedCourse.find({
+      $or: [
+        { category: { $regex: interests, $options: 'i' } },
+        { studyMode: { $regex: studyMode, $options: 'i' } },
+        { price: { $lte: budget } },
+      ],
+    }).populate('collegeId'); // Populate to get college details
+
+    res.status(200).json(recommendedCourses);
+  } catch (error) {
+    console.error('Error recommending courses:', error);
+    res.status(500).json({ message: 'Error recommending courses' });
+  }
+};
+
 module.exports = {
   addCourses,
   fetchCourses,
@@ -525,4 +545,5 @@ module.exports = {
   getStudentApplications,
   getCollegeInfo,
   getDashboardStats,
+  recommendCourses,
 };

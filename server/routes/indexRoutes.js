@@ -8,6 +8,7 @@ const { enrollCourse } = require('../controller/enrollcourseController');
 const auth = require('../middleware/authMiddleware');
 const educationCourseController = require('../controller/educationCourseController');
 const userController = require('../controller/userController');
+const { recommendCourses } = require('../controller/educationCourseController');
 
 
 router.use('/auth', authRoutes);
@@ -55,6 +56,8 @@ router.post('/offer-course',educationCourseController.offerCourse);
 router.post('/remove-course-offer', educationCourseController.remove_course_offer);
 
 router.get('/offered-courses/:collegeId', educationCourseController.getOfferedCourses);
+
+router.post('/recommend-courses', recommendCourses);
 
   
 module.exports = router;

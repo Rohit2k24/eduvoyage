@@ -8,6 +8,7 @@
   margin: 0 auto;
   flex-grow: 1;
   overflow-y: auto;
+  margin-left: 250px; /* Adjust margin to accommodate the sidebar width */
 }
 
 .header {
@@ -53,6 +54,7 @@
   vertical-align: top;
   white-space: normal; /* Allows text to wrap */
   word-wrap: break-word; /* Breaks long words if necessary */
+  max-width: 200px; /* Set a max width for the description column */
 }
 
 .modal {

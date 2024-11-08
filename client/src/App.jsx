@@ -33,6 +33,7 @@ import CollegeDetails from "./components/student/CollegeDetails";
 import AvailableCourses from "./components/student/AvailableCourses";
 import HelpSupport from "./components/student/HelpSupport";
 import ScholarshipPrograms from "./components/student/ScholarshipPrograms";
+import GetCourseRecommendations from './components/student/GetCourseRecommendations';
 
 function App() {
   return (
@@ -71,6 +72,7 @@ function App() {
         <Route path="/analytics" element={<PrivateRoutes><Analytics /></PrivateRoutes>} />
         <Route path="/groups" element={<PrivateRoutes><Groups /></PrivateRoutes>} />
         <Route path="/messages" element={<PrivateRoutes><Messages /></PrivateRoutes>} />
+        <Route path="/get-course-recommendations" element={<PrivateRoutes><GetCourseRecommendations /></PrivateRoutes>} />
       </Routes>
     </Router>
   );

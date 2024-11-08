@@ -72,6 +72,10 @@ const StudyProgram = () => {
     }
   };
 
+  const handleGetRecommendations = () => {
+    navigate('/get-course-recommendations'); // Redirect to the recommendations page
+  };
+
   const styles = {
     container: {
       flex: 1,
@@ -165,6 +169,23 @@ const StudyProgram = () => {
       letterSpacing: '1px',
       boxShadow: '0 4px 8px rgba(0, 123, 255, 0.2)',
     },
+    recommendationSection: {
+      textAlign: 'center',
+      margin: '20px 0',
+    },
+    recommendationButton: {
+      backgroundColor: '#007bff',
+      color: '#fff',
+      border: 'none',
+      padding: '12px 25px',
+      borderRadius: '6px',
+      cursor: 'pointer',
+      transition: 'background-color 0.3s ease',
+      fontSize: '1rem',
+      fontWeight: '600',
+      textTransform: 'uppercase',
+      letterSpacing: '1px',
+    },
   };
 
   return (
@@ -193,6 +214,12 @@ const StudyProgram = () => {
               <p style={styles.collegeInfo}>{college.country}</p>
             </div>
           ))}
+        </div>
+        <div style={styles.recommendationSection}>
+          <h2>Not sure about the course you are looking for? Let us help you!</h2>
+          <button style={styles.recommendationButton} onClick={handleGetRecommendations}>
+            Get Course Recommendations
+          </button>
         </div>
         {selectedCollege && (
           <div style={styles.courseList}>
