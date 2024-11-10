@@ -74,6 +74,7 @@
 /* Table styling */
 .application-table {
     width: 100%;
+    margin-left: 275px;
     border-collapse: collapse;
     margin-top: 10px;
 }
