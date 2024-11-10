@@ -12,7 +12,7 @@ const GetCourseRecommendations = () => {
   useEffect(() => {
     const fetchCourseFields = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/course-fields');
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/course-fields`);
         setCourseFields(response.data);
       } catch (error) {
         console.error('Error fetching course fields:', error);
@@ -25,7 +25,7 @@ const GetCourseRecommendations = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/recommend-courses', {
+      const response = await axios.post('${import.meta.env.VITE_BASE_URL}/api/recommend-courses', {
         interests,
         studyMode,
         budget,

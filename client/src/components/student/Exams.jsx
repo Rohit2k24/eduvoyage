@@ -1,8 +1,7 @@
-// src/components/student/Exams.jsx
 import React, { useEffect, useState } from 'react';
 import StudentSidebar from '../Sidebar/StudentSidebar';
-import './studentDashboard.css'; // Import your CSS for global styles
-import Header from './Header'; // Import the Header component
+import './studentDashboard.css';
+import Header from './Header'; 
 import axios from 'axios';
 
 const Exams = () => {
@@ -10,13 +9,11 @@ const Exams = () => {
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
-    // Fetch user data here and set it
-    // Example: setUser({ firstname: 'John', lastname: 'Doe' });
   }, []);
 
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:5000/api/auth/logout');
+      await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/logout`);
       localStorage.removeItem("token");
       localStorage.removeItem('studentId');
       localStorage.removeItem("role");
@@ -33,12 +30,12 @@ const Exams = () => {
       fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
       backgroundColor: '#f8f9fa',
       minHeight: '100vh',
-      marginLeft: '250px', // Match sidebar width
+      marginLeft: '250px',
     },
     header: {
       fontSize: '2.5rem',
       color: '#343a40',
-      marginBottom: '20px', // Space below the header
+      marginBottom: '20px',
       textAlign: 'center',
       textTransform: 'uppercase',
       letterSpacing: '1px',
@@ -47,7 +44,7 @@ const Exams = () => {
       paddingBottom: '10px',
     },
     examsTitle: {
-      marginTop: '40px', // Add margin above the "Exams" title
+      marginTop: '40px',
       fontSize: '2.5rem',
       color: '#343a40',
       textAlign: 'center',

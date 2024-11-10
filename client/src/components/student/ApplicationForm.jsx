@@ -237,7 +237,7 @@ const ApplicationForm = ({ course, onClose, college }) => {
 
     try {
       const response = await axios.post(
-        'http://localhost:5000/api/auth/student-enroll-course',
+        `${import.meta.env.VITE_BASE_URL}/api/auth/student-enroll-course`,
         formDataToSend,
         { headers: { 'Content-Type': 'multipart/form-data' } }
       );

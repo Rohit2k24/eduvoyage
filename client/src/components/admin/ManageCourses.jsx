@@ -23,7 +23,7 @@ const ManageCourses = () => {
   // Fetch active courses from the backend
   const fetchCourses = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/fetch-courses');
+      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/fetch-courses`);
       setCourses(response.data.filter(course => !course.isDisabled)); // Fetch only active courses
     } catch (error) {
       console.error('Error fetching courses:', error);
@@ -52,7 +52,7 @@ const ManageCourses = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.put(`http://localhost:5000/api/course-disable/${courseId}`);
+        await axios.put(`${import.meta.env.VITE_BASE_URL}/api/course-disable/${courseId}`);
         fetchCourses(); // Refresh the course list after disabling
         Swal.fire('Success', 'Course disabled successfully', 'success');
       } catch (error) {
@@ -63,7 +63,7 @@ const ManageCourses = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:5000/api/auth/logout');
+      await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/logout`);
       localStorage.removeItem('token');
       navigate('/login'); // Redirect to login page after logout
     } catch (error) {
@@ -98,11 +98,11 @@ const ManageCourses = () => {
 
       if (isEditMode) {
         // Update existing course
-        await axios.put(`http://localhost:5000/api/course-update/${currentCourseId}`, courseData);
+        await axios.put(`${import.meta.env.VITE_BASE_URL}/api/course-update/${currentCourseId}`, courseData);
         Swal.fire("Success", "Course updated successfully", "success");
       } else {
         // Add new course
-        await axios.post('http://localhost:5000/api/course-add', courseData);
+        await axios.post(`${import.meta.env.VITE_BASE_URL}/api/course-add`, courseData);
         Swal.fire("Success", "Course added successfully", "success");
       }
 

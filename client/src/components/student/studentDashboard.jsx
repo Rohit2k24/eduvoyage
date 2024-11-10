@@ -35,7 +35,7 @@ const StudentDashboard = () => {
           return;
         }
 
-        const response = await axios.get('http://localhost:5000/api/users', {
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/users`, {
           headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -58,7 +58,7 @@ const StudentDashboard = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:5000/api/auth/logout');
+      await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/logout`);
       localStorage.removeItem("token");
       localStorage.removeItem('studentId');
       localStorage.removeItem("role");

@@ -7,7 +7,7 @@ import './Reports.css'; // You can create a separate CSS for styling
 
 const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:5000/api/auth/logout');
+      await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/logout`);
       localStorage.removeItem('token');
       navigate('/login'); // Redirect to login page after logout
     } catch (error) {
@@ -22,7 +22,7 @@ useEffect(() => {
     // Fetch reports or analytics data
     const fetchReports = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/reports');
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/reports`);
         setReports(response.data);
       } catch (error) {
         console.error('Error fetching reports:', error);

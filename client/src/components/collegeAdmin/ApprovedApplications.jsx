@@ -10,7 +10,7 @@ const ApprovedApplications = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:5000/api/auth/logout');
+      await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/logout`);
       localStorage.removeItem('token');
       localStorage.removeItem('collegeId');
       localStorage.removeItem('role');
@@ -24,7 +24,7 @@ const ApprovedApplications = () => {
     try {
       const collegeId = localStorage.getItem('collegeId');
       if (collegeId) {
-        const response = await axios.get(`http://localhost:5000/api/auth/student-enroll-course/${collegeId}`);
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/auth/student-enroll-course/${collegeId}`);
         
         // Filter for approved applications
         const approvedApps = response.data.data.filter(application => application.status === "approved");

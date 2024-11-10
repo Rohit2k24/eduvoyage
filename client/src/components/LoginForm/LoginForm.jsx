@@ -62,7 +62,7 @@ function LoginForm() {
     if (Object.keys(newErrors).length === 0) {
       try {
         const response = await axios.post(
-          "http://localhost:5000/api/auth/login-for-all",
+          `${import.meta.env.VITE_BASE_URL}/api/auth/login-for-all`,
           formData
         );
 

@@ -20,7 +20,7 @@ const AvailableCourses = () => {
 
   const fetchOfferedCourses = async (collegeId) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/auth/offered-courses/${collegeId}`);
+      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/auth/offered-courses/${collegeId}`);
       setOfferedCourses(response.data);
     } catch (error) {
       console.error('Error fetching offered courses:', error);
@@ -30,7 +30,7 @@ const AvailableCourses = () => {
   const fetchApplications = async () => {
     try {
       const studentId = localStorage.getItem('studentId');
-      const response = await axios.get(`http://localhost:5000/api/auth/student-applications/${studentId}`);
+      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/auth/student-applications/${studentId}`);
       setApplications(response.data);
     } catch (error) {
       console.error('Error fetching applications:', error);

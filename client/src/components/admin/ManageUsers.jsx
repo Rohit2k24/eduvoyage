@@ -18,7 +18,7 @@ const ManageUsers = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/users');
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/users`);
         setUsers(response.data);
         setFilteredUsers(response.data);
       } catch (error) {
@@ -31,7 +31,7 @@ const ManageUsers = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:5000/api/auth/logout');
+      await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/logout`);
       localStorage.removeItem('token');
       navigate('/login');
     } catch (error) {
@@ -60,7 +60,7 @@ const ManageUsers = () => {
   const handleSaveChanges = async () => {
     try {
       const updatedUser = { firstname, lastname, email };
-      await axios.put(`http://localhost:5000/api/users/${editUser._id}`, updatedUser);
+      await axios.put(`${import.meta.env.VITE_BASE_URL}/api/users/${editUser._id}`, updatedUser);
 
       const updatedUserList = users.map((user) =>
         user._id === editUser._id ? { ...user, firstname, lastname, email } : user

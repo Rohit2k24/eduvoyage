@@ -10,7 +10,7 @@ const ExamsAndCertifications = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:5000/api/auth/logout');
+      await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/logout`);
       localStorage.removeItem('token');
       localStorage.removeItem('collegeId');
       localStorage.removeItem('role');

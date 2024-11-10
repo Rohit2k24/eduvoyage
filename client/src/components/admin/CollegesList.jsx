@@ -13,7 +13,7 @@ const CollegesList = () => {
 
   const fetchColleges = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/auth/colleges');
+      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/auth/colleges`);
       setColleges(response.data);
     } catch (error) {
       console.error('Error fetching colleges:', error);
@@ -70,7 +70,7 @@ const CollegesList = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:5000/api/auth/logout');
+      await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/logout`);
       localStorage.removeItem('token');
       navigate('/login'); // Redirect to login page after logout
     } catch (error) {
@@ -89,7 +89,7 @@ const CollegesList = () => {
       });
 
       if (result.isConfirmed) {
-        await axios.patch(`http://localhost:5000/api/auth/colleges/${collegeId}/disable`);
+        await axios.patch(`${import.meta.env.VITE_BASE_URL}/api/auth/colleges/${collegeId}/disable`);
         fetchColleges(); // Refresh the list after disabling
 
         Swal.fire("Success", "College disabled successfully", "success");

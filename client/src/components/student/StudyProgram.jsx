@@ -24,7 +24,7 @@ const StudyProgram = () => {
 
   const fetchApprovedColleges = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/auth/approved-colleges');
+      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/auth/approved-colleges`);
       console.log(response.data);
       setColleges(response.data);
     } catch (error) {
@@ -34,7 +34,7 @@ const StudyProgram = () => {
 
   const fetchOfferedCourses = async (collegeId) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/auth/offered-courses/${collegeId}`);
+      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/auth/offered-courses/${collegeId}`);
       setOfferedCourses(response.data);
     } catch (error) {
       console.error('Error fetching offered courses:', error);
@@ -62,7 +62,7 @@ const StudyProgram = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:5000/api/auth/logout');
+      await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/logout`);
       localStorage.removeItem("token");
       localStorage.removeItem('studentId');
       localStorage.removeItem("role");

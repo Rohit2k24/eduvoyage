@@ -30,9 +30,9 @@ const AdminDashboard = () => {
     const fetchData = async () => {
       try {
         const [roleCounts, coursesData, recentActivityData] = await Promise.all([
-          axios.get('http://localhost:5000/api/role-counts'),
-          axios.get('http://localhost:5000/api/fetch-courses'),
-          axios.get('http://localhost:5000/api/users'),
+          axios.get(`${import.meta.env.VITE_BASE_URL}/api/role-counts`),
+          axios.get(`${import.meta.env.VITE_BASE_URL}/api/fetch-courses`),
+          axios.get(`${import.meta.env.VITE_BASE_URL}/api/users`),
         ]);
 
         setRoleCounts((prevCounts) => ({
@@ -53,7 +53,7 @@ const AdminDashboard = () => {
   // Handle logout function
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:5000/api/auth/logout');
+      await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/logout`);
       localStorage.removeItem('token');
       navigate('/login'); // Redirect to login page after logout
     } catch (error) {
@@ -80,8 +80,8 @@ const AdminDashboard = () => {
     };
 
     try {
-      await axios.post('http://localhost:5000/api/course-add', newCourse);
-      const coursesData = await axios.get('http://localhost:5000/api/fetch-courses');
+      await axios.post(`${import.meta.env.VITE_BASE_URL}/api/course-add`, newCourse);
+      const coursesData = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/fetch-courses`);
       setCourses(coursesData.data);
       handleCloseAddCourseModal(); 
       Swal.fire({

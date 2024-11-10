@@ -16,7 +16,7 @@ const DisabledCourses = () => {
   // Fetch deleted (disabled) courses from the backend
   const fetchDeletedCourses = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/disabled-courses');
+      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/disabled-courses`);
       console.log('Deleted Courses fetched from API:', response.data);
       setDeletedCourses(response.data);
     } catch (error) {
@@ -26,7 +26,7 @@ const DisabledCourses = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:5000/api/auth/logout');
+      await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/logout`);
       localStorage.removeItem('token');
       navigate('/login'); // Redirect to login page after logout
     } catch (error) {
@@ -37,7 +37,7 @@ const DisabledCourses = () => {
   // Function to handle enabling a course
   const enableCourse = async (courseId) => {
     try {
-      await axios.put(`http://localhost:5000/api/course-enable/${courseId}`);
+      await axios.put(`${import.meta.env.VITE_BASE_URL}/api/course-enable/${courseId}`);
       fetchDeletedCourses();
       Swal.fire({
         icon: 'success',
@@ -68,7 +68,7 @@ const DisabledCourses = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`http://localhost:5000/api/course-delete/${courseId}`);
+          await axios.delete(`${import.meta.env.VITE_BASE_URL}/api/course-delete/${courseId}`);
           fetchDeletedCourses();
           Swal.fire({
             icon: 'success',

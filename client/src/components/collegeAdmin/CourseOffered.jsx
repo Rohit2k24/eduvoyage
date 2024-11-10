@@ -11,12 +11,12 @@ const CourseOffered = () => {
 
   const fetchCourses = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/fetch-courses");
+      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/fetch-courses`);
       setCourses(response.data);
 
       const collegeId = localStorage.getItem("collegeId");
       if (collegeId) {
-        const offeredResponse = await axios.get(`http://localhost:5000/api/auth/offered-courses/${collegeId}`);
+        const offeredResponse = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/auth/offered-courses/${collegeId}`);
         setOfferedCourses(offeredResponse.data);
       }
     } catch (error) {
@@ -55,7 +55,7 @@ const CourseOffered = () => {
         throw new Error("College ID not found");
       }
 
-      const response = await axios.post("http://localhost:5000/api/offer-course", {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/offer-course`, {
         courseId: course._id,
         courseName: course.courseName,
         courseDescription: course.courseDescription,
@@ -79,7 +79,7 @@ const CourseOffered = () => {
         throw new Error("College ID not found");
       }
 
-      const response = await axios.post("http://localhost:5000/api/remove-course-offer", {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/remove-course-offer`, {
         courseId: course._id,
         collegeId: collegeId,
       });
@@ -96,7 +96,7 @@ const CourseOffered = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:5000/api/auth/logout');
+      await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/logout`);
       localStorage.removeItem('token');
       localStorage.removeItem('collegeId');
       localStorage.removeItem('role');

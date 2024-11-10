@@ -3,7 +3,6 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import "react-phone-number-input/style.css";
-import PhoneInput from "react-phone-number-input";
 
 const CollegeRegistrationForm = () => {
   const [formData, setFormData] = useState({
@@ -144,7 +143,7 @@ const CollegeRegistrationForm = () => {
         );
 
         const response = await axios.post(
-          "http://localhost:5000/api/auth/register-college",
+          `${import.meta.env.VITE_BASE_URL}/api/auth/register-college`,
           formDataToSend,
           {
             headers: { "Content-Type": "multipart/form-data" },

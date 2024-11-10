@@ -16,7 +16,7 @@ const ApplicationRecieved = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:5000/api/auth/logout');
+      await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/logout`);
       localStorage.removeItem('token');
       localStorage.removeItem('collegeId');
       localStorage.removeItem('role');
@@ -32,7 +32,7 @@ const ApplicationRecieved = () => {
     try {
       const collegeId = localStorage.getItem('collegeId');
       if (collegeId) {
-        const response = await axios.get(`http://localhost:5000/api/auth/student-enroll-course/${collegeId}`);
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/auth/student-enroll-course/${collegeId}`);
         console.log(response.data.data)
         setApplications(response.data.data);
       } else {
@@ -47,7 +47,7 @@ const ApplicationRecieved = () => {
 
   const handleApprove = async (applicationId) => {
     try {
-      await axios.put(`http://localhost:5000/api/auth/approve-application/${applicationId}`, { status: "approved" });
+      await axios.put(`${import.meta.env.VITE_BASE_URL}/api/auth/approve-application/${applicationId}`, { status: "approved" });
       swal.fire({
         title: "Application Approved",
         text: "The application has been successfully approved!",
@@ -71,7 +71,7 @@ const ApplicationRecieved = () => {
       reverseButtons: true
     }).then((result) => {
       if (result.isConfirmed) {
-        axios.put(`http://localhost:5000/api/auth/reject-application/${applicationId}`, { status: "rejected" })
+        axios.put(`${import.meta.env.VITE_BASE_URL}/api/auth/reject-application/${applicationId}`, { status: "rejected" })
           .then(() => {
             swal.fire({
               title: "Application Denied",
@@ -93,7 +93,7 @@ const ApplicationRecieved = () => {
     try {
       const formattedPath = filePath.replace(/^.*[\\\/]/, ''); // Clean path to use just the filename if needed
       console.log(formattedPath)
-      const response = await axios.get(`http://localhost:5000/api/auth/download/${formattedPath}`, {
+      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/auth/download/${formattedPath}`, {
         responseType: 'blob'
       });
   

@@ -20,7 +20,7 @@ const CollegeAdminDashboard = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:5000/api/auth/logout');
+      await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/logout`);
       localStorage.removeItem('token');
       localStorage.removeItem('collegeId');
       localStorage.removeItem('role');
@@ -34,11 +34,11 @@ const CollegeAdminDashboard = () => {
     try {
       const collegeId = localStorage.getItem('collegeId');
       // Fetch college info
-      const collegeResponse = await axios.get(`http://localhost:5000/api/auth/college/${collegeId}`);
+      const collegeResponse = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/auth/college/${collegeId}`);
       setCollegeInfo(collegeResponse.data);
         
       // Fetch applications
-      const applicationsResponse = await axios.get(`http://localhost:5000/api/auth/student-enroll-course/${collegeId}`);
+      const applicationsResponse = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/auth/student-enroll-course/${collegeId}`);
       const applications = applicationsResponse.data.data;
 
       // Calculate statistics

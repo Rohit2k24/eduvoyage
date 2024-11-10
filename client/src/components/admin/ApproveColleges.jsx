@@ -13,7 +13,7 @@ const ApproveColleges = () => {
 
   const fetchUnapprovedColleges = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/auth/unapproved-colleges');
+      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/auth/unapproved-colleges`);
       setUnapprovedColleges(response.data);
     } catch (error) {
       console.error('Error fetching unapproved colleges:', error);
@@ -22,7 +22,7 @@ const ApproveColleges = () => {
 
   const handleApproveCollege = async (id) => {
     try {
-      await axios.put(`http://localhost:5000/api/auth/approve-college/${id}`);
+      await axios.put(`${import.meta.env.VITE_BASE_URL}/api/auth/approve-college/${id}`);
       fetchUnapprovedColleges();
       Swal.fire("Success", "College approved successfully", "success");
     } catch (error) {
@@ -33,7 +33,7 @@ const ApproveColleges = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:5000/api/auth/logout');
+      await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/logout`);
       localStorage.removeItem('token');
       navigate('/login'); // Redirect to login page after logout
     } catch (error) {
@@ -43,7 +43,7 @@ const ApproveColleges = () => {
 
   const handleDeclineCollege = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/auth/decline-college/${id}`);
+      await axios.delete(`${import.meta.env.VITE_BASE_URL}/api/auth/decline-college/${id}`);
       fetchUnapprovedColleges();
       Swal.fire("Success", "College request declined and deleted", "success");
     } catch (error) {
@@ -159,7 +159,7 @@ const ApproveColleges = () => {
                       {college.accreditationCertificate && (
                         <div style={styles.imageContainer}>
                           <a
-                            href={`http://localhost:5000/api/auth/download/accreditation/${college.collegeName}`}
+                            href={`${import.meta.env.VITE_BASE_URL}/api/auth/download/accreditation/${college.collegeName}`}
                             download
                             className="btn btn-primary"
                           >
@@ -170,7 +170,7 @@ const ApproveColleges = () => {
                       {college.legalDocuments && (
                         <div style={styles.imageContainer}>
                           <a
-                            href={`http://localhost:5000/api/auth/download/legal/${college.collegeName}`}
+                            href={`${import.meta.env.VITE_BASE_URL}/api/auth/download/legal/${college.collegeName}`}
                             download
                             className="btn btn-primary"
                           >
