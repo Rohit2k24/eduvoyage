@@ -71,22 +71,32 @@ const StudentDashboard = () => {
   const UserProfileCard = () => (
     <div className="user-profile-card">
       <div className="profile-header">
-        <div className="profile-avatar">
-          {user.firstname.charAt(0)}{user.lastname.charAt(0)}
+        <div className="profile-avatar-wrapper">
+          <div className="profile-avatar">
+            {user.firstname.charAt(0)}{user.lastname.charAt(0)}
+          </div>
+          <div className="online-status"></div>
         </div>
-        <h2>{user.firstname} {user.lastname}</h2>
+        <h2 className="profile-name">{user.firstname} {user.lastname}</h2>
+        <span className="profile-role">Student</span>
       </div>
       <div className="profile-info">
         <div className="info-item">
-          <span className="info-label">Email:</span>
+          <span className="info-label">
+            <i className="fas fa-envelope"></i> Email
+          </span>
           <span className="info-value">{user.email}</span>
         </div>
         <div className="info-item">
-          <span className="info-label">Address:</span>
+          <span className="info-label">
+            <i className="fas fa-map-marker-alt"></i> Address
+          </span>
           <span className="info-value">{user.address || 'Not provided'}</span>
         </div>
         <div className="info-item">
-          <span className="info-label">Country:</span>
+          <span className="info-label">
+            <i className="fas fa-globe"></i> Country
+          </span>
           <span className="info-value">{user.country || 'Not provided'}</span>
         </div>
       </div>

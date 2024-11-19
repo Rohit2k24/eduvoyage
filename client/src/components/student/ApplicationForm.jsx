@@ -231,7 +231,8 @@ const ApplicationForm = ({ course, onClose, college }) => {
     Object.keys(formData).forEach((key) => {
       formDataToSend.append(key, formData[key]);
     });
-    formDataToSend.append('courseId', course._id);
+    formDataToSend.append('courseId', course.courseId);
+    console.log("Course id print:",course.courseId);
     formDataToSend.append('collegeId', college._id);
     formDataToSend.append('studentId', localStorage.getItem('studentId'));
 

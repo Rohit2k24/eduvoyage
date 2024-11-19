@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authRoutes = require('./authRoutes');
-const { getAllStudents, editStudent, deleteStudent } = require('../controller/studentController');
+const { getAllStudents, editStudent, deleteStudent, getMyCourses } = require('../controller/studentController');
 const { getCurrentUser } = require('../controller/userDetailsController');
 const { addCourse, getCourseCount, getCourses } = require('../controller/courseController');
 const { enrollCourse } = require('../controller/enrollcourseController');
@@ -9,8 +9,13 @@ const auth = require('../middleware/authMiddleware');
 const educationCourseController = require('../controller/educationCourseController');
 const userController = require('../controller/userController');
 const { recommendCourses } = require('../controller/educationCourseController');
+const paymentRoutes = require('./paymentRoutes');
+const { uploadCourseNotes, downloadCourseNotes, getCourseNotes } = require('../controller/notesController');
+const examController = require('../controller/examController');
 
-
+router.get('/questions/:courseId', examController.getExamQuestions);
+router.post('/submit', examController.submitExam);
+router.get('/certificate/:examId', examController.generateCertificate);
 router.use('/auth', authRoutes);
 
 router.get('/role-counts', userController.getUserRoleCounts);
@@ -18,6 +23,8 @@ router.get('/role-counts', userController.getUserRoleCounts);
 router.get('/users',userController.getAllUsers)
 
 router.get('/student', getAllStudents); 
+
+router.get('/student/my-courses/:studentId', auth, getMyCourses);
 
 router.put('/student-edit/:id', editStudent); 
 
@@ -59,5 +66,21 @@ router.get('/offered-courses/:collegeId', educationCourseController.getOfferedCo
 
 router.post('/recommend-courses', recommendCourses);
 
-  
+router.use('/payment', paymentRoutes)
+
+router.post('/upload-course-notes', uploadCourseNotes);
+router.get('/download-course-notes/:fileName', downloadCourseNotes);
+router.get('/course-notes/:courseId', getCourseNotes);
+
+router.put('/update-course-progress', auth, educationCourseController.updateCourseProgress);
+router.put('/update-course-status', auth, educationCourseController.updateCourseStatus);
+
+router.get('/student/completed-courses/:studentId', auth, examController.getCompletedCourses);
+
+router.get('/exam/questions/:courseId', auth, examController.getExamQuestions);
+router.post('/exam/submit', auth, examController.submitExam);
+router.get('/exam/certificate/:certificateId', auth, examController.generateCertificate);
+
+router.get('/student/certificates/:studentId', auth, examController.getStudentCertificates);
+
 module.exports = router;

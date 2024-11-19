@@ -74,15 +74,16 @@
 /* Table styling */
 .application-table {
     width: 100%;
-    margin-left: 275px;
     border-collapse: collapse;
     margin-top: 10px;
+    table-layout: fixed; /* Ensure fixed layout for consistent column widths */
 }
 
 .application-table th, .application-table td {
     padding: 12px 15px;
     text-align: left;
     border-bottom: 1px solid #ddd;
+    overflow: hidden; /* Prevent overflow of content */
 }
 
 .application-table th {

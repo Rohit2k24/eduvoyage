@@ -4,7 +4,7 @@ import Advertisement from "./components/Home/Advertisement";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import "./App.css"; 
-import StudentDashboard from "./components/student/StudentDashboard";
+import StudentDashboard from "./components/student/studentDashboard";
 import CollegeAdmin from "./components/collegeAdmin/CollegeAdminDashboard";
 import ForgotPassword from "./components/ForgotPassword";
 import AdminDashboard from "./components/Admin/AdminDashboard";
@@ -34,6 +34,8 @@ import AvailableCourses from "./components/student/AvailableCourses";
 import HelpSupport from "./components/student/HelpSupport";
 import ScholarshipPrograms from "./components/student/ScholarshipPrograms";
 import GetCourseRecommendations from './components/student/GetCourseRecommendations';
+import MyCourses from './components/student/MyCourses';
+import MyCertificates from './components/student/MyCertificates';
 
 function App() {
   return (
@@ -73,6 +75,8 @@ function App() {
         <Route path="/groups" element={<PrivateRoutes><Groups /></PrivateRoutes>} />
         <Route path="/messages" element={<PrivateRoutes><Messages /></PrivateRoutes>} />
         <Route path="/get-course-recommendations" element={<PrivateRoutes><GetCourseRecommendations /></PrivateRoutes>} />
+        <Route path="/my-courses" element={<PrivateRoutes><MyCourses /></PrivateRoutes>} />
+        <Route path="/my-certificates" element={<MyCertificates />} />
       </Routes>
     </Router>
   );

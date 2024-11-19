@@ -4,8 +4,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import ApplicationForm from './ApplicationForm';
 import StudentSidebar from '../Sidebar/StudentSidebar';
-import Header from './Header'; // Import the Header component
-import './studentDashboard.css'; // Import your CSS for global styles
+import Header from './Header';
 
 const StudyProgram = () => {
   const navigate = useNavigate();
@@ -16,6 +15,25 @@ const StudyProgram = () => {
   const [showApplicationForm, setShowApplicationForm] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [filters, setFilters] = useState({
+    search: '',
+    country: '',
+    courseType: ''
+  });
+  
+  const [sortBy, setSortBy] = useState('name');
+  const [viewMode, setViewMode] = useState('grid');
+
+  // Filter options
+  const countries = [...new Set(colleges.map(college => college.country))];
+  const courseTypes = ['Bachelor', 'Master', 'PhD', 'Diploma', 'Certificate'];
+
+  const filteredColleges = colleges.filter(college => {
+    const matchesSearch = college.collegeName.toLowerCase().includes(filters.search.toLowerCase());
+    const matchesCountry = !filters.country || college.country === filters.country;
+    const matchesCourseType = !filters.courseType || college.courseTypes?.includes(filters.courseType);
+    return matchesSearch && matchesCountry && matchesCourseType;
+  });
 
   useEffect(() => {
     fetchApprovedColleges();
@@ -78,174 +96,332 @@ const StudyProgram = () => {
 
   const styles = {
     container: {
-      flex: 1,
-      padding: '40px 20px',
-      fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-      backgroundColor: '#f8f9fa',
+      display: 'flex',
       minHeight: '100vh',
-      marginLeft: '250px', // Match sidebar width
+      backgroundColor: '#f1f5f9',
     },
-    header: {
-      marginTop:'40px',
-      fontSize: '2.5rem',
-      color: '#343a40',
-      marginBottom: '40px',
+    mainContent: {
+      flex: 1,
+      padding: '32px',
+      marginLeft: '250px',
+      backgroundColor: '#f1f5f9',
+    },
+    heroSection: {
       textAlign: 'center',
-      textTransform: 'uppercase',
-      letterSpacing: '1px',
-      fontWeight: '700',
-      borderBottom: '2px solid #007bff',
-      paddingBottom: '10px',
+      padding: '60px 0',
+      background: 'linear-gradient(135deg, #2563eb, #3b82f6)',
+      color: 'white',
+      borderRadius: '16px',
+      marginBottom: '32px',
     },
-    collegeList: {
+    heroTitle: {
+      fontSize: '2.5rem',
+      marginBottom: '16px',
+      fontWeight: '700',
+    },
+    heroSubtitle: {
+      fontSize: '1.2rem',
+      opacity: '0.9',
+    },
+    filtersSection: {
+      background: 'white',
+      padding: '24px',
+      borderRadius: '16px',
+      marginBottom: '32px',
+      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+    },
+    searchBar: {
+      position: 'relative',
+      marginBottom: '24px',
+    },
+    searchInput: {
+      width: '100%',
+      padding: '12px 48px',
+      border: '2px solid #e2e8f0',
+      borderRadius: '8px',
+      fontSize: '1rem',
+      transition: 'all 0.3s ease',
+    },
+    searchIcon: {
+      position: 'absolute',
+      left: '16px',
+      top: '50%',
+      transform: 'translateY(-50%)',
+      color: '#64748b',
+    },
+    filtersContainer: {
+      display: 'flex',
+      gap: '16px',
+      flexWrap: 'wrap',
+      alignItems: 'center',
+    },
+    filterGroup: {
+      flex: '1 1 200px',
+      maxWidth: '300px',
+    },
+    select: {
+      width: '100%',
+      padding: '12px',
+      border: '1px solid #e2e8f0',
+      borderRadius: '8px',
+      fontSize: '0.875rem',
+      color: '#1e293b',
+      backgroundColor: 'white',
+      cursor: 'pointer',
+      transition: 'all 0.2s ease',
+      '&:hover': {
+        borderColor: '#2563eb',
+      },
+      '&:focus': {
+        outline: 'none',
+        borderColor: '#2563eb',
+        boxShadow: '0 0 0 3px rgba(37, 99, 235, 0.1)',
+      }
+    },
+    viewToggle: {
+      display: 'flex',
+      gap: '8px',
+      marginLeft: 'auto',
+    },
+    viewToggleButton: (isActive) => ({
+      padding: '10px 16px',
+      border: '1px solid #e2e8f0',
+      background: isActive ? '#2563eb' : 'white',
+      color: isActive ? 'white' : '#64748b',
+      borderRadius: '8px',
+      cursor: 'pointer',
+      transition: 'all 0.2s ease',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      '&:hover': {
+        background: isActive ? '#2563eb' : '#f8fafc',
+      }
+    }),
+    collegesContainer: {
       display: 'grid',
+      gap: '24px',
+      marginBottom: '48px',
       gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-      gap: '30px',
-      marginBottom: '50px',
     },
     collegeCard: {
-      padding: '25px',
-      borderRadius: '12px',
-      boxShadow: '0 10px 20px rgba(0, 0, 0, 0.15)',
-      cursor: 'pointer',
-      transition: 'all 0.3s ease',
-      backgroundColor: '#fff',
-      border: '1px solid #dee2e6',
-      position: 'relative',
+      background: 'white',
+      borderRadius: '16px',
       overflow: 'hidden',
+      transition: 'all 0.3s ease',
+      cursor: 'pointer',
+      '&:hover': {
+        transform: 'translateY(-4px)',
+        boxShadow: '0 12px 24px rgba(0, 0, 0, 0.15)',
+      },
     },
-    collegeName: {
-      fontSize: '1.5rem',
-      fontWeight: 'bold',
-      marginBottom: '15px',
-      color: '#007bff',
+    collegeImage: {
+      position: 'relative',
+      height: '200px',
+    },
+    collegeImg: {
+      width: '100%',
+      height: '100%',
+      objectFit: 'cover',
+    },
+    collegeRating: {
+      position: 'absolute',
+      top: '16px',
+      right: '16px',
+      background: 'rgba(255, 255, 255, 0.9)',
+      padding: '4px 8px',
+      borderRadius: '20px',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '4px',
     },
     collegeInfo: {
-      fontSize: '1rem',
-      color: '#6c757d',
-      marginBottom: '5px',
+      padding: '24px',
     },
-    courseList: {
-      marginTop: '40px',
-    },
-    courseListHeader: {
-      fontSize: '2rem',
-      color: '#343a40',
-      marginBottom: '25px',
-      textAlign: 'center',
+    collegeName: {
+      marginBottom: '12px',
+      fontSize: '1.25rem',
+      color: '#1e293b',
       fontWeight: '600',
     },
-    courseCard: {
-      backgroundColor: '#fff',
-      borderRadius: '12px',
-      padding: '25px',
-      marginBottom: '25px',
-      boxShadow: '0 5px 15px rgba(0, 0, 0, 0.1)',
-      transition: 'transform 0.3s ease',
+    collegeLocation: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '8px',
+      color: '#64748b',
+      marginBottom: '16px',
     },
-    courseName: {
-      fontSize: '1.4rem',
-      fontWeight: 'bold',
-      color: '#343a40',
-      marginBottom: '15px',
+    collegeStats: {
+      display: 'flex',
+      gap: '24px',
+      marginBottom: '24px',
+      color: '#64748b',
     },
-    courseDetails: {
-      fontSize: '1rem',
-      color: '#495057',
-      marginBottom: '20px',
-      lineHeight: '1.6',
-    },
-    applyButton: {
-      backgroundColor: '#007bff',
-      color: '#fff',
+    viewDetailsBtn: {
+      width: '100%',
+      padding: '12px',
+      background: '#2563eb',
+      color: 'white',
       border: 'none',
-      padding: '12px 25px',
-      borderRadius: '6px',
-      cursor: 'pointer',
-      transition: 'background-color 0.3s ease',
-      fontSize: '1rem',
+      borderRadius: '8px',
       fontWeight: '600',
-      textTransform: 'uppercase',
-      letterSpacing: '1px',
-      boxShadow: '0 4px 8px rgba(0, 123, 255, 0.2)',
+      cursor: 'pointer',
+      transition: 'all 0.3s ease',
+      '&:hover': {
+        background: '#3b82f6',
+      },
     },
     recommendationSection: {
+      background: 'white',
+      borderRadius: '16px',
+      padding: '48px',
       textAlign: 'center',
-      margin: '20px 0',
+      marginBottom: '48px',
     },
-    recommendationButton: {
-      backgroundColor: '#007bff',
-      color: '#fff',
+    recommendationTitle: {
+      fontSize: '2rem',
+      marginBottom: '16px',
+      color: '#1e293b',
+      fontWeight: '700',
+    },
+    recommendationText: {
+      color: '#64748b',
+      marginBottom: '24px',
+    },
+    recommendationBtn: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: '8px',
+      padding: '12px 24px',
+      background: '#2563eb',
+      color: 'white',
       border: 'none',
-      padding: '12px 25px',
-      borderRadius: '6px',
-      cursor: 'pointer',
-      transition: 'background-color 0.3s ease',
-      fontSize: '1rem',
+      borderRadius: '8px',
       fontWeight: '600',
-      textTransform: 'uppercase',
-      letterSpacing: '1px',
+      cursor: 'pointer',
+      transition: 'all 0.3s ease',
+      '&:hover': {
+        background: '#3b82f6',
+      },
     },
   };
 
   return (
-    <div className="student-dashboard">
+    <div style={styles.container}>
       <StudentSidebar />
-      <div style={styles.container}>
-        <Header user={user} onLogout={handleLogout} /> {/* Pass user and logout function */}
-        <h1 style={styles.header}>Study Programs</h1>
-        <div style={styles.collegeList}>
-          {colleges.map((college) => (
-            <div
-              key={college._id}
-              style={styles.collegeCard}
-              onClick={() => handleCollegeClick(college)}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'scale(1.05)';
-                e.currentTarget.style.boxShadow = '0 15px 30px rgba(0, 0, 0, 0.2)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'scale(1)';
-                e.currentTarget.style.boxShadow = '0 10px 20px rgba(0, 0, 0, 0.15)';
-              }}
-            >
-              <h2 style={styles.collegeName}>{college.collegeName}</h2>
-              <p style={styles.collegeInfo}>{college.address}</p>
-              <p style={styles.collegeInfo}>{college.country}</p>
+      <div style={styles.mainContent}>
+        <Header user={user} onLogout={handleLogout} />
+        
+        <section style={styles.heroSection}>
+          <h1 style={styles.heroTitle}>Find Your Perfect Study Program</h1>
+          <p style={styles.heroSubtitle}>Explore top colleges and universities worldwide</p>
+        </section>
+
+        <section style={styles.filtersSection}>
+          <div style={styles.searchBar}>
+            <i className="fas fa-search" style={styles.searchIcon}></i>
+            <input
+              style={styles.searchInput}
+              type="text"
+              placeholder="Search colleges..."
+              value={filters.search}
+              onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+            />
+          </div>
+
+          <div style={styles.filtersContainer}>
+            <div style={styles.filterGroup}>
+              <select
+                style={styles.select}
+                value={filters.country}
+                onChange={(e) => setFilters({ ...filters, country: e.target.value })}
+              >
+                <option value="">All Countries</option>
+                {countries.map(country => (
+                  <option key={country} value={country}>{country}</option>
+                ))}
+              </select>
+            </div>
+
+            <div style={styles.filterGroup}>
+              <select
+                style={styles.select}
+                value={filters.courseType}
+                onChange={(e) => setFilters({ ...filters, courseType: e.target.value })}
+              >
+                <option value="">All Course Types</option>
+                {courseTypes.map(type => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
+            </div>
+
+            <div style={styles.viewToggle}>
+              <button 
+                style={styles.viewToggleButton(viewMode === 'grid')}
+                onClick={() => setViewMode('grid')}
+              >
+                <i className="fas fa-th-large"></i>
+              </button>
+              <button 
+                style={styles.viewToggleButton(viewMode === 'list')}
+                onClick={() => setViewMode('list')}
+              >
+                <i className="fas fa-list"></i>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section style={styles.collegesContainer}>
+          {filteredColleges.map((college) => (
+            <div key={college._id} style={styles.collegeCard} onClick={() => handleCollegeClick(college)}>
+              <div style={styles.collegeImage}>
+                <img 
+                  src={college.imageUrl || '/default-college.jpg'} 
+                  alt={college.collegeName}
+                  style={styles.collegeImg}
+                />
+                <div style={styles.collegeRating}>
+                  <i className="fas fa-star" style={{ color: '#fbbf24' }}></i>
+                  <span>{college.rating || '4.5'}</span>
+                </div>
+              </div>
+              <div style={styles.collegeInfo}>
+                <h2 style={styles.collegeName}>{college.collegeName}</h2>
+                <div style={styles.collegeLocation}>
+                  <i className="fas fa-map-marker-alt"></i>
+                  <span>{college.address}, {college.country}</span>
+                </div>
+                <div style={styles.collegeStats}>
+                  <div>
+                    <i className="fas fa-graduation-cap"></i>
+                    <span>{college.programCount || '25'} Programs</span>
+                  </div>
+                  <div>
+                    <i className="fas fa-users"></i>
+                    <span>{college.studentCount || '5000'}+ Students</span>
+                  </div>
+                </div>
+                <button style={styles.viewDetailsBtn}>View Details</button>
+              </div>
             </div>
           ))}
-        </div>
-        <div style={styles.recommendationSection}>
-          <h2>Not sure about the course you are looking for? Let us help you!</h2>
-          <button style={styles.recommendationButton} onClick={handleGetRecommendations}>
-            Get Course Recommendations
-          </button>
-        </div>
-        {selectedCollege && (
-          <div style={styles.courseList}>
-            <h2 style={styles.courseListHeader}>{selectedCollege.collegeName} Offered Courses</h2>
-            {offeredCourses.map((course) => (
-              <div
-                key={course._id}
-                style={styles.courseCard}
-                onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-5px)')}
-                onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
-              >
-                <h3 style={styles.courseName}>{course.courseName}</h3>
-                <p style={styles.courseDetails}>Duration: {course.duration}</p>
-                <p style={styles.courseDetails}>Price: ${course.price}</p>
-                <button
-                  style={styles.applyButton}
-                  onClick={() => handleApply(course)}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#0056b3')}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#007bff')}
-                >
-                  Apply Now
-                </button>
-              </div>
-            ))}
+        </section>
+
+        <section style={styles.recommendationSection}>
+          <div>
+            <h2 style={styles.recommendationTitle}>Not sure what to study?</h2>
+            <p style={styles.recommendationText}>
+              Get personalized course recommendations based on your interests and goals
+            </p>
+            <button style={styles.recommendationBtn} onClick={handleGetRecommendations}>
+              Get Recommendations
+              <i className="fas fa-arrow-right"></i>
+            </button>
           </div>
-        )}
+        </section>
+
         {showApplicationForm && (
           <ApplicationForm
             course={selectedCourse}
@@ -253,7 +429,6 @@ const StudyProgram = () => {
             onClose={() => setShowApplicationForm(false)}
           />
         )}
-        {errorMessage && <div className="error-message">{errorMessage}</div>} {/* Display logout error message */}
       </div>
     </div>
   );

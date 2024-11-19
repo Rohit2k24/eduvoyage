@@ -45,14 +45,35 @@ const AvailableCourses = () => {
     return courseApplications.length > 0 ? courseApplications[0].status : null;
   };
 
+  const getPaymentStatus = (courseId) => {
+    const courseApplications = applications
+      .filter(app => app.courseId === courseId)
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  
+    return courseApplications.length > 0 ? courseApplications[0].paymentStatus : null;
+  };
+  
+
   const renderActionButton = (course) => {
-    const status = getApplicationStatus(course._id);
-    
+    const status = getApplicationStatus(course.courseId);
+    const paymentStatus = getPaymentStatus(course.courseId); // Assume getPaymentStatus fetches payment status for the course
+  
+    if (status === 'approved' && paymentStatus === 'completed') {
+      return (
+        <button
+          style={{ ...styles.applyButton, backgroundColor: '#27ae60' }}
+          disabled
+        >
+          Payment Done
+        </button>
+      );
+    }
+  
     switch(status) {
       case 'pending':
         return (
           <button
-            style={{...styles.applyButton, backgroundColor: '#f39c12'}}
+            style={{ ...styles.applyButton, backgroundColor: '#f39c12' }}
             disabled
           >
             Application Under Process
@@ -61,7 +82,7 @@ const AvailableCourses = () => {
       case 'approved':
         return (
           <button
-            style={{...styles.applyButton, backgroundColor: '#27ae60'}}
+            style={{ ...styles.applyButton, backgroundColor: '#27ae60' }}
             onClick={() => handlePayment(course)}
           >
             Pay Now
@@ -69,36 +90,8 @@ const AvailableCourses = () => {
         );
       case 'rejected':
         return (
-          <button 
-            style={{
-              backgroundColor: '#ff4444',
-              color: 'white',
-              padding: '10px 20px',
-              border: 'none',
-              borderRadius: '5px',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
-              width: '100%',
-              maxWidth: '250px',
-              margin: '10px 0',
-              fontSize: '0.9rem',
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px',
-              position: 'relative',
-              overflow: 'hidden'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#ff6666';
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#ff4444';
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.2)';
-            }}
+          <button
+            style={styles.rejected}
             onClick={() => {
               setSelectedCourse(course);
               setShowApplicationForm(true);
@@ -115,24 +108,76 @@ const AvailableCourses = () => {
               setSelectedCourse(course);
               setShowApplicationForm(true);
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#0056b3')}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#007bff')}
           >
             Apply Now
           </button>
         );
     }
   };
+  
 
   const handleApply = (course) => {
     setSelectedCourse(course);
     setShowApplicationForm(true);
   };
 
-  const handlePayment = (course) => {
-    console.log('Handle payment for course:', course);
-  };
+  const handlePayment = async (course) => {
+    try {
+      const studentId = localStorage.getItem('studentId');
 
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/payment/enroll-payment`, {
+        userId: studentId,
+        courseId: course.courseId,
+        collegeId: college._id,
+        amount: course.price
+      });
+      console.log(response);
+  
+      const { orderId, key, amount, currency } = response.data;
+  
+      
+      const options = {
+        key: key, 
+        amount: amount, 
+        currency: currency,
+        name: college.collegeName,
+        description: `Payment for ${course.courseName}`,
+        order_id: orderId, 
+        handler: async function (response) {
+          const paymentData = {
+            razorpayOrderId: response.razorpay_order_id,
+            paymentId: response.razorpay_payment_id,
+            signature: response.razorpay_signature
+          };
+  
+
+          await axios.post(`${import.meta.env.VITE_BASE_URL}/api/payment/confirm-payment`, {
+            ...paymentData,
+            userId: studentId,
+            courseId: course.courseId,
+            collegeId: college._id
+          });
+  
+          fetchApplications(); 
+          alert("Payment successful! Your application is complete.");
+        },
+        prefill: {
+          name: localStorage.getItem('studentName') || '', 
+          email: localStorage.getItem('studentEmail') || '',
+        },
+        theme: {
+          color: "#007bff"
+        }
+      };
+  
+      const paymentGateway = new window.Razorpay(options);
+      paymentGateway.open();
+    } catch (error) {
+      console.error('Error initiating payment:', error);
+      alert("There was an error initiating the payment. Please try again.");
+    }
+  };
+  
   // Reusing styles from StudyProgram.jsx
   const styles = {
     container: {
@@ -209,7 +254,7 @@ const AvailableCourses = () => {
         <div style={styles.courseList}>
           {offeredCourses.map((course) => (
             <div
-              key={course._id}
+              key={course.courseId}
               style={styles.courseCard}
               onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-5px)')}
               onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}

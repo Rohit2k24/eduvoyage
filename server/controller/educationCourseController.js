@@ -493,6 +493,54 @@ const recommendCourses = async (req, res) => {
   }
 };
 
+const updateCourseProgress = async (req, res) => {
+  try {
+    const { courseId, studentId, progress } = req.body;
+    
+    const enrollment = await Enroll.findOneAndUpdate(
+      { 
+        courseId: courseId,
+        studentId: studentId 
+      },
+      { progress },
+      { new: true }
+    );
+
+    if (!enrollment) {
+      return res.status(404).json({ message: 'Enrollment not found' });
+    }
+
+    res.json({ 
+      message: 'Progress updated successfully', 
+      enrollment 
+    });
+  } catch (error) {
+    console.error('Error updating progress:', error);
+    res.status(500).json({ message: 'Error updating progress' });
+  }
+};
+
+const updateCourseStatus = async (req, res) => {
+  try {
+    const { courseId, studentId, status } = req.body;
+    
+    const enrollment = await Enroll.findOneAndUpdate(
+      { courseId, studentId },
+      { status },
+      { new: true }
+    );
+
+    if (!enrollment) {
+      return res.status(404).json({ message: 'Enrollment not found' });
+    }
+
+    res.json({ message: 'Status updated successfully', enrollment });
+  } catch (error) {
+    console.error('Error updating status:', error);
+    res.status(500).json({ message: 'Error updating status' });
+  }
+};
+
 module.exports = {
   addCourses,
   fetchCourses,
@@ -513,4 +561,6 @@ module.exports = {
   getCollegeInfo,
   getDashboardStats,
   recommendCourses,
+  updateCourseProgress,
+  updateCourseStatus
 };

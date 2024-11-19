@@ -1,6 +1,7 @@
 // userController.js
 
 const User = require('../models/User'); // Adjust the path according to your project structure
+const Enroll = require('../models/Enroll');
 
 // Fetch all students (excluding admin and college admins)
 const getAllStudents = async (req, res) => {
@@ -74,6 +75,50 @@ const deleteStudent = async (req, res) => {
     }
   };
   
+  const getMyCourses = async (req, res) => {
+    try {
+      const { studentId } = req.params;
+      console.log("Fetching courses for student:", studentId);
+
+      if (!studentId) {
+        return res.status(400).json({ message: 'Student ID is required' });
+      }
+
+      const enrollments = await Enroll.find({ studentId })
+        .populate({
+          path: 'courseId',
+          model: 'EducationCourse',
+          select: 'courseName courseDescription'
+        })
+        .populate({
+          path: 'collegeId',
+          select: 'collegeName'
+        })
+        .sort({ enrolledDate: -1 });
+
+      const formattedCourses = enrollments.map(enrollment => ({
+        id: enrollment._id,
+        courseId: enrollment.courseId,
+        name: enrollment.courseId?.courseName || 'Course Not Assigned',
+        imageUrl: '/default-course-image.jpg',
+        collegeName: enrollment.collegeId?.collegeName || 'College Not Assigned',
+        status: enrollment.status || 'pending',
+        enrolledDate: enrollment.enrolledDate,
+        progress: enrollment.progress || 0,
+        paymentStatus: enrollment.paymentStatus,
+        description: enrollment.courseId?.courseDescription || '',
+      }));
+
+      res.json(formattedCourses);
+    } catch (error) {
+      console.error('Error in getMyCourses:', error);
+      res.status(500).json({ 
+        message: 'Server error', 
+        error: error.message 
+      });
+    }
+  };
+  
   
 
 // Exporting the functions
@@ -81,4 +126,5 @@ module.exports = {
   getAllStudents,
   editStudent,
   deleteStudent,
+  getMyCourses
 };

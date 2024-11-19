@@ -106,6 +106,94 @@ const CourseOffered = () => {
     }
   };
 
+  const handleAddNotes = async (course) => {
+    const { value: formValues } = await Swal.fire({
+      title: 'Add Course Notes',
+      html: `
+        <div id="note-inputs">
+          <div class="note-entry" style="margin-bottom: 15px;">
+            <input type="text" class="swal2-input note-title" placeholder="Note Title">
+            <input type="file" class="swal2-file note-file" accept="application/pdf">
+          </div>
+        </div>
+        <button type="button" id="add-more" class="swal2-confirm swal2-styled" style="margin-top: 10px;">Add Another File</button>
+      `,
+      didOpen: () => {
+        // Add click handler for "Add Another File" button
+        document.getElementById('add-more').addEventListener('click', () => {
+          const noteInputs = document.getElementById('note-inputs');
+          const newEntry = document.createElement('div');
+          newEntry.className = 'note-entry';
+          newEntry.style = 'margin-bottom: 15px;';
+          newEntry.innerHTML = `
+            <input type="text" class="swal2-input note-title" placeholder="Note Title">
+            <input type="file" class="swal2-file note-file" accept="application/pdf">
+            <button type="button" class="swal2-confirm swal2-styled remove-entry" style="background-color: #dc3545;">Remove</button>
+          `;
+          noteInputs.appendChild(newEntry);
+
+          // Add remove handler
+          newEntry.querySelector('.remove-entry').addEventListener('click', () => {
+            newEntry.remove();
+          });
+        });
+      },
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'Upload',
+      preConfirm: () => {
+        const entries = document.querySelectorAll('.note-entry');
+        const files = [];
+        const titles = [];
+        
+        for (let entry of entries) {
+          const title = entry.querySelector('.note-title').value;
+          const file = entry.querySelector('.note-file').files[0];
+          
+          if (!title || !file) {
+            Swal.showValidationMessage('Please fill all fields');
+            return false;
+          }
+          
+          files.push(file);
+          titles.push(title);
+        }
+        
+        return { files, titles };
+      }
+    });
+
+    if (formValues) {
+      const { files, titles } = formValues;
+      const formData = new FormData();
+      
+      // Append each file and title
+      files.forEach((file, index) => {
+        formData.append('notes', file);
+        formData.append('titles', titles[index]);
+      });
+      
+      formData.append('courseId', course._id);
+      console.log("Course ID",course._id)
+      formData.append('collegeId', localStorage.getItem('collegeId'));
+      console.log("College  id:",localStorage.getItem('collegeId'))
+      formData.append('courseName', course.courseName);
+      console.log("Course Name:",course.courseName)
+
+      try {
+        await axios.post(`${import.meta.env.VITE_BASE_URL}/api/upload-course-notes`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+        Swal.fire('Success', 'Notes uploaded successfully', 'success');
+      } catch (error) {
+        console.error('Error uploading notes:', error);
+        Swal.fire('Error', 'Failed to upload notes', 'error');
+      }
+    }
+  };
+
   const styles = {
     mainContainer: {
       display: 'flex',
@@ -222,6 +310,16 @@ const CourseOffered = () => {
                         <>
                           <button style={styles.disabledButton} disabled>Offered</button>
                           <button onClick={() => handleRemoveOffer(course)} style={styles.removeButton}>Not Offering</button>
+                          <button 
+                            onClick={() => handleAddNotes(course)} 
+                            style={{
+                              ...styles.offerButton,
+                              backgroundColor: '#17a2b8',
+                              marginLeft: '10px'
+                            }}
+                          >
+                            Add Notes
+                          </button>
                         </>
                       ) : (
                         <button onClick={() => handleOfferCourse(course)} style={styles.offerButton}>Offer Course</button>
