@@ -211,6 +211,16 @@ exports.resetPassword = async (req, res) => {
 
 exports.registerCollege = async (req, res) => {
   try {
+    // Validate all required files are present
+    if (!req.files || 
+        !req.files.accreditationCertificate || 
+        !req.files.legalDocuments || 
+        !req.files.collegeImage) {
+      return res.status(400).json({ 
+        msg: "All required files (accreditation certificate, legal documents, and college image) must be uploaded" 
+      });
+    }
+
     const {
       collegeName,
       email,
@@ -218,7 +228,6 @@ exports.registerCollege = async (req, res) => {
       address,
       country,
       contactPerson,
-      // phoneNumber,
       website,
     } = req.body;
 
@@ -230,27 +239,22 @@ exports.registerCollege = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const accreditationCertificate = req.files["accreditationCertificate"][0];
-    const legalDocuments = req.files["legalDocuments"][0];
+    const accreditationCertificate = req.files.accreditationCertificate[0];
+    const legalDocuments = req.files.legalDocuments[0];
+    const collegeImage = req.files.collegeImage[0];
 
-    const accreditationPath = path.join(
-      "uploads",
-      "colleges",
-      collegeName,
-      "accreditation" + path.extname(accreditationCertificate.originalname)
-    );
-    const legalDocumentsPath = path.join(
-      "uploads",
-      "colleges",
-      collegeName,
-      "legal" + path.extname(legalDocuments.originalname)
-    );
+    // Create directory for college files
+    const collegeDir = path.join("uploads", "colleges", collegeName);
+    fs.mkdirSync(collegeDir, { recursive: true });
 
-    fs.mkdirSync(path.join("uploads", "colleges", collegeName), {
-      recursive: true,
-    });
+    // Save all files
+    const accreditationPath = path.join(collegeDir, "accreditation" + path.extname(accreditationCertificate.originalname));
+    const legalDocumentsPath = path.join(collegeDir, "legal" + path.extname(legalDocuments.originalname));
+    const collegeImagePath = path.join(collegeDir, "image" + path.extname(collegeImage.originalname));
+
     fs.writeFileSync(accreditationPath, accreditationCertificate.buffer);
     fs.writeFileSync(legalDocumentsPath, legalDocuments.buffer);
+    fs.writeFileSync(collegeImagePath, collegeImage.buffer);
 
     const newCollege = new College({
       collegeName,
@@ -259,20 +263,21 @@ exports.registerCollege = async (req, res) => {
       address,
       country,
       contactPerson,
-      // phoneNumber,
       website,
       accreditationCertificate: accreditationPath,
       legalDocuments: legalDocumentsPath,
+      collegeImage: collegeImagePath,
     });
 
     await newCollege.save();
 
-    return res
-      .status(201)
-      .json({ msg: "College registered successfully, pending approval" });
+    return res.status(201).json({ msg: "College registered successfully, pending approval" });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: "Server error" });
+    console.error('Error in registerCollege:', error);
+    res.status(500).json({ 
+      msg: "Server error", 
+      error: error.message 
+    });
   }
 };
 
@@ -650,5 +655,37 @@ exports.verify_payment = async (req, res) => {
   } catch (error) {
     console.error('Error verifying payment:', error);
     return res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// Add a new endpoint to serve college images
+exports.getCollegeImage = async (req, res) => {
+  console.log("Entered the image backend");
+  try {
+    const { collegeName } = req.params;
+    const college = await College.findOne({ collegeName });
+    
+    if (!college || !college.collegeImage) {
+      return res.status(404).json({ msg: "College image not found" });
+    }
+
+    // Use the absolute path from the root of your project
+    const imagePath = path.join(
+      __dirname,
+      '..',
+      college.collegeImage // This path is already relative to the project root
+    );
+    
+    console.log('Attempting to serve image from:', imagePath);
+    
+    if (fs.existsSync(imagePath)) {
+      res.sendFile(imagePath);
+    } else {
+      console.log('Image file not found at path:', imagePath);
+      res.status(404).json({ msg: "College image file not found" });
+    }
+  } catch (error) {
+    console.error('Error serving college image:', error);
+    res.status(500).json({ msg: "Error serving college image" });
   }
 };

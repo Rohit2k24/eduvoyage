@@ -217,7 +217,10 @@ const StudyProgram = () => {
     },
     collegeImage: {
       position: 'relative',
+      width: '100%',
       height: '200px',
+      overflow: 'hidden',
+      borderRadius: '8px 8px 0 0',
     },
     collegeImg: {
       width: '100%',
@@ -378,9 +381,13 @@ const StudyProgram = () => {
             <div key={college._id} style={styles.collegeCard} onClick={() => handleCollegeClick(college)}>
               <div style={styles.collegeImage}>
                 <img 
-                  src={college.imageUrl || '/default-college.jpg'} 
+                  src={`${import.meta.env.VITE_BASE_URL}/api/auth/college-image/${college.collegeName}`}
                   alt={college.collegeName}
                   style={styles.collegeImg}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = '/default-college.jpg';
+                  }}
                 />
                 <div style={styles.collegeRating}>
                   <i className="fas fa-star" style={{ color: '#fbbf24' }}></i>

@@ -20,6 +20,7 @@ const CollegeRegistrationForm = () => {
   const [documents, setDocuments] = useState({
     accreditationCertificate: null,
     legalDocuments: null,
+    collegeImage: null
   });
 
   const [errors, setErrors] = useState({});
@@ -107,6 +108,13 @@ const CollegeRegistrationForm = () => {
           newErrors.legalDocuments = "Legal Documents are required";
         } else {
           delete newErrors.legalDocuments;
+        }
+        break;
+      case "collegeImage":
+        if (!documents.collegeImage) {
+          newErrors.collegeImage = "College Image is required";
+        } else {
+          delete newErrors.collegeImage;
         }
         break;
       default:
@@ -306,6 +314,23 @@ const CollegeRegistrationForm = () => {
           />
           {errors.legalDocuments && (
             <p style={styles.errorMessage}>{errors.legalDocuments}</p>
+          )}
+        </div>
+
+        <div style={styles.formGroup}>
+          <label htmlFor="collegeImage" style={styles.label}>
+            College Image
+          </label>
+          <input
+            type="file"
+            id="collegeImage"
+            name="collegeImage"
+            accept=".jpg, .jpeg, .png"
+            onChange={handleFileChange}
+            style={styles.fileInput}
+          />
+          {errors.collegeImage && (
+            <p style={styles.errorMessage}>{errors.collegeImage}</p>
           )}
         </div>
 

@@ -11,6 +11,7 @@ const collegeSchema = new mongoose.Schema({
   website: { type: String },
   accreditationCertificate: { type: String },
   legalDocuments: { type: String },
+  collegeImage: { type: String },
   isApproved: { type: Boolean, default: false },
   paymentVerified: { type: Boolean, default: false, }, 
 });

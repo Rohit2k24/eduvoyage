@@ -15,7 +15,8 @@ router.post('/forgot-password', authController.forgotPassword);
 
 router.post('/register-college', upload.fields([
   { name: 'accreditationCertificate', maxCount: 1 },
-  { name: 'legalDocuments', maxCount: 1 }
+  { name: 'legalDocuments', maxCount: 1 },
+  { name: 'collegeImage', maxCount: 1 }
 ]), authController.registerCollege);
 
 router.put('/reset-password/:resetToken', authController.resetPassword);
@@ -27,6 +28,8 @@ router.get('/unapproved-colleges', authController.unapprovedColleges);
 router.put('/approve-college/:id', authController.approvecollege);
 
 router.delete('/decline-college/:id',authController.deletereqcollege);
+
+router.get('/college-image/:collegeName', authController.getCollegeImage);
 
 
 router.get('/colleges', authController.getAllColleges)
