@@ -33,7 +33,7 @@ const Home = () => {
         <div className="home-container">
           <section className="hero">
             <h1>Welcome to EduVoyage</h1>
-            <p>Your gateway to global education and opportunities abroad.</p>
+            <p>Your gateway to global education.</p>
             <button className="explore-button">Explore Now</button>
           </section>
 
@@ -45,7 +45,7 @@ const Home = () => {
           <section className="features">
             <div className="feature">
               <h2>Explore Courses</h2>
-              <p>Find the best programs to kickstart your international academic journey.</p>
+              <p>Find the best programs for your academic journey.</p>
               <ul className="course-list">
                 {courses.map((course, index) => (
                   <li key={index}>{course}</li>
@@ -54,11 +54,11 @@ const Home = () => {
             </div>
             <div className="feature">
               <h2>Connect with Universities</h2>
-              <p>Discover top universities and get direct assistance with admissions.</p>
+              <p>Get direct assistance with admissions.</p>
             </div>
             <div className="feature">
               <h2>Plan Your Study Abroad</h2>
-              <p>Get expert guidance on scholarships, visas, and cultural integration.</p>
+              <p>Guidance on scholarships and visas.</p>
             </div>
           </section>
         </div>

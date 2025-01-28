@@ -112,3 +112,11 @@
     font-size: 2rem;
   }
 }
+
+.custom-modal .modal-dialog {
+  max-width: 1500px;
+}
+
+.custom-modal .modal-content {
+  padding: 20px;
+}

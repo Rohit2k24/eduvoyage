@@ -12,6 +12,7 @@ const collegeSchema = new mongoose.Schema({
   accreditationCertificate: { type: String },
   legalDocuments: { type: String },
   isApproved: { type: Boolean, default: false },
+  paymentVerified: { type: Boolean, default: false, }, 
 });
 
 module.exports = mongoose.model('College', collegeSchema);

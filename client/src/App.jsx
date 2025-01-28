@@ -36,6 +36,7 @@ import ScholarshipPrograms from "./components/student/ScholarshipPrograms";
 import GetCourseRecommendations from './components/student/GetCourseRecommendations';
 import MyCourses from './components/student/MyCourses';
 import MyCertificates from './components/student/MyCertificates';
+import PaymentVerification from "./components/PaymentVerification/PaymentVerification";
 
 function App() {
   return (
@@ -77,6 +78,7 @@ function App() {
         <Route path="/get-course-recommendations" element={<PrivateRoutes><GetCourseRecommendations /></PrivateRoutes>} />
         <Route path="/my-courses" element={<PrivateRoutes><MyCourses /></PrivateRoutes>} />
         <Route path="/my-certificates" element={<MyCertificates />} />
+        <Route path="/payment-verification" element={<PaymentVerification />} />
       </Routes>
     </Router>
   );

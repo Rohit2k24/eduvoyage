@@ -566,6 +566,8 @@ exports.LoginForAll = async (req, res) => {
         return res.status(400).json({ msg: "Invalid email or password" });
       }
 
+      
+
       const payload = {
         user: {
           id: college.id,
@@ -573,6 +575,18 @@ exports.LoginForAll = async (req, res) => {
           collegeId: college.id,
         },
       };
+ 
+      if (!college.paymentVerified) {
+        
+        const token = jwt.sign({ collegeId: college.id, role: 'CollegeAdmin' }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+        return res.status(200).json({
+          msg: "Payment not verified. Please complete the payment to access the dashboard.",
+          collegeId: college.id,
+          role: 'CollegeAdmin',
+          token: token // Include the token in the response
+        });   
+       }
 
       jwt.sign(
         payload,
@@ -617,5 +631,24 @@ exports.getApprovedColleges = async (req, res) => {
   } catch (error) {
     console.error("Server error:", error.message);
     res.status(500).send("Server error");
+  }
+};
+
+exports.verify_payment = async (req, res) => {
+  const { collegeId } = req.params;
+
+  try {
+    const college = await College.findById(collegeId);
+    if (!college) {
+      return res.status(404).json({ message: 'College not found' });
+    }
+
+    college.paymentVerified = true; // Set paymentVerified to true
+    await college.save(); // Save the changes
+
+    return res.status(200).json({ message: 'Payment verified successfully', college });
+  } catch (error) {
+    console.error('Error verifying payment:', error);
+    return res.status(500).json({ message: 'Server error' });
   }
 };

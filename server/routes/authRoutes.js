@@ -64,4 +64,7 @@ router.get('/college/:collegeId', educationCourseController.getCollegeInfo);
 
 router.get('/dashboard-stats/:collegeId', educationCourseController.getDashboardStats);
 
+router.put('/verify-payment/:collegeId',authController.verify_payment);
+
+
 module.exports = router;

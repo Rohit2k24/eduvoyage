@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authRoutes = require('./authRoutes');
+const payauthroutes=require('./auth')
 const { getAllStudents, editStudent, deleteStudent, getMyCourses } = require('../controller/studentController');
 const { getCurrentUser } = require('../controller/userDetailsController');
 const { addCourse, getCourseCount, getCourses } = require('../controller/courseController');
@@ -17,6 +18,7 @@ router.get('/questions/:courseId', examController.getExamQuestions);
 router.post('/submit', examController.submitExam);
 router.get('/certificate/:examId', examController.generateCertificate);
 router.use('/auth', authRoutes);
+router.use('/payauth',payauthroutes)
 
 router.get('/role-counts', userController.getUserRoleCounts);
 

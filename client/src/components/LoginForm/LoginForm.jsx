@@ -82,7 +82,13 @@ function LoginForm() {
               ? "/studentDashboard"
               : "/collegeadminDashboard"
           );
-        } else {
+        }else if (response.data.msg === "Payment not verified. Please complete the payment to access the dashboard.") {
+          localStorage.setItem("collegeId",response.data.collegeId)
+          localStorage.setItem("role",response.data.role)
+          localStorage.setItem("token", token);
+          navigate('/payment-verification');
+      } 
+         else {
           setErrors({ form: "Invalid credentials" });
         }
       } catch (error) {

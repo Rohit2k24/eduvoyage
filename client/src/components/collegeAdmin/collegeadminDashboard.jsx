@@ -16,6 +16,7 @@ const CollegeAdminDashboard = () => {
     totalCourses: 0
   });
   const [loading, setLoading] = useState(true);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -37,6 +38,12 @@ const CollegeAdminDashboard = () => {
       const collegeResponse = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/auth/college/${collegeId}`);
       setCollegeInfo(collegeResponse.data);
         
+      // Check if payment is verified
+      if (!collegeResponse.data.paymentVerified) {
+        setShowPaymentModal(true);
+        return;
+      }
+
       // Fetch applications
       const applicationsResponse = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/auth/student-enroll-course/${collegeId}`);
       const applications = applicationsResponse.data.data;
@@ -59,6 +66,53 @@ const CollegeAdminDashboard = () => {
   useEffect(() => {
     fetchDashboardData();
   }, []);
+
+  // const handlePayment = async () => {
+  //   try {
+  //     const collegeId = localStorage.getItem('collegeId');
+
+  //     // Step 1: Create an order on the server
+  //     const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/payauth/create-order`, {
+  //       amount: 1000, // Amount in INR (1000 paise = 10 INR)
+  //       currency: 'INR',
+  //     });
+
+  //     const { id: orderId } = response.data;
+
+  //     // Step 2: Initialize Razorpay payment
+  //     const options = {
+  //       key: import.meta.env.VITE_RAZORPAY_KEY_ID, // Your Razorpay Key ID
+  //       amount: response.data.amount,
+  //       currency: response.data.currency,
+  //       name: 'Your College Name',
+  //       description: 'Payment for College Dashboard Access',
+  //       order_id: orderId,
+  //       handler: async (response) => {
+  //         // Step 3: Verify payment and update payment status
+  //         try {
+  //           await axios.put(`${import.meta.env.VITE_BASE_URL}/api/auth/verify-payment/${collegeId}`);
+  //           setShowPaymentModal(false);
+  //           fetchDashboardData();
+  //         } catch (error) {
+  //           console.error('Error verifying payment:', error);
+  //         }
+  //       },
+  //       prefill: {
+  //         name: 'Your Name',
+  //         email: 'your-email@example.com',
+  //         contact: '9999999999',
+  //       },
+  //       theme: {
+  //         color: '#F37254',
+  //       },
+  //     };
+
+  //     const paymentObject = new window.Razorpay(options);
+  //     paymentObject.open();
+  //   } catch (error) {
+  //     console.error('Error during payment process:', error);
+  //   }
+  // };
 
   return (
     <div className="college-admin-dashboard">
@@ -116,6 +170,20 @@ const CollegeAdminDashboard = () => {
           </>
         )}
       </div>
+
+      {/* <Modal show={showPaymentModal} onHide={() => setShowPaymentModal(false)} backdrop="static" className="custom-modal">
+        <Modal.Header>
+          <Modal.Title>Payment Required</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>You need to complete the initial payment to access the dashboard.</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={handlePayment}>
+            Complete Payment
+          </Button>
+        </Modal.Footer>
+      </Modal> */}
     </div>
   );
 };
