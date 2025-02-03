@@ -1,14 +1,61 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import StudentSidebar from '../Sidebar/StudentSidebar';
+import SharedHeader from './SharedHeader';
+import { FaBars } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const MyCertificates = () => {
+  const navigate = useNavigate();
   const [certificates, setCertificates] = useState([]);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState({
+    firstname: '',
+    lastname: '',
+    email: ''
+  });
 
   useEffect(() => {
-    fetchCertificates();
-  }, []);
+    const checkAuthAndFetchData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const studentId = localStorage.getItem('studentId');
+        
+        if (!token || !studentId) {
+          navigate('/login');
+          return;
+        }
+
+        // Get user data from localStorage or session
+        const storedUser = JSON.parse(localStorage.getItem('user'));
+        if (storedUser) {
+          setUser(storedUser);
+        }
+
+        // Fetch certificates
+        await fetchCertificates();
+      } catch (error) {
+        console.error('Auth check error:', error);
+        navigate('/login');
+      }
+    };
+
+    checkAuthAndFetchData();
+  }, [navigate]);
+
+  const handleLogout = async () => {
+    try {
+      await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/logout`);
+      localStorage.removeItem('token');
+      localStorage.removeItem('studentId');
+      localStorage.removeItem('role');
+      localStorage.removeItem('user');
+      navigate('/');
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
 
   const fetchCertificates = async () => {
     try {
@@ -59,6 +106,10 @@ const MyCertificates = () => {
       console.error('Error downloading certificate:', error);
       alert('Failed to download certificate. Please try again.');
     }
+  };
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
   };
 
   const styles = {
@@ -130,10 +181,20 @@ const MyCertificates = () => {
   };
 
   return (
-    <div style={{ display: 'flex' }}>
-      <StudentSidebar />
-      <div style={styles.container}>
-        <h1 style={styles.header}>My Certificates</h1>
+    <div className="student-dashboard">
+      <div className="menu-button" onClick={toggleSidebar}>
+        <FaBars />
+      </div>
+      
+      <StudentSidebar isOpen={isSidebarOpen} />
+      
+      <div className={`main-content ${isSidebarOpen ? 'shifted' : ''}`}>
+        <SharedHeader 
+          user={user}
+          onLogout={handleLogout}
+          title="My Certificates"
+          subtitle="View and download your earned certificates"
+        />
         
         {loading ? (
           <p style={styles.loadingText}>Loading certificates...</p>

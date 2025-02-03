@@ -4,11 +4,13 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import ApplicationForm from './ApplicationForm';
 import StudentSidebar from '../Sidebar/StudentSidebar';
-import Header from './Header';
+import SharedHeader from './SharedHeader';
+import { FaBars, FaMapMarkerAlt, FaGraduationCap, FaUsers } from 'react-icons/fa';
 
 const StudyProgram = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState({ firstname: '', lastname: '' });
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [colleges, setColleges] = useState([]);
   const [selectedCollege, setSelectedCollege] = useState(null);
   const [offeredCourses, setOfferedCourses] = useState([]);
@@ -94,6 +96,10 @@ const StudyProgram = () => {
     navigate('/get-course-recommendations'); // Redirect to the recommendations page
   };
 
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   const styles = {
     container: {
       display: 'flex',
@@ -107,102 +113,105 @@ const StudyProgram = () => {
       backgroundColor: '#f1f5f9',
     },
     heroSection: {
-      textAlign: 'center',
-      padding: '60px 0',
-      background: 'linear-gradient(135deg, #2563eb, #3b82f6)',
-      color: 'white',
+      background: 'linear-gradient(135deg, #1a237e 0%, #283593 100%)',
       borderRadius: '16px',
-      marginBottom: '32px',
+      padding: '3.5rem 2rem',
+      color: 'white',
+      textAlign: 'center',
+      marginBottom: '2rem',
+      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+      position: 'relative',
+      overflow: 'hidden',
+      '&::before': {
+        content: '""',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%)',
+        pointerEvents: 'none'
+      }
     },
     heroTitle: {
-      fontSize: '2.5rem',
-      marginBottom: '16px',
+      fontSize: '2.75rem',
       fontWeight: '700',
+      marginBottom: '1.25rem',
+      textShadow: '0 2px 4px rgba(0,0,0,0.1)'
     },
     heroSubtitle: {
-      fontSize: '1.2rem',
-      opacity: '0.9',
+      fontSize: '1.25rem',
+      opacity: '0.95',
+      maxWidth: '700px',
+      margin: '0 auto',
+      lineHeight: '1.6'
     },
     filtersSection: {
       background: 'white',
-      padding: '24px',
       borderRadius: '16px',
-      marginBottom: '32px',
-      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+      padding: '1.75rem',
+      marginBottom: '2rem',
+      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+      border: '1px solid rgba(226, 232, 240, 0.8)'
     },
-    searchBar: {
-      position: 'relative',
-      marginBottom: '24px',
+    filterControls: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+      gap: '1.25rem',
+      alignItems: 'center',
+      padding: '0.5rem'
     },
     searchInput: {
       width: '100%',
-      padding: '12px 48px',
-      border: '2px solid #e2e8f0',
-      borderRadius: '8px',
+      padding: '0.875rem 1.25rem',
+      borderRadius: '12px',
+      border: '1px solid #e2e8f0',
       fontSize: '1rem',
-      transition: 'all 0.3s ease',
-    },
-    searchIcon: {
-      position: 'absolute',
-      left: '16px',
-      top: '50%',
-      transform: 'translateY(-50%)',
-      color: '#64748b',
-    },
-    filtersContainer: {
-      display: 'flex',
-      gap: '16px',
-      flexWrap: 'wrap',
-      alignItems: 'center',
-    },
-    filterGroup: {
-      flex: '1 1 200px',
-      maxWidth: '300px',
+      backgroundColor: '#f8fafc',
+      color: '#1e293b',
+      transition: 'all 0.2s ease',
+      '&:focus': {
+        outline: 'none',
+        borderColor: '#3b82f6',
+        boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.1)',
+        backgroundColor: '#ffffff'
+      },
+      '&::placeholder': {
+        color: '#94a3b8'
+      }
     },
     select: {
       width: '100%',
-      padding: '12px',
+      padding: '0.875rem 1.25rem',
+      borderRadius: '12px',
       border: '1px solid #e2e8f0',
-      borderRadius: '8px',
-      fontSize: '0.875rem',
+      fontSize: '1rem',
+      backgroundColor: '#f8fafc',
       color: '#1e293b',
-      backgroundColor: 'white',
       cursor: 'pointer',
+      appearance: 'none',
+      backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: 'right 1rem center',
+      backgroundSize: '1em',
+      paddingRight: '2.5rem',
       transition: 'all 0.2s ease',
-      '&:hover': {
-        borderColor: '#2563eb',
-      },
       '&:focus': {
         outline: 'none',
-        borderColor: '#2563eb',
-        boxShadow: '0 0 0 3px rgba(37, 99, 235, 0.1)',
-      }
-    },
-    viewToggle: {
-      display: 'flex',
-      gap: '8px',
-      marginLeft: 'auto',
-    },
-    viewToggleButton: (isActive) => ({
-      padding: '10px 16px',
-      border: '1px solid #e2e8f0',
-      background: isActive ? '#2563eb' : 'white',
-      color: isActive ? 'white' : '#64748b',
-      borderRadius: '8px',
-      cursor: 'pointer',
-      transition: 'all 0.2s ease',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
+        borderColor: '#3b82f6',
+        boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.1)',
+        backgroundColor: '#ffffff'
+      },
       '&:hover': {
-        background: isActive ? '#2563eb' : '#f8fafc',
+        borderColor: '#3b82f6',
+        backgroundColor: '#ffffff'
       }
-    }),
-    collegesContainer: {
+    },
+    collegeGrid: {
       display: 'grid',
-      gap: '24px',
-      marginBottom: '48px',
-      gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+      gap: '2rem',
+      padding: '1rem 0'
     },
     collegeCard: {
       background: 'white',
@@ -210,175 +219,183 @@ const StudyProgram = () => {
       overflow: 'hidden',
       transition: 'all 0.3s ease',
       cursor: 'pointer',
+      border: '1px solid #e2e8f0',
+      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
       '&:hover': {
-        transform: 'translateY(-4px)',
-        boxShadow: '0 12px 24px rgba(0, 0, 0, 0.15)',
-      },
+        transform: 'translateY(-5px)',
+        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+      }
     },
     collegeImage: {
       position: 'relative',
-      width: '100%',
-      height: '200px',
+      height: '220px',
       overflow: 'hidden',
-      borderRadius: '8px 8px 0 0',
+      backgroundColor: '#f1f5f9'
     },
     collegeImg: {
       width: '100%',
       height: '100%',
       objectFit: 'cover',
-    },
-    collegeRating: {
-      position: 'absolute',
-      top: '16px',
-      right: '16px',
-      background: 'rgba(255, 255, 255, 0.9)',
-      padding: '4px 8px',
-      borderRadius: '20px',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '4px',
+      transition: 'transform 0.3s ease',
+      '&:hover': {
+        transform: 'scale(1.05)'
+      }
     },
     collegeInfo: {
-      padding: '24px',
+      padding: '1.75rem'
     },
     collegeName: {
-      marginBottom: '12px',
-      fontSize: '1.25rem',
-      color: '#1e293b',
+      fontSize: '1.35rem',
       fontWeight: '600',
+      color: '#1e293b',
+      marginBottom: '1rem',
+      lineHeight: '1.4'
     },
     collegeLocation: {
       display: 'flex',
       alignItems: 'center',
-      gap: '8px',
+      gap: '0.5rem',
       color: '#64748b',
-      marginBottom: '16px',
+      marginBottom: '1.25rem',
+      fontSize: '0.95rem'
     },
     collegeStats: {
       display: 'flex',
-      gap: '24px',
-      marginBottom: '24px',
+      justifyContent: 'space-between',
+      padding: '1.25rem 0',
+      borderTop: '1px solid #e2e8f0',
       color: '#64748b',
+      fontSize: '0.95rem'
+    },
+    statItem: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.5rem',
+      color: '#4b5563'
     },
     viewDetailsBtn: {
       width: '100%',
-      padding: '12px',
-      background: '#2563eb',
+      padding: '0.875rem',
+      background: '#1a237e',
       color: 'white',
       border: 'none',
-      borderRadius: '8px',
-      fontWeight: '600',
+      borderRadius: '12px',
+      fontWeight: '500',
       cursor: 'pointer',
       transition: 'all 0.3s ease',
+      marginTop: '1.25rem',
+      fontSize: '1rem',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '0.5rem',
       '&:hover': {
-        background: '#3b82f6',
-      },
+        background: '#283593',
+        transform: 'translateY(-2px)',
+        boxShadow: '0 4px 12px rgba(26, 35, 126, 0.15)'
+      }
     },
     recommendationSection: {
       background: 'white',
       borderRadius: '16px',
-      padding: '48px',
+      padding: '3.5rem 2rem',
       textAlign: 'center',
-      marginBottom: '48px',
+      marginBottom: '3rem',
+      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+      border: '1px solid rgba(226, 232, 240, 0.8)'
     },
     recommendationTitle: {
-      fontSize: '2rem',
-      marginBottom: '16px',
+      fontSize: '2.25rem',
+      marginBottom: '1.25rem',
       color: '#1e293b',
       fontWeight: '700',
+      lineHeight: '1.3'
     },
     recommendationText: {
       color: '#64748b',
-      marginBottom: '24px',
+      marginBottom: '2rem',
+      fontSize: '1.1rem',
+      maxWidth: '600px',
+      margin: '0 auto 2rem'
     },
     recommendationBtn: {
       display: 'inline-flex',
       alignItems: 'center',
-      gap: '8px',
-      padding: '12px 24px',
+      gap: '0.75rem',
+      padding: '1rem 2rem',
       background: '#2563eb',
       color: 'white',
       border: 'none',
-      borderRadius: '8px',
+      borderRadius: '12px',
       fontWeight: '600',
       cursor: 'pointer',
       transition: 'all 0.3s ease',
+      fontSize: '1.1rem',
       '&:hover': {
-        background: '#3b82f6',
-      },
-    },
+        background: '#1d4ed8',
+        transform: 'translateY(-2px)',
+        boxShadow: '0 4px 12px rgba(37, 99, 235, 0.2)'
+      }
+    }
   };
 
   return (
-    <div style={styles.container}>
-      <StudentSidebar />
-      <div style={styles.mainContent}>
-        <Header user={user} onLogout={handleLogout} />
-        
-        <section style={styles.heroSection}>
-          <h1 style={styles.heroTitle}>Find Your Perfect Study Program</h1>
-          <p style={styles.heroSubtitle}>Explore top colleges and universities worldwide</p>
-        </section>
+    <div className="student-dashboard">
+      <div className="menu-button" onClick={toggleSidebar}>
+        <FaBars />
+      </div>
+      
+      <StudentSidebar isOpen={isSidebarOpen} />
+      
+      <div className={`main-content ${isSidebarOpen ? 'shifted' : ''}`}>
+        <SharedHeader 
+          user={user}
+          onLogout={handleLogout}
+          title="Discover Your Academic Path"
+          subtitle="Explore prestigious institutions and find the perfect program for your future"
+        />
 
         <section style={styles.filtersSection}>
-          <div style={styles.searchBar}>
-            <i className="fas fa-search" style={styles.searchIcon}></i>
+          <div style={styles.filterControls}>
             <input
-              style={styles.searchInput}
               type="text"
-              placeholder="Search colleges..."
+              placeholder="Search for colleges..."
               value={filters.search}
               onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+              style={styles.searchInput}
             />
-          </div>
 
-          <div style={styles.filtersContainer}>
-            <div style={styles.filterGroup}>
-              <select
-                style={styles.select}
-                value={filters.country}
-                onChange={(e) => setFilters({ ...filters, country: e.target.value })}
-              >
-                <option value="">All Countries</option>
-                {countries.map(country => (
-                  <option key={country} value={country}>{country}</option>
-                ))}
-              </select>
-            </div>
+            <select
+              value={filters.country}
+              onChange={(e) => setFilters({ ...filters, country: e.target.value })}
+              style={styles.select}
+            >
+              <option value="">All Countries</option>
+              {countries.map(country => (
+                <option key={country} value={country}>{country}</option>
+              ))}
+            </select>
 
-            <div style={styles.filterGroup}>
-              <select
-                style={styles.select}
-                value={filters.courseType}
-                onChange={(e) => setFilters({ ...filters, courseType: e.target.value })}
-              >
-                <option value="">All Course Types</option>
-                {courseTypes.map(type => (
-                  <option key={type} value={type}>{type}</option>
-                ))}
-              </select>
-            </div>
-
-            <div style={styles.viewToggle}>
-              <button 
-                style={styles.viewToggleButton(viewMode === 'grid')}
-                onClick={() => setViewMode('grid')}
-              >
-                <i className="fas fa-th-large"></i>
-              </button>
-              <button 
-                style={styles.viewToggleButton(viewMode === 'list')}
-                onClick={() => setViewMode('list')}
-              >
-                <i className="fas fa-list"></i>
-              </button>
-            </div>
+            <select
+              value={filters.courseType}
+              onChange={(e) => setFilters({ ...filters, courseType: e.target.value })}
+              style={styles.select}
+            >
+              <option value="">All Program Types</option>
+              {courseTypes.map(type => (
+                <option key={type} value={type}>{type}</option>
+              ))}
+            </select>
           </div>
         </section>
 
-        <section style={styles.collegesContainer}>
+        <div style={styles.collegeGrid}>
           {filteredColleges.map((college) => (
-            <div key={college._id} style={styles.collegeCard} onClick={() => handleCollegeClick(college)}>
+            <div 
+              key={college._id} 
+              style={styles.collegeCard}
+              onClick={() => handleCollegeClick(college)}
+            >
               <div style={styles.collegeImage}>
                 <img 
                   src={`${import.meta.env.VITE_BASE_URL}/api/auth/college-image/${college.collegeName}`}
@@ -389,32 +406,30 @@ const StudyProgram = () => {
                     e.target.src = '/default-college.jpg';
                   }}
                 />
-                <div style={styles.collegeRating}>
-                  <i className="fas fa-star" style={{ color: '#fbbf24' }}></i>
-                  <span>{college.rating || '4.5'}</span>
-                </div>
               </div>
               <div style={styles.collegeInfo}>
                 <h2 style={styles.collegeName}>{college.collegeName}</h2>
                 <div style={styles.collegeLocation}>
-                  <i className="fas fa-map-marker-alt"></i>
+                  <FaMapMarkerAlt />
                   <span>{college.address}, {college.country}</span>
                 </div>
                 <div style={styles.collegeStats}>
-                  <div>
-                    <i className="fas fa-graduation-cap"></i>
+                  <div style={styles.statItem}>
+                    <FaGraduationCap />
                     <span>{college.programCount || '25'} Programs</span>
                   </div>
-                  <div>
-                    <i className="fas fa-users"></i>
+                  <div style={styles.statItem}>
+                    <FaUsers />
                     <span>{college.studentCount || '5000'}+ Students</span>
                   </div>
                 </div>
-                <button style={styles.viewDetailsBtn}>View Details</button>
+                <button style={styles.viewDetailsBtn}>
+                  View Details
+                </button>
               </div>
             </div>
           ))}
-        </section>
+        </div>
 
         <section style={styles.recommendationSection}>
           <div>

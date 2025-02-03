@@ -1,47 +1,160 @@
 .student-sidebar {
-    width: 250px; /* Adjust the width of the sidebar */
-    background-color:#282c34; /* Changed to match header color */
-    color: white; /* Text color */
-    height: 100vh; /* Full height */
-    padding: 20px; /* Padding inside the sidebar */
-    position: fixed; /* Fix the sidebar on the left */
+  width: 280px;
+  height: 100vh;
+  background: linear-gradient(180deg, #1a237e 0%, #283593 100%);
+  color: #fff;
+  padding: 2rem;
+  position: fixed;
+  left: -280px;
+  top: 0;
+  overflow-y: auto;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  transition: left 0.3s ease;
+}
+
+.student-sidebar.open {
+  left: 0;
+}
+
+.student-sidebar h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 2.5rem;
+  text-align: center;
+  color: #fff;
+  letter-spacing: 1px;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.student-sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.student-sidebar li {
+  margin-bottom: 0.5rem;
+}
+
+.student-sidebar a {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.student-sidebar a:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  transform: translateX(5px);
+}
+
+.student-sidebar .active {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-weight: 600;
+}
+
+.sidebar-icon {
+  margin-right: 12px;
+  font-size: 1.2rem;
+}
+
+/* Dashboard Cards Container */
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  padding: 2rem;
+  margin-left: 280px;
+}
+
+.dashboard-card {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.card-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #1a237e;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.card-description {
+  color: #64748b;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* Optional: Add overlay when sidebar is open */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.sidebar-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Adjust main content when sidebar is open */
+.main-content {
+  transition: margin-left 0.3s ease;
+}
+
+.main-content.shifted {
+  margin-left: 280px;
+}
+
+@media (max-width: 768px) {
+  .main-content.shifted {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 1024px) {
+  .dashboard-cards {
+    margin-left: 0;
+    padding: 1rem;
   }
   
-  .student-sidebar h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #ffffff; /* Heading color */
+  .student-sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
   }
   
-  .student-sidebar ul {
-    list-style-type: none; /* Remove bullet points */
-    padding: 0; /* Remove padding */
+  .student-sidebar.open {
+    transform: translateX(0);
   }
-  
-  .student-sidebar li {
-    padding: 10px 15px; /* Padding for each item */
-    cursor: pointer; /* Change cursor on hover */
-    transition: background-color 0.3s; /* Smooth transition for hover effect */
-  }
-  
-  .student-sidebar li:hover {
-    background-color: #34495e; /* Slightly lighter shade for hover */
-  }
-  
-  .student-sidebar .active {
-    background-color: #3498db; /* Changed to match the theme */
-  }
-  
-  .student-sidebar .active:hover {
-    background-color: #2980b9; /* Darker shade of active color */
-  }
-  
-  .student-sidebar a {
-    color: white; /* Link color */
-    text-decoration: none; /* Remove underline from links */
-  }
-  
-  .student-sidebar a:hover {
-    text-decoration: underline; /* Underline on hover */
-  }
+}
   

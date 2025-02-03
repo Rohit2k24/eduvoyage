@@ -3,6 +3,7 @@
 import React from 'react';
 import './header.css'; // Create a CSS file for styles if needed
 import { useNavigate } from 'react-router-dom';
+import { FaSignOutAlt } from 'react-icons/fa';
 
 const Header = ({ user, onLogout }) => {
   const navigate = useNavigate(); // Hook for navigation
@@ -12,68 +13,26 @@ const Header = ({ user, onLogout }) => {
     navigate('/'); // Navigate to the login page or home page
   };
 
-  const styles = {
-    header: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      padding: '16px 24px',
-      background: 'white',
-      borderRadius: '12px',
-      marginBottom: '24px',
-      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-    },
-    userInfo: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '12px',
-    },
-    avatar: {
-      width: '40px',
-      height: '40px',
-      borderRadius: '50%',
-      background: '#2563eb',
-      color: 'white',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      fontWeight: '600',
-    },
-    userName: {
-      fontWeight: '600',
-      color: '#1e293b',
-    },
-    logoutButton: {
-      padding: '8px 16px',
-      borderRadius: '8px',
-      border: 'none',
-      background: '#ef4444',
-      color: 'white',
-      cursor: 'pointer',
-      transition: 'all 0.2s ease',
-    }
-  };
-
-  if (!user) {
-    return null; // or return a loading indicator
-  }
+  if (!user) return null;
 
   return (
-    <header style={styles.header}>
-      <div style={styles.userInfo}>
-        <div style={styles.avatar}>
-          {user.firstname?.[0]}{user.lastname?.[0]}
+    <header className="dashboard-header">
+      <div className="header-content">
+        <div className="user-profile">
+          <div className="avatar">
+            {user.firstname?.[0]}{user.lastname?.[0]}
+          </div>
+          <div className="user-info">
+            <h3 className="user-name">{user.firstname} {user.lastname}</h3>
+            <span className="user-email">{user.email}</span>
+          </div>
         </div>
-        <span style={styles.userName}>
-          {user.firstname} {user.lastname}
-        </span>
+        
+        <button className="logout-button" onClick={handleLogout}>
+          <FaSignOutAlt className="logout-icon" />
+          <span>Logout</span>
+        </button>
       </div>
-      <button 
-        style={styles.logoutButton} 
-        onClick={handleLogout}
-      >
-        Logout
-      </button>
     </header>
   );
 };

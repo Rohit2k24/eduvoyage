@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import "react-phone-number-input/style.css";
 import { CountryDropdown } from 'react-country-region-selector';
+import Header from '../Header/Header';
 
 const CollegeRegistrationForm = () => {
   const [formData, setFormData] = useState({
@@ -203,21 +204,43 @@ const CollegeRegistrationForm = () => {
     container: {
       display: "flex",
       justifyContent: "center",
+      alignItems: "center",
+      minHeight: "100vh",
       backgroundColor: "#f0f2f5",
       padding: "2rem",
+      fontFamily: "'Plus Jakarta Sans', 'Inter', system-ui, sans-serif",
+      marginTop: "80px",
     },
     form: {
       width: "100%",
       maxWidth: "600px",
       backgroundColor: "white",
-      padding: "2rem",
-      borderRadius: "8px",
-      boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+      padding: "2.5rem",
+      borderRadius: "16px",
+      boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.02)",
+      position: "relative",
+      overflow: "hidden",
+      backdropFilter: "blur(10px)",
+      border: "1px solid rgba(255, 255, 255, 0.7)",
     },
     title: {
       textAlign: "center",
-      marginBottom: "2rem",
       color: "#333",
+      marginBottom: "2rem",
+      fontSize: "1.75rem",
+      fontWeight: "600",
+      position: "relative",
+    },
+    titleAfter: {
+      content: "''",
+      position: "absolute",
+      bottom: "-8px",
+      left: "50%",
+      transform: "translateX(-50%)",
+      width: "60px",
+      height: "3px",
+      background: "linear-gradient(90deg, #3b82f6, #6366f1)",
+      borderRadius: "2px",
     },
     formGroup: {
       marginBottom: "1.5rem",
@@ -225,153 +248,186 @@ const CollegeRegistrationForm = () => {
     label: {
       display: "block",
       marginBottom: "0.5rem",
-      fontWeight: "bold",
       color: "#555",
+      fontSize: "0.925rem",
+      fontWeight: "500",
     },
     input: {
       width: "100%",
-      padding: "0.75rem",
-      border: "1px solid #ccc",
-      borderRadius: "4px",
+      padding: "0.75rem 1rem",
+      border: "1.5px solid #e2e8f0",
+      borderRadius: "8px",
       fontSize: "1rem",
+      color: "#1e293b",
+      backgroundColor: "#fff",
+      transition: "all 0.2s ease",
     },
     errorInput: {
-      borderColor: "#e74c3c",
+      borderColor: "#ef4444",
     },
     errorMessage: {
-      color: "red",
+      color: "#ef4444",
+      fontSize: "0.875rem",
       marginTop: "0.25rem",
+    },
+    fileInput: {
+      width: "100%",
+      padding: "0.75rem 1rem",
+      border: "1.5px solid #e2e8f0",
+      borderRadius: "8px",
+      fontSize: "0.875rem",
+      backgroundColor: "#fff",
+      cursor: "pointer",
     },
     submitButton: {
       width: "100%",
-      padding: "0.75rem",
-      backgroundColor: "#2ecc71",
+      padding: "0.875rem",
+      background: "linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)",
       color: "white",
       border: "none",
-      borderRadius: "4px",
-      cursor: "pointer",
+      borderRadius: "8px",
       fontSize: "1rem",
-      fontWeight: "bold",
-      transition: "background-color 0.3s ease",
+      fontWeight: "600",
+      cursor: "pointer",
+      transition: "all 0.3s ease",
+      position: "relative",
+      overflow: "hidden",
     },
-    fileInput: {
-      border: "1px solid #ccc",
-      padding: "0.5rem",
-      borderRadius: "4px",
-      fontSize: "0.875rem",
+    submitButtonHover: {
+      transform: "translateY(-1px)",
+      boxShadow: "0 4px 12px rgba(59, 130, 246, 0.25), 0 0 0 2px rgba(59, 130, 246, 0.1)",
+    },
+    countryDropdown: {
+      width: "100%",
+      padding: "0.75rem 1rem",
+      border: "1.5px solid #e2e8f0",
+      borderRadius: "8px",
+      fontSize: "1rem",
+      color: "#1e293b",
+      backgroundColor: "#fff",
+      transition: "all 0.2s ease",
     },
   };
 
   return (
-    <div style={styles.container}>
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <h2 style={styles.title}>College Registration</h2>
+    <>
+      <Header />
+      <div style={{...styles.container}}>
+        <form onSubmit={handleSubmit} style={{...styles.form}}>
+          <h2 style={{...styles.title}}>
+            College Registration
+            <div style={{...styles.titleAfter}}></div>
+          </h2>
 
-        {Object.keys(formData).map((field) => (
-          <div key={field} style={styles.formGroup}>
-            <label htmlFor={field} style={styles.label}>
-              {field.charAt(0).toUpperCase() +
-                field.slice(1).replace(/([A-Z])/g, " $1")}
+          {Object.keys(formData).map((field) => (
+            <div key={field} style={{...styles.formGroup}}>
+              <label style={{...styles.label}}>
+                {field.charAt(0).toUpperCase() +
+                  field.slice(1).replace(/([A-Z])/g, " $1")}
+              </label>
+              {field === "country" ? (
+                <CountryDropdown
+                  value={formData.country}
+                  onChange={(val) => setFormData(prev => ({ ...prev, country: val }))}
+                  style={{...styles.countryDropdown}}
+                />
+              ) : (
+                <input
+                  type={
+                    field.includes("password") ? "password" : "text"
+                  }
+                  id={field}
+                  name={field}
+                  value={formData[field]}
+                  onChange={handleChange}
+                  style={{
+                    ...styles.input,
+                    ...(errors[field] ? styles.errorInput : {}),
+                  }}
+                />
+              )}
+              {errors[field] && (
+                <p style={{...styles.errorMessage}}>{errors[field]}</p>
+              )}
+            </div>
+          ))}
+
+          <div style={{...styles.formGroup}}>
+            <label style={{...styles.label}}>
+              Accreditation Certificate
             </label>
-            {field === "country" ? (
-              <CountryDropdown
-                value={formData.country}
-                onChange={(val) => setFormData(prev => ({ ...prev, country: val }))}
-                style={{
-                  ...styles.input,
-                  ...(errors[field] ? styles.errorInput : {}),
-                }}
-              />
-            ) : (
-              <input
-                type={
-                  field.includes("password") ? "password" : "text"
-                }
-                id={field}
-                name={field}
-                value={formData[field]}
-                onChange={handleChange}
-                style={{
-                  ...styles.input,
-                  ...(errors[field] ? styles.errorInput : {}),
-                }}
-              />
-            )}
-            {errors[field] && (
-              <p style={styles.errorMessage}>{errors[field]}</p>
+            <input
+              type="file"
+              id="accreditationCertificate"
+              name="accreditationCertificate"
+              accept=".jpg,.jpeg,.png,.pdf"
+              onChange={handleFileChange}
+              style={{...styles.fileInput}}
+            />
+            {errors.accreditationCertificate && (
+              <p style={{...styles.errorMessage}}>{errors.accreditationCertificate}</p>
             )}
           </div>
-        ))}
 
-        <div style={styles.formGroup}>
-          <label htmlFor="accreditationCertificate" style={styles.label}>
-            Accreditation Certificate
-          </label>
-          <input
-            type="file"
-            id="accreditationCertificate"
-            name="accreditationCertificate"
-            accept=".jpg,.jpeg,.png,.pdf"
-            onChange={handleFileChange}
-            style={styles.fileInput}
-          />
-          {errors.accreditationCertificate && (
-            <p style={styles.errorMessage}>{errors.accreditationCertificate}</p>
-          )}
-        </div>
+          <div style={{...styles.formGroup}}>
+            <label style={{...styles.label}}>
+              Legal Documents
+            </label>
+            <input
+              type="file"
+              id="legalDocuments"
+              name="legalDocuments"
+              accept=".jpg,.jpeg,.png,.pdf"
+              onChange={handleFileChange}
+              style={{...styles.fileInput}}
+            />
+            {errors.legalDocuments && (
+              <p style={{...styles.errorMessage}}>{errors.legalDocuments}</p>
+            )}
+          </div>
 
-        <div style={styles.formGroup}>
-          <label htmlFor="legalDocuments" style={styles.label}>
-            Legal Documents
-          </label>
-          <input
-            type="file"
-            id="legalDocuments"
-            name="legalDocuments"
-            accept=".jpg,.jpeg,.png,.pdf"
-            onChange={handleFileChange}
-            style={styles.fileInput}
-          />
-          {errors.legalDocuments && (
-            <p style={styles.errorMessage}>{errors.legalDocuments}</p>
-          )}
-        </div>
+          <div style={{...styles.formGroup}}>
+            <label style={{...styles.label}}>
+              College Image
+            </label>
+            <input
+              type="file"
+              id="collegeImage"
+              name="collegeImage"
+              accept=".jpg,.jpeg,.png"
+              onChange={handleFileChange}
+              style={{...styles.fileInput}}
+            />
+            {errors.collegeImage && (
+              <p style={{...styles.errorMessage}}>{errors.collegeImage}</p>
+            )}
+          </div>
 
-        <div style={styles.formGroup}>
-          <label htmlFor="collegeImage" style={styles.label}>
-            College Image
-          </label>
-          <input
-            type="file"
-            id="collegeImage"
-            name="collegeImage"
-            accept=".jpg,.jpeg,.png"
-            onChange={handleFileChange}
-            style={styles.fileInput}
-          />
-          {errors.collegeImage && (
-            <p style={styles.errorMessage}>{errors.collegeImage}</p>
-          )}
-        </div>
+          {/* { <div>
+            <PhoneInput
+              placeholder="Enter phone number"
+              value={phone}
+              onChange={setPhone}
+            />
+          </div> } */}
 
-        {/* { <div>
-          <PhoneInput
-            placeholder="Enter phone number"
-            value={phone}
-            onChange={setPhone}
-          />
-        </div> } */}
-
-        <button
-          type="submit"
-          style={styles.submitButton}
-          onMouseOver={(e) => (e.target.style.backgroundColor = "#27ae60")}
-          onMouseOut={(e) => (e.target.style.backgroundColor = "#2ecc71")}
-        >
-          Register College
-        </button>
-      </form>
-    </div>
+          <button
+            type="submit"
+            style={{...styles.submitButton}}
+            onMouseOver={(e) => {
+              e.target.style.transform = "translateY(-1px)";
+              e.target.style.boxShadow = "0 4px 12px rgba(59, 130, 246, 0.25), 0 0 0 2px rgba(59, 130, 246, 0.1)";
+            }}
+            onMouseOut={(e) => {
+              e.target.style.transform = "translateY(0)";
+              e.target.style.boxShadow = "none";
+            }}
+          >
+            Register College
+          </button>
+        </form>
+      </div>
+    </>
   );
 };
 

@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import StudentSidebar from '../Sidebar/StudentSidebar';
-import Header from './Header';
+import SharedHeader from './SharedHeader';
+import { FaBars } from 'react-icons/fa';
 
 const ScholarshipPrograms = () => {
   const location = useLocation();
   const { college } = location.state;
   const [selectedScholarship, setSelectedScholarship] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
 
   // Sample scholarship data - replace with actual API call
   const scholarships = [
@@ -37,45 +43,24 @@ const ScholarshipPrograms = () => {
   ];
 
   const styles = {
-    container: {
-      flex: 1,
-      padding: '80px 20px 40px',
-      fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-      backgroundColor: '#f8f9fa',
-      minHeight: '100vh',
-      marginLeft: '250px',
-    },
-    header: {
-      marginTop: '40px',
-      fontSize: '2.5rem',
-      color: '#343a40',
-      marginBottom: '40px',
-      textAlign: 'center',
-      textTransform: 'uppercase',
-      letterSpacing: '1px',
-      fontWeight: '700',
-      borderBottom: '2px solid #007bff',
-      paddingBottom: '10px',
-    },
     scholarshipCard: {
-      backgroundColor: '#fff',
+      background: '#fff',
       borderRadius: '12px',
-      padding: '25px',
-      marginBottom: '25px',
-      boxShadow: '0 10px 20px rgba(0, 0, 0, 0.15)',
-      transition: 'all 0.3s ease',
-      border: '1px solid #dee2e6',
+      padding: '1.5rem',
+      marginBottom: '1.5rem',
+      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+      transition: 'transform 0.3s ease',
     },
     scholarshipTitle: {
       fontSize: '1.4rem',
       fontWeight: 'bold',
-      color: '#007bff',
-      marginBottom: '15px',
+      color: '#1e293b',
+      marginBottom: '1rem',
     },
     scholarshipDetails: {
       fontSize: '1rem',
-      color: '#495057',
-      marginBottom: '20px',
+      color: '#64748b',
+      marginBottom: '1rem',
       lineHeight: '1.6',
     },
     deadline: {
@@ -101,10 +86,19 @@ const ScholarshipPrograms = () => {
 
   return (
     <div className="student-dashboard">
-      <StudentSidebar />
-      <div style={styles.container}>
-        <Header user={{}} onLogout={() => {}} />
-        <h1 style={styles.header}>{college.collegeName} - Scholarships</h1>
+      <div className="menu-button" onClick={toggleSidebar}>
+        <FaBars />
+      </div>
+      
+      <StudentSidebar isOpen={isSidebarOpen} />
+      
+      <div className={`main-content ${isSidebarOpen ? 'shifted' : ''}`}>
+        <SharedHeader 
+          user={{}}
+          onLogout={() => {}}
+          title={`${college.collegeName} - Scholarships`}
+          subtitle="Explore scholarship opportunities"
+        />
         
         {scholarships.map((scholarship) => (
           <div

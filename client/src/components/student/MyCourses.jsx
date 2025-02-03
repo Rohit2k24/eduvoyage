@@ -4,6 +4,8 @@ import StudentSidebar from '../Sidebar/StudentSidebar';
 import Header from './Header';
 import courseimg from '../../assets/course.jpg'
 import { useNavigate } from 'react-router-dom';
+import SharedHeader from './SharedHeader';
+import { FaBars } from 'react-icons/fa';
 
 const MyCourses = () => {
   const [courses, setCourses] = useState([]);
@@ -14,6 +16,7 @@ const MyCourses = () => {
   const [selectedCourseNotes, setSelectedCourseNotes] = useState([]);
   const [showNotesModal, setShowNotesModal] = useState(false);
   const [viewedNotes, setViewedNotes] = useState(new Set());
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
   const DEFAULT_IMAGE = '../../assets/course.jpg'; // Make sure this image exists in your public folder
@@ -291,6 +294,10 @@ const MyCourses = () => {
     }
   };
 
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   const styles = {
     container: {
       display: 'flex',
@@ -495,15 +502,21 @@ const MyCourses = () => {
   };
 
   return (
-    <div style={styles.container}>
-      <StudentSidebar activeTab="My Courses" />
-      <div style={styles.mainContent}>
+    <div className="student-dashboard">
+      <div className="menu-button" onClick={toggleSidebar}>
+        <FaBars />
+      </div>
+      
+      <StudentSidebar isOpen={isSidebarOpen} />
+      
+      <div className={`main-content ${isSidebarOpen ? 'shifted' : ''}`}>
+        <SharedHeader 
+          user={user}
+          onLogout={handleLogout}
+          title="My Courses"
+          subtitle="Manage and track your enrolled courses"
+        />
         
-        <div style={styles.header}>
-          <h1 style={styles.headerTitle}>My Courses</h1>
-          <p style={styles.headerSubtitle}>Manage and track your enrolled courses</p>
-        </div>
-
         <div style={styles.controls}>
           <div style={styles.searchBar}>
             <i className="fas fa-search" style={styles.searchIcon}></i>

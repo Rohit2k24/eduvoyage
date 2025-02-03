@@ -6,13 +6,53 @@ import StudentSidebar from '../Sidebar/StudentSidebar';
 import './studentDashboard.css';
 import Header from './Header';
 import axios from 'axios';
-import { Routes, Route, Outlet } from 'react-router-dom';
-import Resources from './Resources';
-import Tasks from './Tasks';
-import Exams from './Exams';
-import Analytics from './Analytics';
-import Groups from './Groups';
-import Messages from './Messages';
+import { Link } from 'react-router-dom';
+import { 
+  FaHome, 
+  FaGraduationCap, 
+  FaBook, 
+  FaClipboardList,
+  FaCertificate,
+  FaBars
+} from 'react-icons/fa';
+
+const dashboardItems = [
+  {
+    path: '/studentDashboard',
+    icon: <FaHome className="card-icon" />,
+    title: 'Dashboard',
+    description: 'Overview of your academic progress',
+    color: '#4f46e5'
+  },
+  {
+    path: '/study-program',
+    icon: <FaGraduationCap className="card-icon" />,
+    title: 'Study Programs',
+    description: 'Explore available study programs',
+    color: '#0891b2'
+  },
+  {
+    path: '/my-courses',
+    icon: <FaBook className="card-icon" />,
+    title: 'My Courses',
+    description: 'Access your enrolled courses',
+    color: '#2563eb'
+  },
+  {
+    path: '/exams',
+    icon: <FaClipboardList className="card-icon" />,
+    title: 'Exams',
+    description: 'View and manage your examinations',
+    color: '#7c3aed'
+  },
+  {
+    path: '/my-certificates',
+    icon: <FaCertificate className="card-icon" />,
+    title: 'My Certificates',
+    description: 'Access your earned certificates',
+    color: '#059669'
+  }
+];
 
 const StudentDashboard = () => {
   const [user, setUser] = useState({
@@ -23,6 +63,7 @@ const StudentDashboard = () => {
     country: ''
   });
   const [errorMessage, setErrorMessage] = useState('');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -68,47 +109,54 @@ const StudentDashboard = () => {
     }
   };
 
-  const UserProfileCard = () => (
-    <div className="user-profile-card">
-      <div className="profile-header">
-        <div className="profile-avatar-wrapper">
-          <div className="profile-avatar">
-            {user.firstname.charAt(0)}{user.lastname.charAt(0)}
-          </div>
-          <div className="online-status"></div>
-        </div>
-        <h2 className="profile-name">{user.firstname} {user.lastname}</h2>
-        <span className="profile-role">Student</span>
-      </div>
-      <div className="profile-info">
-        <div className="info-item">
-          <span className="info-label">
-            <i className="fas fa-envelope"></i> Email
-          </span>
-          <span className="info-value">{user.email}</span>
-        </div>
-        <div className="info-item">
-          <span className="info-label">
-            <i className="fas fa-map-marker-alt"></i> Address
-          </span>
-          <span className="info-value">{user.address || 'Not provided'}</span>
-        </div>
-        <div className="info-item">
-          <span className="info-label">
-            <i className="fas fa-globe"></i> Country
-          </span>
-          <span className="info-value">{user.country || 'Not provided'}</span>
-        </div>
-      </div>
-    </div>
-  );
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  // Optional: Close sidebar when clicking outside
+  const handleOverlayClick = () => {
+    setIsSidebarOpen(false);
+  };
 
   return (
     <div className="student-dashboard">
-      <StudentSidebar />
-      <div className="main-content">
+      <div className="menu-button" onClick={toggleSidebar}>
+        <FaBars />
+      </div>
+      
+      {/* Add overlay */}
+      <div 
+        className={`sidebar-overlay ${isSidebarOpen ? 'open' : ''}`} 
+        onClick={handleOverlayClick}
+      />
+      
+      <StudentSidebar isOpen={isSidebarOpen} />
+      
+      <div className={`main-content ${isSidebarOpen ? 'shifted' : ''}`}>
         <Header user={user} onLogout={handleLogout} />
-        <UserProfileCard />
+        
+        <div className="welcome-section">
+          <h1>Welcome back, {user.firstname}!</h1>
+          <p>Access all your educational resources from one place</p>
+        </div>
+
+        <div className="dashboard-grid">
+          {dashboardItems.map((item) => (
+            <Link to={item.path} key={item.path} className="dashboard-card-link">
+              <div 
+                className="dashboard-card" 
+                style={{ borderTop: `4px solid ${item.color}` }}
+              >
+                <div className="card-icon-wrapper" style={{ color: item.color }}>
+                  {item.icon}
+                </div>
+                <h3 className="card-title">{item.title}</h3>
+                <p className="card-description">{item.description}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
+
         {errorMessage && (
           <div className="error-message">
             {errorMessage}

@@ -1,86 +1,231 @@
 body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #f7f7f7;
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    min-height: 100vh;
     margin: 0;
     padding: 0;
 }
 
-.registration-form-container {
-    max-width: 450px;
-    margin: 60px auto;
-    padding: 25px;
-    background-color: #2c2c2c;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+.registration-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f2f5;
+    padding: 2rem;
+}
+
+.registration-form form {
+    background-color: white;
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 
+        0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -2px rgba(0, 0, 0, 0.05),
+        0 0 0 1px rgba(0, 0, 0, 0.02);
+    width: 100%;
+    max-width: 480px;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+}
+
+.registration-form form::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #3b82f6, #6366f1);
 }
 
 .registration-form h2 {
     text-align: center;
-    margin-bottom: 25px;
-    font-size: 24px;
-    color: #ffffff; /* White text for heading */
+    color: #333;
+    margin-bottom: 2rem;
+    font-size: 1.75rem;
+    font-weight: 600;
+    position: relative;
+}
+
+.registration-form h2::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #3b82f6, #6366f1);
+    border-radius: 2px;
 }
 
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 1.5rem;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 6px;
+    margin-bottom: 0.5rem;
+    color: #555;
+    font-size: 0.925rem;
     font-weight: 500;
-    color: #bbbbbb; /* Lighter label color */
 }
 
 .form-group input,
 .form-group select {
     width: 100%;
-    padding: 12px;
-    background-color: #3d3d3d; /* Darker background for inputs */
-    color: #ffffff; /* White text for input */
-    border: 1px solid #555555; /* Darker border */
-    border-radius: 6px;
-    box-sizing: border-box;
-    transition: border-color 0.3s ease, background-color 0.3s ease;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #1e293b;
+    background-color: #fff;
+    transition: all 0.2s ease;
 }
 
-.form-group input::placeholder,
-.form-group select::placeholder {
-    color: #999999; /* Placeholder color */
+.form-group input:hover,
+.form-group select:hover {
+    border-color: #cbd5e1;
 }
 
 .form-group input:focus,
 .form-group select:focus {
-    border-color: #007bff;
     outline: none;
-    background-color: #454545; /* Slightly lighter on focus */
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .error-message {
-    color: #e74c3c;
-    font-size: 0.85em;
+    color: #ef4444;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
 }
 
-button {
+button[type="submit"] {
     width: 100%;
-    padding: 12px;
-    background-color: #007bff;
-    color: #ffffff;
+    padding: 0.875rem;
+    background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+    color: white;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
-    font-size: 18px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
-button:hover {
-    background-color: #0056b3;
+button[type="submit"]:hover {
+    transform: translateY(-1px);
+    box-shadow: 
+        0 4px 12px rgba(59, 130, 246, 0.25),
+        0 0 0 2px rgba(59, 130, 246, 0.1);
 }
 
-@media (max-width: 480px) {
-    .registration-form-container {
-        width: 90%;
-        padding: 20px;
+button[type="submit"]:active {
+    transform: translateY(0);
+}
+
+/* Country dropdown specific styling */
+.country-dropdown {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #1e293b;
+    background-color: #fff;
+    transition: all 0.2s ease;
+}
+
+.country-dropdown:hover {
+    border-color: #cbd5e1;
+}
+
+.country-dropdown:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Role select styling */
+select[name="role"] {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1em;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.registration-form form {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+    .registration-form {
+        padding: 1rem;
+    }
+
+    .registration-form form {
+        padding: 1.5rem;
+    }
+
+    .registration-form h2 {
+        font-size: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .country-dropdown,
+    button[type="submit"] {
+        padding: 0.75rem;
+    }
+}
+
+/* Loading state */
+button[type="submit"].loading {
+    background: #94a3b8;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+button[type="submit"].loading::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    margin: -10px 0 0 -10px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
     }
 }
