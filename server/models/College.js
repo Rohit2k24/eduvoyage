@@ -13,7 +13,13 @@ const collegeSchema = new mongoose.Schema({
   legalDocuments: { type: String },
   collegeImage: { type: String },
   isApproved: { type: Boolean, default: false },
-  paymentVerified: { type: Boolean, default: false, }, 
+  paymentVerified: { type: Boolean, default: false, },
+  isVerified: {
+    type: Boolean,
+    default: false
+  },
+  otp: String,
+  otpExpiry: Date
 });
 
 module.exports = mongoose.model('College', collegeSchema);

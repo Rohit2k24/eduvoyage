@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import "react-phone-number-input/style.css";
+import { CountryDropdown } from 'react-country-region-selector';
 
 const CollegeRegistrationForm = () => {
   const [formData, setFormData] = useState({
@@ -36,21 +37,21 @@ const CollegeRegistrationForm = () => {
     const { name, files } = e.target;
     const file = files[0];
   
-    if (file && !["image/jpeg", "image/png"].includes(file.type)) {
+    if (file && !["image/jpeg", "image/png", "application/pdf"].includes(file.type)) {
       setErrors({
         ...errors,
-        [name]: "Only JPG and PNG files are allowed",
+        [name]: "Only JPG, PNG and PDF files are allowed",
       });
     } else {
       setDocuments({ ...documents, [name]: file });
-      setErrors({ ...errors, [name]: undefined }); // Clear the error if valid
+      setErrors({ ...errors, [name]: undefined });
     }
   };
 
   const validateField = (name, value) => {
     const newErrors = { ...errors };
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Email format regex
-    const phoneRegex = /^(?!0)\d{10}$/; // Phone number regex: 10 digits, cannot start with 0
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const websiteRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
 
     switch (name) {
       case "collegeName":
@@ -85,40 +86,19 @@ const CollegeRegistrationForm = () => {
           delete newErrors.confirmPassword;
         }
         break;
-      case "phoneNumber":
-        if (!value.trim()) {
-          newErrors.phoneNumber = "Phone number is required";
-        } else if (!phoneRegex.test(value)) {
-          newErrors.phoneNumber =
-            "Phone number must be 10 digits and cannot start with 0";
+      case "website":
+        if (value && !websiteRegex.test(value)) {
+          newErrors.website = "Invalid website format";
         } else {
-          delete newErrors.phoneNumber;
-        }
-        break;
-      case "accreditationCertificate":
-        if (!documents.accreditationCertificate) {
-          newErrors.accreditationCertificate =
-            "Accreditation Certificate is required";
-        } else {
-          delete newErrors.accreditationCertificate;
-        }
-        break;
-      case "legalDocuments":
-        if (!documents.legalDocuments) {
-          newErrors.legalDocuments = "Legal Documents are required";
-        } else {
-          delete newErrors.legalDocuments;
-        }
-        break;
-      case "collegeImage":
-        if (!documents.collegeImage) {
-          newErrors.collegeImage = "College Image is required";
-        } else {
-          delete newErrors.collegeImage;
+          delete newErrors.website;
         }
         break;
       default:
-        break;
+        if (!value.trim()) {
+          newErrors[name] = `${name.charAt(0).toUpperCase() + name.slice(1)} is required`;
+        } else {
+          delete newErrors[name];
+        }
     }
 
     setErrors(newErrors);
@@ -127,12 +107,19 @@ const CollegeRegistrationForm = () => {
   const validateForm = () => {
     const newErrors = {};
     Object.keys(formData).forEach((key) => {
-      if (!formData[key].trim()) {
-        newErrors[key] = `${
-          key.charAt(0).toUpperCase() + key.slice(1)
-        } is required`;
-      }
+      validateField(key, formData[key]);
     });
+
+    // Validate files
+    if (!documents.accreditationCertificate) {
+      newErrors.accreditationCertificate = "Accreditation Certificate is required";
+    }
+    if (!documents.legalDocuments) {
+      newErrors.legalDocuments = "Legal Documents are required";
+    }
+    if (!documents.collegeImage) {
+      newErrors.collegeImage = "College Image is required";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -157,29 +144,55 @@ const CollegeRegistrationForm = () => {
             headers: { "Content-Type": "multipart/form-data" },
           }
         );
-        console.log(response);
 
-        if (
-          response.status === 201 ||
-          response.data.msg ===
-            "College registered successfully, pending approval"
-        ) {
-          Swal.fire({
-            title: "Registered Successfully",
-            text: "Your college registration is pending approval.",
-            icon: "success",
+        if (response.data.status === 1) {
+          // Show OTP input dialog
+          const { value: otpInput } = await Swal.fire({
+            title: 'Enter OTP',
+            text: 'Please check your email for the OTP',
+            input: 'text',
+            inputAttributes: {
+              autocapitalize: 'off'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Verify',
+            showLoaderOnConfirm: true,
+            preConfirm: async (inputValue) => {
+              try {
+                const verifyResponse = await axios.post(
+                  `${import.meta.env.VITE_BASE_URL}/api/auth/verify-college-otp`,
+                  {
+                    email: response.data.email,
+                    otp: inputValue
+                  }
+                );
+                if (verifyResponse.data.status === 1) {
+                  return verifyResponse.data;
+                }
+                throw new Error(verifyResponse.data.msg || 'Invalid OTP');
+              } catch (error) {
+                Swal.showValidationMessage(
+                  error.response?.data?.msg || 'Invalid OTP'
+                );
+              }
+            },
+            allowOutsideClick: () => !Swal.isLoading()
           });
-          navigate("/login");
-        } else {
-          throw new Error("Unexpected response from server");
+
+          if (otpInput) {
+            Swal.fire({
+              title: "Registration Successful",
+              text: "Your college registration is pending approval.",
+              icon: "success",
+            });
+            navigate("/login");
+          }
         }
       } catch (error) {
         console.error("Registration error:", error);
         Swal.fire({
           title: "Registration Failed",
-          text:
-            error.response?.data?.msg ||
-            "An error occurred during registration",
+          text: error.response?.data?.msg || "An error occurred during registration",
           icon: "error",
         });
       }
@@ -260,23 +273,30 @@ const CollegeRegistrationForm = () => {
               {field.charAt(0).toUpperCase() +
                 field.slice(1).replace(/([A-Z])/g, " $1")}
             </label>
-            <input
-              type={
-                field === "confirmPassword"
-                  ? "password"
-                  : field.includes("password")
-                  ? "password"
-                  : "text"
-              }
-              id={field}
-              name={field}
-              value={formData[field]}
-              onChange={handleChange}
-              style={{
-                ...styles.input,
-                ...(errors[field] ? styles.errorInput : {}),
-              }}
-            />
+            {field === "country" ? (
+              <CountryDropdown
+                value={formData.country}
+                onChange={(val) => setFormData(prev => ({ ...prev, country: val }))}
+                style={{
+                  ...styles.input,
+                  ...(errors[field] ? styles.errorInput : {}),
+                }}
+              />
+            ) : (
+              <input
+                type={
+                  field.includes("password") ? "password" : "text"
+                }
+                id={field}
+                name={field}
+                value={formData[field]}
+                onChange={handleChange}
+                style={{
+                  ...styles.input,
+                  ...(errors[field] ? styles.errorInput : {}),
+                }}
+              />
+            )}
             {errors[field] && (
               <p style={styles.errorMessage}>{errors[field]}</p>
             )}
@@ -291,7 +311,7 @@ const CollegeRegistrationForm = () => {
             type="file"
             id="accreditationCertificate"
             name="accreditationCertificate"
-            accept=".jpg, .jpeg, .png" 
+            accept=".jpg,.jpeg,.png,.pdf"
             onChange={handleFileChange}
             style={styles.fileInput}
           />
@@ -308,7 +328,7 @@ const CollegeRegistrationForm = () => {
             type="file"
             id="legalDocuments"
             name="legalDocuments"
-            accept=".jpg, .jpeg, .png" 
+            accept=".jpg,.jpeg,.png,.pdf"
             onChange={handleFileChange}
             style={styles.fileInput}
           />
@@ -325,7 +345,7 @@ const CollegeRegistrationForm = () => {
             type="file"
             id="collegeImage"
             name="collegeImage"
-            accept=".jpg, .jpeg, .png"
+            accept=".jpg,.jpeg,.png"
             onChange={handleFileChange}
             style={styles.fileInput}
           />

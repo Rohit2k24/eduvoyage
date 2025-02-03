@@ -266,6 +266,9 @@ exports.registerCollege = async (req, res) => {
       return res.status(400).json({ msg: "College already exists" });
     }
 
+    // Generate OTP
+    const otp = generateOTP();
+    
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -297,11 +300,26 @@ exports.registerCollege = async (req, res) => {
       accreditationCertificate: accreditationPath,
       legalDocuments: legalDocumentsPath,
       collegeImage: collegeImagePath,
+      isVerified: false,
+      otp: otp,
+      otpExpiry: Date.now() + 10 * 60 * 1000 // OTP valid for 10 minutes
     });
 
     await newCollege.save();
 
-    return res.status(201).json({ msg: "College registered successfully, pending approval" });
+    // Send OTP email
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "College Email Verification OTP",
+      text: `Your OTP for college email verification is: ${otp}. Valid for 10 minutes.`
+    });
+
+    return res.status(201).json({ 
+      status: 1,
+      msg: "OTP sent to college email",
+      email: email
+    });
   } catch (error) {
     console.error('Error in registerCollege:', error);
     res.status(500).json({ 
@@ -742,6 +760,34 @@ exports.verifyOTP = async (req, res) => {
     await user.save();
 
     res.json({ status: 1, msg: "Email verified successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error");
+  }
+};
+
+// Add new verify OTP endpoint for colleges
+exports.verifyCollegeOTP = async (req, res) => {
+  const { email, otp } = req.body;
+
+  try {
+    const college = await College.findOne({ 
+      email,
+      otp,
+      otpExpiry: { $gt: Date.now() }
+    });
+
+    if (!college) {
+      return res.status(400).json({ msg: "Invalid or expired OTP" });
+    }
+
+    // Update college verification status
+    college.isVerified = true;
+    college.otp = undefined;
+    college.otpExpiry = undefined;
+    await college.save();
+
+    res.json({ status: 1, msg: "College email verified successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).send("Server error");

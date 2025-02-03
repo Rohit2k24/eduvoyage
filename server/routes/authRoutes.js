@@ -71,4 +71,6 @@ router.put('/verify-payment/:collegeId',authController.verify_payment);
 
 router.post('/verify-otp', authController.verifyOTP);
 
+router.post('/verify-college-otp', authController.verifyCollegeOTP);
+
 module.exports = router;
