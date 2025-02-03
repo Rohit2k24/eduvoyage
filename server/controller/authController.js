@@ -7,6 +7,7 @@ const path = require("path");
 const fs = require("fs");
 const OfferedCourse = require("../models/OfferedCourse");
 const nodemailer = require('nodemailer');
+const otpGenerator = require('otp-generator');
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -15,6 +16,15 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 });
+
+const generateOTP = () => {
+  return otpGenerator.generate(6, { 
+    digits: true,
+    alphabets: false,
+    upperCase: false,
+    specialChars: false
+  });
+};
 
 exports.userRegister = async (req, res) => {
   const {
@@ -33,6 +43,11 @@ exports.userRegister = async (req, res) => {
     if (user) {
       return res.status(400).json({ msg: "User already exists" });
     }
+
+    // Generate OTP
+    const otp = generateOTP();
+    
+    // Create user with unverified status
     user = new User({
       firstname: firstName,
       lastname: lastName,
@@ -42,13 +57,28 @@ exports.userRegister = async (req, res) => {
       phone: phone,
       address: address,
       country: country,
+      isVerified: false,
+      otp: otp,
+      otpExpiry: Date.now() + 10 * 60 * 1000 // OTP valid for 10 minutes
     });
 
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(password, salt);
     await user.save();
 
-    res.status(201).json({ status: 1, msg: "User registered successfully" });
+    // Send OTP email
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Email Verification OTP",
+      text: `Your OTP for email verification is: ${otp}. Valid for 10 minutes.`
+    });
+
+    res.status(201).json({ 
+      status: 1, 
+      msg: "OTP sent to your email",
+      email: email
+    });
   } catch (error) {
     console.error(error);
     res.status(500).send("Server error");
@@ -119,7 +149,7 @@ exports.forgotPassword = async (req, res) => {
     secure: process.env.SMTP_SECURE === "true",
     auth: {
       user: process.env.SMTP_EMAIL,
-      pass: "********", // Don't log the actual password
+      pass: "", // Don't log the actual password
     },
   });
 
@@ -498,7 +528,7 @@ exports.downloadPercentageFile = async (req, res) => {
   // Decode the URL-encoded file path
   const filePath = decodeURIComponent(req.params.filePath);
   console.log(filePath)
-  // Define the full file path by joining the `uploads` directory and the provided file path
+  // Define the full file path by joining the uploads directory and the provided file path
   const fileLocation = path.join( 'C:/Users/rohit/EduVoyage/server/uploads', filePath);
 
   console.log("File path:", fileLocation);
@@ -687,5 +717,33 @@ exports.getCollegeImage = async (req, res) => {
   } catch (error) {
     console.error('Error serving college image:', error);
     res.status(500).json({ msg: "Error serving college image" });
+  }
+};
+
+// Add new verify OTP endpoint
+exports.verifyOTP = async (req, res) => {
+  const { email, otp } = req.body;
+
+  try {
+    const user = await User.findOne({ 
+      email,
+      otp,
+      otpExpiry: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      return res.status(400).json({ msg: "Invalid or expired OTP" });
+    }
+
+    // Update user verification status
+    user.isVerified = true;
+    user.otp = undefined;
+    user.otpExpiry = undefined;
+    await user.save();
+
+    res.json({ status: 1, msg: "Email verified successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error");
   }
 };

@@ -69,5 +69,6 @@ router.get('/dashboard-stats/:collegeId', educationCourseController.getDashboard
 
 router.put('/verify-payment/:collegeId',authController.verify_payment);
 
+router.post('/verify-otp', authController.verifyOTP);
 
 module.exports = router;

@@ -1,68 +1,93 @@
 // src/Home.jsx
-import React, { useState, useEffect } from 'react';
-import './Home.css';
+import React from 'react';
+import styles from './home.module.css';
 import Header from '../Header/Header';
-import Advertisement from '../Home/Advertisement'; // Import the advertisement component
+import { FaGlobeAmericas, FaGraduationCap, FaUniversity, FaUsers } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 
 const Home = () => {
-  const [courses, setCourses] = useState([]);
-  const [loading, setLoading] = useState(true); // Loading state
-
-  useEffect(() => {
-    // Simulating data fetching
-    const fetchCourses = async () => {
-      // Simulating a delay
-      setTimeout(() => {
-        setLoading(false);
-      }, 2000); // 2 seconds delay for loading simulation
-    };
-
-    fetchCourses();
-  }, []);
+  const fadeIn = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.6 }
+  };
 
   return (
-    <div className="home-page">  
+    <div className={styles.homepage}>
       <Header />
-
-      {loading ? (
-        <div className="loader-container">
-          <div className="loader"></div>
-          <p>Loading...</p>
-        </div>
-      ) : (
-        <div className="home-container">
-          <section className="hero">
-            <h1>Welcome to EduVoyage</h1>
-            <p>Your gateway to global education.</p>
-            <button className="explore-button">Explore Now</button>
-          </section>
-
-          {/* Add Advertisement Section */}
-          <section className="advertisement">
-            <Advertisement />
-          </section>
-
-          <section className="features">
-            <div className="feature">
-              <h2>Explore Courses</h2>
-              <p>Find the best programs for your academic journey.</p>
-              <ul className="course-list">
-                {courses.map((course, index) => (
-                  <li key={index}>{course}</li>
-                ))}
-              </ul>
+      
+      <main className={styles.maincontent}>
+        <section className={styles.herosection}>
+          <motion.div 
+            className={styles.herocontent}
+            initial={fadeIn.initial}
+            animate={fadeIn.animate}
+            transition={fadeIn.transition}
+          >
+            <h1>Transform Your Future with Global Education</h1>
+            <p>Discover world-class universities and programs tailored to your aspirations</p>
+            <div className={styles.herobuttons}>
+              <button className="primary-button">Explore Programs</button>
+              <button className="secondary-button">Learn More</button>
             </div>
-            <div className="feature">
-              <h2>Connect with Universities</h2>
-              <p>Get direct assistance with admissions.</p>
+          </motion.div>
+        </section>
+
+        <section className={styles.statssection}>
+          <div className={styles.statcontainer}>
+            <div className={styles.statitem}>
+              <span className={styles.statnumber}>500+</span>
+              <span className={styles.statlabel}>Universities</span>
             </div>
-            <div className="feature">
-              <h2>Plan Your Study Abroad</h2>
-              <p>Guidance on scholarships and visas.</p>
+            <div className={styles.statitem}>
+              <span className={styles.statnumber}>50k+</span>
+              <span className={styles.statlabel}>Students</span>
             </div>
-          </section>
-        </div>
-      )}
+            <div className={styles.statitem}>
+              <span className={styles.statnumber}>100+</span>
+              <span className={styles.statlabel}>Countries</span>
+            </div>
+            <div className={styles.statitem}>
+              <span className={styles.statnumber}>1000+</span>
+              <span className={styles.statlabel}>Programs</span>
+            </div>
+          </div>
+        </section>
+
+        <section className={styles.featuressection}>
+          <h2>Why Choose EduVoyage?</h2>
+          <div className={styles.featuresgrid}>
+            <div className={styles.featurecard}>
+              <FaGlobeAmericas className={styles.featureicon}/>
+              <h3>Global Reach</h3>
+              <p>Access to prestigious institutions worldwide</p>
+            </div>
+            <div className={styles.featurecard}>
+              <FaGraduationCap className={styles.featureicon} />
+              <h3>Expert Guidance</h3>
+              <p>Personalized counseling for your academic journey</p>
+            </div>
+            <div className={styles.featurecard}>
+              <FaUniversity className={styles.featureicon} />
+              <h3>Top Universities</h3>
+              <p>Partnerships with leading educational institutions</p>
+            </div>
+            <div className={styles.featurecard}>
+              <FaUsers className={styles.featureicon} />
+              <h3>Student Community</h3>
+              <p>Connect with peers from around the world</p>
+            </div>
+          </div>
+        </section>
+
+        <section className={styles.ctasection}>
+          <div className={styles.ctacontent}>
+            <h2>Ready to Begin Your Journey?</h2>
+            <p>Take the first step towards your international education</p>
+            <button className={styles.ctabutton}>Get Started</button>
+          </div>
+        </section>
+      </main>
     </div>
   );
 };

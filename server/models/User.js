@@ -35,6 +35,16 @@ const UserSchema = new mongoose.Schema({
     },
     resetPasswordExpire: {
         type: Date,
+    },
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
+    otp: {
+        type: String
+    },
+    otpExpiry: {
+        type: Date
     }
 });
 

@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./components/Home/Home";
-import Advertisement from "./components/Home/Advertisement";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import "./App.css"; 
@@ -43,7 +42,6 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/ad" element={<Advertisement />} />
         <Route path="/register-redirect" element={<RegisterRedirect />} />
         <Route path="/register" element={<Register />} />
         <Route path="/college-register" element={<CollegeRegistrationForm />} />

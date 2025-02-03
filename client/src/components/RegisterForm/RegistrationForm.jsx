@@ -20,6 +20,10 @@ const RegistrationForm = () => {
 
   const navigate = useNavigate();
 
+  const [showOtpInput, setShowOtpInput] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [registeredEmail, setRegisteredEmail] = useState("");
+
   const validateName = (name) => {
     return /^[A-Za-z\s]+$/.test(name);
   };
@@ -124,14 +128,55 @@ const RegistrationForm = () => {
     try {
       const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/register`, formData);
       if (response.data.status === 1) {
-        Swal.fire({
-          title: "Registered Successfully",
-          icon: "success"
+        setRegisteredEmail(response.data.email);
+        // Show OTP input dialog
+        const { value: otpInput } = await Swal.fire({
+          title: 'Enter OTP',
+          text: 'Please check your email for the OTP',
+          input: 'text',
+          inputAttributes: {
+            autocapitalize: 'off'
+          },
+          showCancelButton: true,
+          confirmButtonText: 'Verify',
+          showLoaderOnConfirm: true,
+          preConfirm: async (inputValue) => {
+            try {
+              const verifyResponse = await axios.post(
+                `${import.meta.env.VITE_BASE_URL}/api/auth/verify-otp`,
+                {
+                  email: response.data.email,
+                  otp: inputValue
+                }
+              );
+              if (verifyResponse.data.status === 1) {
+                return verifyResponse.data;
+              }
+              throw new Error(verifyResponse.data.msg || 'Invalid OTP');
+            } catch (error) {
+              Swal.showValidationMessage(
+                error.response?.data?.msg || 'Invalid OTP'
+              );
+            }
+          },
+          allowOutsideClick: () => !Swal.isLoading()
         });
-        navigate("/login");
+
+        if (otpInput) {
+          Swal.fire({
+            title: 'Success!',
+            text: 'Registration completed successfully',
+            icon: 'success'
+          });
+          navigate("/login");
+        }
       }
     } catch (error) {
-      alert(error.response?.data?.msg || "Error during registration");
+      Swal.fire({
+        title: 'Error',
+        text: error.response?.data?.msg || "Error during registration",
+        icon: 'error'
+      });
       console.error("Error:", error);
     }
   };
